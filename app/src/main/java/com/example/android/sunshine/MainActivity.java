@@ -1,5 +1,8 @@
 package com.example.android.sunshine;
 
+import java.util.Arrays;
+import java.util.List;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -8,9 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.util.Arrays;
-import java.util.List;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -51,6 +53,8 @@ public class MainActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        ArrayAdapter<String> mForecastAdapter = null;
+
         public PlaceholderFragment() {
         }
 
@@ -70,6 +74,14 @@ public class MainActivity extends ActionBarActivity {
                     "Sat - HELP TRAPPED IN WEATHERSTATION -- 60/51",
                     "Sun - Sunny -- 80/68"
             );
+            mForecastAdapter = new ArrayAdapter<String>(
+                    getActivity(),
+                    R.layout.list_item_forecast,
+                    R.id.list_item_forecast_textview,
+                    weekForecast);
+            final ListView lv =
+                (ListView)rootView.findViewById(R.id.listview_forecast);
+            lv.setAdapter(mForecastAdapter);
             return rootView;
         }
     }

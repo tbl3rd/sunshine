@@ -1,7 +1,7 @@
 ANDROID := $(ANDROID_HOME)/tools/android
 ADB := $(ANDROID_HOME)/platform-tools/adb
 
-API := android-14
+API := android-19
 
 ANDROIDAPIS := $(API) # Add others as required.
 
@@ -9,7 +9,8 @@ ANDROIDSOURCES := $(addprefix $(ANDROID_HOME)/sources/,$(ANDROIDAPIS))
 
 PACKAGE := com.example.android.sunshine
 
-# Task names extracted from output of './gradlew tasks'.
+# Task names extracted from output of './gradlew tasks' and re-ordered
+# slightly.
 #
 GRADLETASKS :=\
 	help\
