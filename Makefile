@@ -52,6 +52,7 @@ $(GRADLETASKS):
 
 
 debug: installDebug
+	$(ADB) logcat -c
 	$(ADB) shell am start -n $(PACKAGE)/$(PACKAGE).MainActivity
 	$(ADB) logcat
 
@@ -60,11 +61,11 @@ define TAGJAVA
 find $(1) -type f -name '*.java' -print |\
 xargs etags --append --output=$(2) &&
 endef
-
 TAGS tags: . $(LIBRARIES) $(ANDROIDSOURCES)
 	rm -f TAGS.tmp
 	$(foreach d,$^,$(call TAGJAVA,$(d),TAGS.tmp)) true
 	cmp -s ./TAGS TAGS.tmp || rm -f ./TAGS && mv TAGS.tmp ./TAGS
+.PHONY: TAGS tags
 
 
 distclean: clean

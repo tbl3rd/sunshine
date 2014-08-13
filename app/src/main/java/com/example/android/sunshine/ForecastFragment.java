@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -19,9 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
-/**
- * A placeholder fragment containing a simple view.
- */
+
 public class ForecastFragment extends Fragment {
 
     private static String LOGTAG = "ForecastFragment";
@@ -52,15 +51,12 @@ public class ForecastFragment extends Fragment {
         return result;
     }
 
-    private static String makeForecastString() {
+    protected String fetchForecast(String... url) {
         String result = null;
         HttpURLConnection connection = null;
         BufferedReader reader = null;
         try {
-            final URL url = new URL(
-                    "http://api.openweathermap.org/data/2.5/forecast/daily"
-                    + "?q=94043&mode=json&units=metric&cnt=7");
-            connection = (HttpURLConnection)url.openConnection();
+            connection = (HttpURLConnection)new URL(url[0]).openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
             final InputStream is = connection.getInputStream();
@@ -96,9 +92,29 @@ public class ForecastFragment extends Fragment {
     {
         final View result
             = inflater.inflate(R.layout.fragment_main, container, false);
-        final String forecast = makeForecastString();
-        Log.i(LOGTAG, "makeForecastString() returned: " + forecast);
+        final String url
+            = "http://api.openweathermap.org/data/2.5/forecast/daily"
+            + "?q=94043&mode=json&units=metric&cnt=7";
+        new FetchWeatherTask().execute(url);
         mForecastAdapter = makeForecastAdapter(result);
         return result;
+    }
+
+
+    private class FetchWeatherTask extends AsyncTask<String, Integer, String> {
+
+        private static final String LOG_TAG = "FetchWeatherTask";
+
+        protected void onPreExecute() {}
+
+        protected String doInBackground(String... url) {
+            return fetchForecast(url);
+        }
+
+        protected void onProgressUpdate(Integer... ignored) {}
+
+        protected void onPostExecute(String forecast) {
+            Log.i(LOG_TAG, "onPostExecute() got: " + forecast);
+        }
     }
 }
