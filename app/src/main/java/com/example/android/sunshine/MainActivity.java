@@ -58,13 +58,9 @@ public class MainActivity extends ActionBarActivity {
         public PlaceholderFragment() {
         }
 
-        @Override
-        public View onCreateView(
-                LayoutInflater inflater,
-                ViewGroup container,
-                Bundle savedInstanceState) {
-            final View rootView
-                = inflater.inflate(R.layout.fragment_main, container, false);
+        // Set up and return adapter for the forecast in rootView.
+        //
+        private ArrayAdapter<String> makeForecastAdapter(View rootView) {
             final List<String> weekForecast = Arrays.asList(
                     "Today - Sunny -- 88/63",
                     "Tomorrow - Foggy -- 70/40",
@@ -74,15 +70,26 @@ public class MainActivity extends ActionBarActivity {
                     "Sat - HELP TRAPPED IN WEATHERSTATION -- 60/51",
                     "Sun - Sunny -- 80/68"
             );
-            mForecastAdapter = new ArrayAdapter<String>(
+            final ArrayAdapter<String> result = new ArrayAdapter<String>(
                     getActivity(),
                     R.layout.list_item_forecast,
                     R.id.list_item_forecast_textview,
                     weekForecast);
             final ListView lv =
                 (ListView)rootView.findViewById(R.id.listview_forecast);
-            lv.setAdapter(mForecastAdapter);
-            return rootView;
+            lv.setAdapter(result);
+            return result;
+        }
+
+        @Override
+        public View onCreateView(
+                LayoutInflater inflater,
+                ViewGroup container,
+                Bundle savedInstanceState) {
+            final View result
+                = inflater.inflate(R.layout.fragment_main, container, false);
+            mForecastAdapter = makeForecastAdapter(result);
+            return result;
         }
     }
 }

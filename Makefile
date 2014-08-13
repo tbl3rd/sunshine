@@ -53,6 +53,7 @@ $(GRADLETASKS):
 
 debug: installDebug
 	$(ADB) shell am start -n $(PACKAGE)/$(PACKAGE).MainActivity
+	$(ADB) logcat
 
 
 define TAGJAVA
