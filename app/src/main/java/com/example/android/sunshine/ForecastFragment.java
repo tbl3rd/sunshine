@@ -23,7 +23,8 @@ import android.widget.ListView;
 
 public class ForecastFragment extends Fragment {
 
-    private static String LOGTAG = "ForecastFragment";
+    private static final String LOG_TAG
+        = ForecastFragment.class.getSimpleName();
 
     ArrayAdapter<String> mForecastAdapter = null;
 
@@ -70,14 +71,14 @@ public class ForecastFragment extends Fragment {
             }
             result = buffer.toString();
         } catch (final Exception e) {
-            Log.e(LOGTAG, "Error ", e);
+            Log.e(LOG_TAG, "Error ", e);
         } finally {
             if (connection != null) connection.disconnect();
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (final IOException ioe) {
-                    Log.e(LOGTAG, "Error closing stream", ioe);
+                    Log.e(LOG_TAG, "Error closing stream", ioe);
                 }
             }
         }
@@ -102,8 +103,6 @@ public class ForecastFragment extends Fragment {
 
 
     private class FetchWeatherTask extends AsyncTask<String, Integer, String> {
-
-        private static final String LOG_TAG = "FetchWeatherTask";
 
         protected void onPreExecute() {}
 
