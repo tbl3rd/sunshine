@@ -57,6 +57,7 @@ public class ForecastFragment extends Fragment {
         HttpURLConnection connection = null;
         BufferedReader reader = null;
         try {
+            Log.i(LOG_TAG, "url[0] == " + url[0]);
             connection = (HttpURLConnection)new URL(url[0]).openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
@@ -104,13 +105,9 @@ public class ForecastFragment extends Fragment {
 
     private class FetchWeatherTask extends AsyncTask<String, Integer, String> {
 
-        protected void onPreExecute() {}
-
         protected String doInBackground(String... url) {
             return fetchForecast(url);
         }
-
-        protected void onProgressUpdate(Integer... ignored) {}
 
         protected void onPostExecute(String forecast) {
             Log.i(LOG_TAG, "onPostExecute() got: " + forecast);
