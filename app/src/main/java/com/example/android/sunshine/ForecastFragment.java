@@ -64,7 +64,7 @@ public class ForecastFragment extends Fragment {
         }
     }
 
-    private String fetchForecast(String... url) {
+    private static String fetchForecast(String... url) {
         Log.i(LOG_TAG, "url[0] == " + url[0]);
         HttpURLConnection connection = null;
         BufferedReader reader = null;
@@ -90,6 +90,19 @@ public class ForecastFragment extends Fragment {
         return null;
     }
 
+    // Too clever?
+    //
+    private static void asycFetchForecast(final String url) {
+        new AsyncTask<Void, Void, String>() {
+            protected String doInBackground(Void... ignored) {
+                return fetchForecast(url);
+            }
+            protected void onPostExecute(String forecast) {
+                Log.i(LOG_TAG, "onPostExecute() got: " + forecast);
+            }
+        }.execute();
+    }
+
     @Override
     public View onCreateView(
             LayoutInflater inflater,
@@ -101,20 +114,8 @@ public class ForecastFragment extends Fragment {
         final String url
             = "http://api.openweathermap.org/data/2.5/forecast/daily"
             + "?q=94043&mode=json&units=metric&cnt=7";
-        new FetchWeatherTask().execute(url);
+        asycFetchForecast(url);
         mForecastAdapter = makeForecastAdapter(result);
         return result;
-    }
-
-
-    private class FetchWeatherTask extends AsyncTask<String, Integer, String> {
-
-        protected String doInBackground(String... url) {
-            return fetchForecast(url);
-        }
-
-        protected void onPostExecute(String forecast) {
-            Log.i(LOG_TAG, "onPostExecute() got: " + forecast);
-        }
     }
 }
