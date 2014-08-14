@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -40,20 +41,22 @@ public class ForecastFragment extends Fragment {
     //
     private ArrayAdapter<String> makeForecastAdapter(View rootView)
     {
-        final List<String> weekForecast = Arrays.asList(
-                "Today - Sunny -- 88/63",
-                "Tomorrow - Foggy -- 70/40",
-                "Weds - Cloudy -- 72/36",
-                "Thurs - Asteroids -- 75/65",
-                "Fri - Heavy Rain -- 65/56",
-                "Sat - HELP TRAPPED IN WEATHERSTATION -- 60/51",
-                "Sun - Sunny -- 80/68"
-        );
+        final String[] strings = {
+            "Today - Sunny -- 88/63",
+            "Tomorrow - Foggy -- 70/40",
+            "Weds - Cloudy -- 72/36",
+            "Thurs - Asteroids -- 75/65",
+            "Fri - Heavy Rain -- 65/56",
+            "Sat - HELP TRAPPED IN WEATHERSTATION -- 60/51",
+            "Sun - Sunny -- 80/68"
+        };
+        final ArrayList<String> forecast
+            = new ArrayList<String>(Arrays.asList(strings));
         final ArrayAdapter<String> result = new ArrayAdapter<String>(
                 getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
-                weekForecast);
+                forecast);
         final ListView lv =
             (ListView)rootView.findViewById(R.id.listview_forecast);
         lv.setAdapter(result);
@@ -123,7 +126,7 @@ public class ForecastFragment extends Fragment {
                 final double hi = temperature.getDouble("max");
                 final double lo = temperature.getDouble("min");
                 final String hiLo = Math.round(hi) + "/" + Math.round(lo);
-                result[i] = day + " - " + description + " - " + hiLo;
+                result[i] = day + " - " + description + " -- " + hiLo;
             }
         } catch (final Exception e) {
             Log.e(LOG_TAG, "parseWeather() catch", e);
@@ -131,7 +134,7 @@ public class ForecastFragment extends Fragment {
         return result;
     }
 
-    private static void asyncFetchForecast() {
+    private void asyncFetchForecast() {
         final int week = 7;
         final String url = makeUrl("02138", week);
         Log.i(LOG_TAG, "asyncFetchForecast() url == " + url);
@@ -141,9 +144,9 @@ public class ForecastFragment extends Fragment {
             }
             protected void onPostExecute(String[] forecast) {
                 Log.v(LOG_TAG, "onPostExecute()");
-                for (String s: forecast) {
-                    Log.v(LOG_TAG, s);
-                }
+                for (String s: forecast) Log.v(LOG_TAG, s);
+                mForecastAdapter.clear();
+                mForecastAdapter.addAll(forecast);
             }
         }.execute();
     }
