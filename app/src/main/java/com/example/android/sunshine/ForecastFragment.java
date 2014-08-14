@@ -1,7 +1,6 @@
 package com.example.android.sunshine;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -52,24 +51,11 @@ public class ForecastFragment extends Fragment {
         return result;
     }
 
-    private static void cleanupFetchForecast(
-            HttpURLConnection connection,
-            BufferedReader reader)
-    {
-        try {
-            if (connection != null) connection.disconnect();
-            if (reader != null) reader.close();
-        } catch (final IOException ioe) {
-            Log.e(LOG_TAG, "Error closing stream", ioe);
-        }
-    }
-
-    private static String fetchForecast(String... url) {
-        Log.i(LOG_TAG, "url[0] == " + url[0]);
+    private static String fetchForecast(String url) {
         HttpURLConnection connection = null;
         BufferedReader reader = null;
         try {
-            connection = (HttpURLConnection)new URL(url[0]).openConnection();
+            connection = (HttpURLConnection)new URL(url).openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
             final InputStream is = connection.getInputStream();
@@ -79,20 +65,24 @@ public class ForecastFragment extends Fragment {
             while (true) {
                 final String line = reader.readLine();
                 if (line == null) break;
-                buffer.append(line + "\n");
+                buffer.append(line).append("\n");
             }
             return buffer.toString();
         } catch (final Exception e) {
-            Log.e(LOG_TAG, "Error ", e);
+            Log.e(LOG_TAG, "catch in fetchForecast()", e);
         } finally {
-            cleanupFetchForecast(connection, reader);
+            try {
+                if (connection != null) connection.disconnect();
+                if (reader != null) reader.close();
+            } catch (final Exception e) {
+                Log.e(LOG_TAG, "finally in fetchForecast()", e);
+            }
         }
         return null;
     }
 
-    // Too clever?
-    //
-    private static void asycFetchForecast(final String url) {
+    private static void asyncFetchForecast(final String url) {
+        Log.i(LOG_TAG, "asyncFetchForecast() url == " + url);
         new AsyncTask<Void, Void, String>() {
             protected String doInBackground(Void... ignored) {
                 return fetchForecast(url);
@@ -114,7 +104,7 @@ public class ForecastFragment extends Fragment {
         final String url
             = "http://api.openweathermap.org/data/2.5/forecast/daily"
             + "?q=94043&mode=json&units=metric&cnt=7";
-        asycFetchForecast(url);
+        asyncFetchForecast(url);
         mForecastAdapter = makeForecastAdapter(result);
         return result;
     }
