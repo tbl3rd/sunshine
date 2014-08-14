@@ -26,8 +26,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 public class ForecastFragment extends Fragment {
@@ -35,23 +37,24 @@ public class ForecastFragment extends Fragment {
     private static final String LOG_TAG
         = ForecastFragment.class.getSimpleName();
 
+    private static final String[] dummyForecast = {
+        "Today - Sunny -- 88/63",
+        "Tomorrow - Foggy -- 70/40",
+        "Weds - Cloudy -- 72/36",
+        "Thurs - Asteroids -- 75/65",
+        "Fri - Heavy Rain -- 65/56",
+        "Sat - HELP TRAPPED IN WEATHERSTATION -- 60/51",
+        "Sun - Sunny -- 80/68"
+    };
+
     ArrayAdapter<String> mForecastAdapter = null;
 
     // Set up and return adapter for the forecast in rootView.
     //
     private ArrayAdapter<String> makeForecastAdapter(View rootView)
     {
-        final String[] strings = {
-            "Today - Sunny -- 88/63",
-            "Tomorrow - Foggy -- 70/40",
-            "Weds - Cloudy -- 72/36",
-            "Thurs - Asteroids -- 75/65",
-            "Fri - Heavy Rain -- 65/56",
-            "Sat - HELP TRAPPED IN WEATHERSTATION -- 60/51",
-            "Sun - Sunny -- 80/68"
-        };
         final ArrayList<String> forecast
-            = new ArrayList<String>(Arrays.asList(strings));
+            = new ArrayList<String>(Arrays.asList(dummyForecast));
         final ArrayAdapter<String> result = new ArrayAdapter<String>(
                 getActivity(),
                 R.layout.list_item_forecast,
@@ -59,7 +62,21 @@ public class ForecastFragment extends Fragment {
                 forecast);
         final ListView lv =
             (ListView)rootView.findViewById(R.id.listview_forecast);
+        final AdapterView.OnItemClickListener ocl
+            = new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(
+                            AdapterView<?> adapter,
+                            View view, int n, long ignoredId) {
+                        Toast.makeText(
+                                view.getContext(),
+                                (String)adapter.getItemAtPosition(n),
+                                Toast.LENGTH_SHORT)
+                            .show();
+                    }
+                };
         lv.setAdapter(result);
+        lv.setOnItemClickListener(ocl);
         return result;
     }
 
