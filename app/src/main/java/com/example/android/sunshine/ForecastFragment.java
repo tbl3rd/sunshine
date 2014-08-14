@@ -15,6 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -68,11 +70,11 @@ public class ForecastFragment extends Fragment {
                     public void onItemClick(
                             AdapterView<?> adapter,
                             View view, int n, long ignoredId) {
-                        Toast.makeText(
-                                view.getContext(),
-                                (String)adapter.getItemAtPosition(n),
-                                Toast.LENGTH_SHORT)
-                            .show();
+                        startActivity(
+                                new Intent(getActivity(), DetailActivity.class)
+                                .putExtra(
+                                        Intent.EXTRA_TEXT,
+                                        mForecastAdapter.getItem(n)));
                     }
                 };
         lv.setAdapter(result);
