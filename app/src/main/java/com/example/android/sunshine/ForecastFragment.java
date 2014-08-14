@@ -52,38 +52,42 @@ public class ForecastFragment extends Fragment {
         return result;
     }
 
-    protected String fetchForecast(String... url) {
-        String result = null;
+    private static void cleanupFetchForecast(
+            HttpURLConnection connection,
+            BufferedReader reader)
+    {
+        try {
+            if (connection != null) connection.disconnect();
+            if (reader != null) reader.close();
+        } catch (final IOException ioe) {
+            Log.e(LOG_TAG, "Error closing stream", ioe);
+        }
+    }
+
+    private String fetchForecast(String... url) {
+        Log.i(LOG_TAG, "url[0] == " + url[0]);
         HttpURLConnection connection = null;
         BufferedReader reader = null;
         try {
-            Log.i(LOG_TAG, "url[0] == " + url[0]);
             connection = (HttpURLConnection)new URL(url[0]).openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
             final InputStream is = connection.getInputStream();
-            final StringBuffer buffer = new StringBuffer();
             final InputStreamReader isr = new InputStreamReader(is);
             reader = new BufferedReader(isr);
+            final StringBuffer buffer = new StringBuffer();
             while (true) {
                 final String line = reader.readLine();
                 if (line == null) break;
                 buffer.append(line + "\n");
             }
-            result = buffer.toString();
+            return buffer.toString();
         } catch (final Exception e) {
             Log.e(LOG_TAG, "Error ", e);
         } finally {
-            if (connection != null) connection.disconnect();
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (final IOException ioe) {
-                    Log.e(LOG_TAG, "Error closing stream", ioe);
-                }
-            }
+            cleanupFetchForecast(connection, reader);
         }
-        return result;
+        return null;
     }
 
     @Override
