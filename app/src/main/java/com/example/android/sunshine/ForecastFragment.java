@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -88,7 +90,7 @@ public class ForecastFragment extends Fragment {
         return null;
     }
 
-    private static String makeUrl(final String postcode) {
+    private static String makeUrl(final String postcode, int days) {
         return new Uri.Builder()
             .scheme("http")
             .authority("api.openweathermap.org")
@@ -98,36 +100,50 @@ public class ForecastFragment extends Fragment {
             .appendPath("daily")
             .appendQueryParameter("mode", "json")
             .appendQueryParameter("units", "metric")
-            .appendQueryParameter("cnt", "7")
+            .appendQueryParameter("cnt", "" + days)
             .appendQueryParameter("q", postcode)
             .build().toString();
     }
 
-    private static double getMaxForDay(String forecast, int dayIndex) {
+    private static String[] parseWeather(String jsonString, int dayCount) {
+        final String[] result = new String[dayCount];
         try {
-            final JSONObject reply = new JSONObject(forecast);
-            final JSONArray list = reply.getJSONArray("list");
-            final JSONObject day = list.getJSONObject(dayIndex);
-            final JSONObject temp = day.getJSONObject("temp");
-            final double max = temp.getDouble("max");
-            Log.v(LOG_TAG, "getMaxForDay() max == " + max);
-            return max;
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "getMaxForDay() catch", e);
+            final JSONObject forecast = new JSONObject(jsonString);
+            final JSONArray list = forecast.getJSONArray("list");
+            for (int i = 0; i < list.length(); ++i) {
+                final JSONObject forDay = list.getJSONObject(i);
+                final long dateTime = forDay.getLong("dt");
+                final Date date = new Date(dateTime * 1000);
+                final SimpleDateFormat fmt = new SimpleDateFormat("E, MMM d");
+                final String day = fmt.format(date).toString();
+                final JSONArray weathers = forDay.getJSONArray("weather");
+                final JSONObject weather = weathers.getJSONObject(0);
+                final String description = weather.getString("main");
+                final JSONObject temperature = forDay.getJSONObject("temp");
+                final double hi = temperature.getDouble("max");
+                final double lo = temperature.getDouble("min");
+                final String hiLo = Math.round(hi) + "/" + Math.round(lo);
+                result[i] = day + " - " + description + " - " + hiLo;
+            }
+        } catch (final Exception e) {
+            Log.e(LOG_TAG, "parseWeather() catch", e);
         }
-        return -1;
+        return result;
     }
 
     private static void asyncFetchForecast() {
-        final String url = makeUrl("02138");
+        final int week = 7;
+        final String url = makeUrl("02138", week);
         Log.i(LOG_TAG, "asyncFetchForecast() url == " + url);
-        new AsyncTask<Void, Void, String>() {
-            protected String doInBackground(Void... ignored) {
-                return fetchForecast(url);
+        new AsyncTask<Void, Void, String[]>() {
+            protected String[] doInBackground(Void... ignored) {
+                return parseWeather(fetchForecast(url), week);
             }
-            protected void onPostExecute(String forecast) {
-                Log.i(LOG_TAG, "onPostExecute() got: " + forecast);
-                getMaxForDay(forecast, 3);
+            protected void onPostExecute(String[] forecast) {
+                Log.v(LOG_TAG, "onPostExecute()");
+                for (String s: forecast) {
+                    Log.v(LOG_TAG, s);
+                }
             }
         }.execute();
     }
