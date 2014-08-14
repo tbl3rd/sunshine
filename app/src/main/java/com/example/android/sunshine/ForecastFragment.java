@@ -8,6 +8,11 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 
 
 public class ForecastFragment extends Fragment {
@@ -84,10 +88,38 @@ public class ForecastFragment extends Fragment {
         return null;
     }
 
+    private static String makeUrl(final String postcode) {
+        return new Uri.Builder()
+            .scheme("http")
+            .authority("api.openweathermap.org")
+            .appendPath("data")
+            .appendPath("2.5")
+            .appendPath("forecast")
+            .appendPath("daily")
+            .appendQueryParameter("mode", "json")
+            .appendQueryParameter("units", "metric")
+            .appendQueryParameter("cnt", "7")
+            .appendQueryParameter("q", postcode)
+            .build().toString();
+    }
+
+    private static double getMaxForDay(String forecast, int dayIndex) {
+        try {
+            final JSONObject reply = new JSONObject(forecast);
+            final JSONArray list = reply.getJSONArray("list");
+            final JSONObject day = list.getJSONObject(dayIndex);
+            final JSONObject temp = day.getJSONObject("temp");
+            final double max = temp.getDouble("max");
+            Log.v(LOG_TAG, "getMaxForDay() max == " + max);
+            return max;
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "getMaxForDay() catch", e);
+        }
+        return -1;
+    }
+
     private static void asyncFetchForecast() {
-        final String url
-            = "http://api.openweathermap.org/data/2.5/forecast/daily"
-            + "?q=94043&mode=json&units=metric&cnt=7";
+        final String url = makeUrl("02138");
         Log.i(LOG_TAG, "asyncFetchForecast() url == " + url);
         new AsyncTask<Void, Void, String>() {
             protected String doInBackground(Void... ignored) {
@@ -95,6 +127,7 @@ public class ForecastFragment extends Fragment {
             }
             protected void onPostExecute(String forecast) {
                 Log.i(LOG_TAG, "onPostExecute() got: " + forecast);
+                getMaxForDay(forecast, 3);
             }
         }.execute();
     }
