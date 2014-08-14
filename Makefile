@@ -41,9 +41,6 @@ GRADLETASKS :=\
 	connectedAndroidTest\
 	connectedCheck\
 	deviceCheck\
-	lint\
-	lintDebug\
-	lintRelease\
 	#
 
 
@@ -55,6 +52,12 @@ debug: installDebug
 	$(ADB) logcat -c
 	$(ADB) shell am start -n $(PACKAGE)/$(PACKAGE).MainActivity
 	$(ADB) logcat
+
+
+lint lintDebug lintRelease:
+	./gradlew $@
+	open app/build/outputs/lint-results.html
+.PHONY: lint lintDebug lintRelease
 
 
 define TAGJAVA

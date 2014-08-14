@@ -13,6 +13,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -81,7 +84,10 @@ public class ForecastFragment extends Fragment {
         return null;
     }
 
-    private static void asyncFetchForecast(final String url) {
+    private static void asyncFetchForecast() {
+        final String url
+            = "http://api.openweathermap.org/data/2.5/forecast/daily"
+            + "?q=94043&mode=json&units=metric&cnt=7";
         Log.i(LOG_TAG, "asyncFetchForecast() url == " + url);
         new AsyncTask<Void, Void, String>() {
             protected String doInBackground(Void... ignored) {
@@ -94,6 +100,13 @@ public class ForecastFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public View onCreateView(
             LayoutInflater inflater,
             ViewGroup container,
@@ -101,11 +114,25 @@ public class ForecastFragment extends Fragment {
     {
         final View result
             = inflater.inflate(R.layout.fragment_main, container, false);
-        final String url
-            = "http://api.openweathermap.org/data/2.5/forecast/daily"
-            + "?q=94043&mode=json&units=metric&cnt=7";
-        asyncFetchForecast(url);
+        asyncFetchForecast();
         mForecastAdapter = makeForecastAdapter(result);
+        setHasOptionsMenu(true);
         return result;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.i(LOG_TAG, "onCreateOptionsMenu()");
+        inflater.inflate(R.menu.forecastfragment, menu);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.i(LOG_TAG, "onOptionsItemSelected()");
+        final int id = item.getItemId();
+        if (id == R.id.action_refresh) {
+            asyncFetchForecast();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
