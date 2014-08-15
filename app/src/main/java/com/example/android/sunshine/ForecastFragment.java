@@ -186,7 +186,6 @@ public class ForecastFragment extends Fragment {
         final View result
             = inflater.inflate(R.layout.fragment_main, container, false);
         mForecastAdapter = makeForecastAdapter(result);
-        setHasOptionsMenu(true);
         return result;
     }
 
