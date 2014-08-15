@@ -134,13 +134,14 @@ public class ForecastFragment extends Fragment {
             final JSONArray list = forecast.getJSONArray("list");
             for (int i = 0; i < list.length(); ++i) {
                 final JSONObject forDay = list.getJSONObject(i);
-                final long dateTime = forDay.getLong("dt");
-                final Date date = new Date(dateTime * 1000);
-                final SimpleDateFormat fmt = new SimpleDateFormat("E, MMM d");
-                final String day = fmt.format(date).toString();
-                final JSONArray weathers = forDay.getJSONArray("weather");
-                final JSONObject weather = weathers.getJSONObject(0);
-                final String description = weather.getString("main");
+                final Date date = new Date(forDay.getLong("dt") * 1000);
+                final String day
+                    = new SimpleDateFormat("E, MMM d").format(date).toString();
+                final String description
+                    = forDay
+                    .getJSONArray("weather")
+                    .getJSONObject(0)
+                    .getString("main");
                 final JSONObject temperature = forDay.getJSONObject("temp");
                 final double hi = temperature.getDouble("max");
                 final double lo = temperature.getDouble("min");
