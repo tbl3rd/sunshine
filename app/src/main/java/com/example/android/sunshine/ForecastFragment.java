@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,6 +51,8 @@ public class ForecastFragment extends Fragment {
     };
 
     ArrayAdapter<String> mForecastAdapter = null;
+
+    public ForecastFragment() {}
 
     // Set up and return adapter for the forecast in rootView.
     //
@@ -112,26 +115,12 @@ public class ForecastFragment extends Fragment {
         return null;
     }
 
-    private static String makeUrl(final String postcode, int days) {
-        return new Uri.Builder()
-            .scheme("http")
-            .authority("api.openweathermap.org")
-            .appendPath("data")
-            .appendPath("2.5")
-            .appendPath("forecast")
-            .appendPath("daily")
-            .appendQueryParameter("mode", "json")
-            .appendQueryParameter("units", "metric")
-            .appendQueryParameter("cnt", "" + days)
-            .appendQueryParameter("q", postcode)
-            .build().toString();
-    }
-
-    private static String[] parseWeather(String jsonString, int dayCount) {
-        final String[] result = new String[dayCount];
+    private static String[] parseWeather(String jsonString) {
+        String[] result = new String[0];
         try {
             final JSONObject forecast = new JSONObject(jsonString);
             final JSONArray list = forecast.getJSONArray("list");
+            result = new String[list.length()];
             for (int i = 0; i < list.length(); ++i) {
                 final JSONObject forDay = list.getJSONObject(i);
                 final Date date = new Date(forDay.getLong("dt") * 1000);
@@ -154,13 +143,32 @@ public class ForecastFragment extends Fragment {
         return result;
     }
 
+    private String getFetchForecastUrl() {
+        final String defaultLocation
+            = getResources().getString(R.string.preference_location_default);
+        final String location =
+            PreferenceManager.getDefaultSharedPreferences(getActivity())
+            .getString("location", defaultLocation);
+        return new Uri.Builder()
+            .scheme("http")
+            .authority("api.openweathermap.org")
+            .appendPath("data")
+            .appendPath("2.5")
+            .appendPath("forecast")
+            .appendPath("daily")
+            .appendQueryParameter("mode", "json")
+            .appendQueryParameter("units", "metric")
+            .appendQueryParameter("cnt", "7")
+            .appendQueryParameter("q", location)
+            .build().toString();
+    }
+
     private void asyncFetchForecast() {
-        final int week = 7;
-        final String url = makeUrl("02138", week);
+        final String url = getFetchForecastUrl();
         Log.i(LOG_TAG, "asyncFetchForecast() url == " + url);
         new AsyncTask<Void, Void, String[]>() {
             protected String[] doInBackground(Void... ignored) {
-                return parseWeather(fetchForecast(url), week);
+                return parseWeather(fetchForecast(url));
             }
             protected void onPostExecute(String[] forecast) {
                 Log.v(LOG_TAG, "onPostExecute()");

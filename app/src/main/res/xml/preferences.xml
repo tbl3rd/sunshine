@@ -4,8 +4,8 @@
 
     <EditTextPreference
         android:key="location"
-        android:title="@string/pref_title_display_name"
-        android:defaultValue="702138"
+        android:title="@string/preference_location_name"
+        android:defaultValue="@string/preference_location_default"
         android:inputType="text"
         android:singleLine="true"
         />
