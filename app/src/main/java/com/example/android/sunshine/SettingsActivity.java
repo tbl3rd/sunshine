@@ -25,10 +25,11 @@ public class SettingsActivity extends PreferenceActivity
         super.onCreate(savedInstanceState);
         // Add 'general' preferences, defined in the XML file
         // TODO: Add preferences from XML
-
+        addPreferencesFromResource(R.xml.pref_general);
         // For all preferences, attach an OnPreferenceChangeListener
         // so the UI summary can be updated when the preference
         // changes.  TODO: Add preferences
+        bindPreferenceSummaryToValue(findPreference("location"));
     }
 
     /**
@@ -49,13 +50,13 @@ public class SettingsActivity extends PreferenceActivity
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
-        String stringValue = value.toString();
+        final String stringValue = value.toString();
         if (preference instanceof ListPreference) {
             // For list preferences, look up the correct display value
             // in the preference's 'entries' list (since they have
             // separate labels/values).
-            ListPreference listPreference = (ListPreference) preference;
-            int prefIndex = listPreference.findIndexOfValue(stringValue);
+            final ListPreference listPreference = (ListPreference)preference;
+            final int prefIndex = listPreference.findIndexOfValue(stringValue);
             if (prefIndex >= 0) {
                 preference.setSummary(listPreference.getEntries()[prefIndex]);
             }
