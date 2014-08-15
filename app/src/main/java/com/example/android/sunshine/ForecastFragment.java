@@ -198,8 +198,8 @@ public class ForecastFragment extends Fragment {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.i(LOG_TAG, "onOptionsItemSelected()");
-        final int id = item.getItemId();
-        if (id == R.id.action_refresh) {
+        switch (item.getItemId()) {
+        case R.id.action_refresh:
             asyncFetchForecast();
             return true;
         }
