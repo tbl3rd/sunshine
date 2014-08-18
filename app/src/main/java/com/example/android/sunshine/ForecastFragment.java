@@ -40,16 +40,6 @@ public class ForecastFragment extends Fragment {
     private static final String LOG_TAG
         = ForecastFragment.class.getSimpleName();
 
-    private static final String[] dummyForecast = {
-        "Today - Sunny -- 88/63",
-        "Tomorrow - Foggy -- 70/40",
-        "Weds - Cloudy -- 72/36",
-        "Thurs - Asteroids -- 75/65",
-        "Fri - Heavy Rain -- 65/56",
-        "Sat - HELP TRAPPED IN WEATHERSTATION -- 60/51",
-        "Sun - Sunny -- 80/68"
-    };
-
     ArrayAdapter<String> mForecastAdapter = null;
 
     public ForecastFragment() {}
@@ -58,13 +48,11 @@ public class ForecastFragment extends Fragment {
     //
     private ArrayAdapter<String> makeForecastAdapter(View rootView)
     {
-        final ArrayList<String> forecast
-            = new ArrayList<String>(Arrays.asList(dummyForecast));
         final ArrayAdapter<String> result = new ArrayAdapter<String>(
                 getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
-                forecast);
+                new ArrayList<String>());
         final ListView lv =
             (ListView)rootView.findViewById(R.id.listview_forecast);
         final AdapterView.OnItemClickListener ocl
@@ -196,6 +184,13 @@ public class ForecastFragment extends Fragment {
             = inflater.inflate(R.layout.fragment_main, container, false);
         mForecastAdapter = makeForecastAdapter(result);
         return result;
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        asyncFetchForecast();
     }
 
     @Override
