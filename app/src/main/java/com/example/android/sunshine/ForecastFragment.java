@@ -103,7 +103,31 @@ public class ForecastFragment extends Fragment {
         return null;
     }
 
-    private static String[] parseWeather(String jsonString) {
+    private static double celsiusToFahrenheit(final double t) {
+        return 32.0 + 1.8 * t;
+    }
+
+    private static String hiloToString(final double high, final double low) {
+        return Math.round(high) + "/" + Math.round(low);
+    }
+
+    private String adjustTemperature(final JSONObject temperature)
+        throws JSONException
+    {
+        final String metric
+            = getResources().getString(R.string.preference_metric_setting);
+        final String units =
+            PreferenceManager.getDefaultSharedPreferences(getActivity())
+            .getString("units", metric);
+        final double max = temperature.getDouble("max");
+        final double min = temperature.getDouble("min");
+        if (units == metric) return hiloToString(max, min);
+        final double high = celsiusToFahrenheit(max);
+        final double low = celsiusToFahrenheit(min);
+        return hiloToString(high, low);
+    }
+
+    private String[] parseWeather(String jsonString) {
         String[] result = new String[0];
         try {
             final JSONObject forecast = new JSONObject(jsonString);
@@ -120,10 +144,8 @@ public class ForecastFragment extends Fragment {
                     .getJSONObject(0)
                     .getString("main");
                 final JSONObject temperature = forDay.getJSONObject("temp");
-                final double hi = temperature.getDouble("max");
-                final double lo = temperature.getDouble("min");
-                final String hiLo = Math.round(hi) + "/" + Math.round(lo);
-                result[i] = day + " - " + description + " -- " + hiLo;
+                final String highLow = adjustTemperature(temperature);
+                result[i] = day + " - " + description + " -- " + highLow;
             }
         } catch (final Exception e) {
             Log.e(LOG_TAG, "parseWeather() catch", e);

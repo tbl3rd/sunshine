@@ -10,4 +10,22 @@
         android:singleLine="true"
         />
 
+    <RadioGroup
+        android:key="units"
+        android:id="@+id/preference_units"
+        android:title="@string/preference_units"
+        android:defaultValue="@+id/preference_metric"
+        >
+        <RadioButton
+            android:id="@id/preference_metric"
+            android:text="@string/preference_metric"
+            android:onClick="onRadioButtonClicked"
+            />
+        <RadioButton
+            android:id="@+id/preference_imperial"
+            android:text="@string/preference_imperial"
+            android:onClick="onRadioButtonClicked"
+            />
+    </RadioGroup>
+
 </PreferenceScreen>

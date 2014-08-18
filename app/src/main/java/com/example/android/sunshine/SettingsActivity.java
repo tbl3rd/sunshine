@@ -6,7 +6,8 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.view.KeyEvent;
+import android.view.View;
+import android.widget.RadioButton;
 
 
 /**
@@ -30,6 +31,7 @@ public class SettingsActivity extends PreferenceActivity
         // so the UI summary can be updated when the preference
         // changes.  TODO: Add preferences
         bindPreferenceSummaryToValue(findPreference("location"));
+        bindPreferenceSummaryToValue(findPreference("units"));
     }
 
     /**
@@ -66,5 +68,18 @@ public class SettingsActivity extends PreferenceActivity
             preference.setSummary(stringValue);
         }
         return true;
+    }
+
+    public void onRadioButtonClicked(View view) {
+        final RadioButton rb = (RadioButton)view;
+        final boolean checked = rb.isChecked();
+        switch(view.getId()) {
+        case R.id.preference_metric:
+            if (checked)
+                break;
+        case R.id.preference_imperial:
+            if (checked)
+                break;
+        }
     }
 }
