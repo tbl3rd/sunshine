@@ -69,17 +69,4 @@ public class SettingsActivity extends PreferenceActivity
         }
         return true;
     }
-
-    public void onRadioButtonClicked(View view) {
-        final RadioButton rb = (RadioButton)view;
-        final boolean checked = rb.isChecked();
-        switch(view.getId()) {
-        case R.id.preference_metric:
-            if (checked)
-                break;
-        case R.id.preference_imperial:
-            if (checked)
-                break;
-        }
-    }
 }

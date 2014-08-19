@@ -1,0 +1,17 @@
+<resources>
+
+    <array
+        name="preference_units_entries"
+        >
+        <item>@string/preference_units_imperial</item>
+        <item>@string/preference_units_metric</item>
+    </array>
+
+    <array
+        name="preference_units_values"
+        >
+        <item>imperial</item>
+        <item>metric</item>
+    </array>
+
+</resources>

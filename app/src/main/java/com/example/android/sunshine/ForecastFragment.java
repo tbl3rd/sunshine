@@ -115,10 +115,11 @@ public class ForecastFragment extends Fragment {
         throws JSONException
     {
         final String metric
-            = getResources().getString(R.string.preference_metric_setting);
+            = getResources().getString(R.string.preference_units_default);
         final String units =
             PreferenceManager.getDefaultSharedPreferences(getActivity())
             .getString("units", metric);
+        Log.v(LOG_TAG, "adjustTemperature() units == " + units);
         final double max = temperature.getDouble("max");
         final double min = temperature.getDouble("min");
         if (units == metric) return hiloToString(max, min);

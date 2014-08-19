@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Sunshine</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
     <string name="action_refresh" translatable="false">Refresh</string>
+    <string name="action_settings">Settings</string>
+    <string name="app_name">Sunshine</string>
+    <string name="preference_location_default">02138</string>
+    <string name="preference_location_key">location</string>
+    <string name="preference_location_title">Location</string>
+    <string name="preference_units_default">metric</string>
+    <string name="preference_units_imperial">Imperial</string>
+    <string name="preference_units_key">units</string>
+    <string name="preference_units_metric">Metric</string>
+    <string name="preference_units_title">Units</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="preference_location_name">Location</string>
-    <string name="preference_location_default">02138</string>
-    <string name="preference_units">Units</string>
-    <string name="preference_units_setting">units</string>
-    <string name="preference_metric_setting">metric</string>
-    <string name="preference_metric">Metric</string>
-    <string name="preference_imperial">Imperial</string>
-    <string name="preference_imperial_setting">imperial</string>
 
 </resources>
