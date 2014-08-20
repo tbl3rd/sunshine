@@ -114,8 +114,7 @@ public class ForecastFragment extends Fragment {
     private String adjustTemperature(final JSONObject temperature)
         throws JSONException
     {
-        final String metric
-            = getResources().getString(R.string.preference_units_default);
+        final String metric = getString(R.string.preference_units_default);
         final MainActivity activity = (MainActivity)getActivity();
         final String units = activity.getUnitsPreference();
         Log.v(LOG_TAG, "adjustTemperature() units == " + units);

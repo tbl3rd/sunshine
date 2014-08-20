@@ -18,21 +18,17 @@ public class MainActivity extends ActionBarActivity {
         = MainActivity.class.getSimpleName();
 
     public String getLocationPreference() {
-        final String key
-            = getResources().getString(R.string.preference_location_key);
-        final String defaultLocation
-            = getResources().getString(R.string.preference_location_default);
+        final String key = getString(R.string.preference_location_key);
+        final String or = getString(R.string.preference_location_default);
         return PreferenceManager.getDefaultSharedPreferences(this)
-            .getString(key, defaultLocation);
+            .getString(key, or);
     }
 
     public String getUnitsPreference() {
-        final String key
-            = getResources().getString(R.string.preference_units_key);
-        final String defaultUnits
-            = getResources().getString(R.string.preference_units_default);
+        final String key = getString(R.string.preference_units_key);
+        final String or = getString(R.string.preference_units_default);
         return PreferenceManager.getDefaultSharedPreferences(this)
-            .getString(key, defaultUnits);
+            .getString(key, or);
     }
 
     public void showMap() {
@@ -45,8 +41,7 @@ public class MainActivity extends ActionBarActivity {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(geo);
         if (intent.resolveActivity(getPackageManager()) == null) {
-            final String noMap
-                = getResources().getString(R.string.action_map_none);
+            final String noMap = getString(R.string.action_map_none);
             Toast.makeText(this, noMap, Toast.LENGTH_SHORT).show();
         } else {
             startActivity(intent);
