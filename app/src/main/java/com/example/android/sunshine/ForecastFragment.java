@@ -116,9 +116,8 @@ public class ForecastFragment extends Fragment {
     {
         final String metric
             = getResources().getString(R.string.preference_units_default);
-        final String units =
-            PreferenceManager.getDefaultSharedPreferences(getActivity())
-            .getString("units", metric);
+        final MainActivity activity = (MainActivity)getActivity();
+        final String units = activity.getUnitsPreference();
         Log.v(LOG_TAG, "adjustTemperature() units == " + units);
         final double max = temperature.getDouble("max");
         final double min = temperature.getDouble("min");
@@ -155,11 +154,8 @@ public class ForecastFragment extends Fragment {
     }
 
     private String getFetchForecastUrl() {
-        final String defaultLocation
-            = getResources().getString(R.string.preference_location_default);
-        final String location =
-            PreferenceManager.getDefaultSharedPreferences(getActivity())
-            .getString("location", defaultLocation);
+        final MainActivity activity = (MainActivity)getActivity();
+        final String location = activity.getLocationPreference();
         return new Uri.Builder()
             .scheme("http")
             .authority("api.openweathermap.org")
