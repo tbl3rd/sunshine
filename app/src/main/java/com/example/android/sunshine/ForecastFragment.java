@@ -117,7 +117,6 @@ public class ForecastFragment extends Fragment {
         final String metric = getString(R.string.preference_units_default);
         final MainActivity activity = (MainActivity)getActivity();
         final String units = activity.getUnitsPreference();
-        Log.v(LOG_TAG, "adjustTemperature() units == " + units);
         final double max = temperature.getDouble("max");
         final double min = temperature.getDouble("min");
         if (units == metric) return hiloToString(max, min);
@@ -178,7 +177,6 @@ public class ForecastFragment extends Fragment {
             }
             protected void onPostExecute(String[] forecast) {
                 Log.v(LOG_TAG, "onPostExecute()");
-                for (String s: forecast) Log.v(LOG_TAG, s);
                 mForecastAdapter.clear();
                 mForecastAdapter.addAll(forecast);
             }
