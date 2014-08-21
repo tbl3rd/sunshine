@@ -36,5 +36,5 @@ public class DetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public DetailActivity() {}
+    public DetailActivity() { super(); }
 }

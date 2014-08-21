@@ -42,8 +42,6 @@ public class ForecastFragment extends Fragment {
 
     ArrayAdapter<String> mForecastAdapter = null;
 
-    public ForecastFragment() {}
-
     // Set up and return adapter for the forecast in rootView.
     //
     private ArrayAdapter<String> makeForecastAdapter(View rootView)
@@ -224,4 +222,6 @@ public class ForecastFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public ForecastFragment() { super(); }
 }

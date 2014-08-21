@@ -66,6 +66,7 @@ public class DetailFragment extends Fragment {
     }
 
     public DetailFragment() {
+        super();
         setHasOptionsMenu(true);
     }
 }
