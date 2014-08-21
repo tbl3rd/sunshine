@@ -16,7 +16,7 @@
     <string name="preference_units_key">units</string>
     <string name="preference_units_metric">Metric</string>
     <string name="preference_units_title">Units</string>
-    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_detail">Details</string>
     <string name="title_activity_settings">Settings</string>
 
 </resources>
