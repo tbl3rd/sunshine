@@ -46,17 +46,25 @@ GRADLETASKS :=\
 
 $(GRADLETASKS):
 	./gradlew $@
+.PHONY: $(GRADLETASKS)
 
 
 debug: installDebug
+	test "$(ANDROID_USB)" && $(ADB) usb || true
 	$(ADB) logcat -c
 	$(ADB) shell am start -n $(PACKAGE)/$(PACKAGE).MainActivity
 	$(ADB) logcat
+.PHONY: debug
 
 
 INSTRUMENT := $(PACKAGE).test/android.test.InstrumentationTestRunner
 
 test: assembleDebugTest
+	@echo
+	@echo Look for: Test results for InstrumentationTestRunner=.....
+	@echo Look for: 'OK (5 tests)' ... for some value of 5
+	@echo
+	test "$(ANDROID_USB)" && $(ADB) usb || true
 	$(ADB) logcat -c
 	$(ADB) shell pm install -r /data/local/tmp/$(PACKAGE)
 	$(ADB) shell pm install -r /data/local/tmp/$(PACKAGE).test
@@ -92,3 +100,4 @@ TAGS tags: . $(LIBRARIES) $(ANDROIDSOURCES)
 
 distclean: clean
 	rm -f TAGS
+.PHONY: distclean
