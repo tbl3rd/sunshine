@@ -16,6 +16,14 @@ public class TestDb extends AndroidTestCase {
 
     final static String LOG_TAG = TestDb.class.getSimpleName();
 
+    final static String[] locationColumns = {
+        LocationEntry._ID,
+        LocationEntry.COLUMN_SETTING,
+        LocationEntry.COLUMN_CITY,
+        LocationEntry.COLUMN_LATITUDE,
+        LocationEntry.COLUMN_LONGITUDE
+    };
+
     public void testCreateDb() throws Throwable {
         Log.v(LOG_TAG, "TestDb.testCreateDb()");
         mContext.deleteDatabase(WeatherDbHelper.DATABASE_NAME);
@@ -25,50 +33,55 @@ public class TestDb extends AndroidTestCase {
         db.close();
     }
 
+    static class LocationRow {
+        public final String city;
+        public final String setting;
+        public final double latitude;
+        public final double longitude;
+        void assertSame(LocationRow that) {
+            assertEquals(that.city, city);
+            assertEquals(that.setting, setting);
+            assertEquals(that.latitude, latitude);
+            assertEquals(that.longitude, longitude);
+        }
+        public LocationRow(String cit, String set, double lat, double lon) {
+            city = cit; setting = set; latitude = lat; longitude = lon;
+        }
+    };
+
+    static ContentValues rowToContentValues(LocationRow row) {
+        final ContentValues result = new ContentValues();
+        result.put(LocationEntry.COLUMN_CITY, row.city);
+        result.put(LocationEntry.COLUMN_SETTING, row.setting);
+        result.put(LocationEntry.COLUMN_LATITUDE, row.latitude);
+        result.put(LocationEntry.COLUMN_LONGITUDE, row.longitude);
+        return result;
+    }
+
+    static LocationRow cursorToRow(Cursor c) {
+        return new LocationRow(
+                c.getString(c.getColumnIndex(LocationEntry.COLUMN_CITY)),
+                c.getString(c.getColumnIndex(LocationEntry.COLUMN_SETTING)),
+                c.getDouble(c.getColumnIndex(LocationEntry.COLUMN_LATITUDE)),
+                c.getDouble(c.getColumnIndex(LocationEntry.COLUMN_LONGITUDE))
+        );
+    }
+
     public void testInsertAndReadDb() throws Throwable {
         Log.v(LOG_TAG, "TestDb.testInsertAndReadDb()");
-        final String testCity = "North Pole";
-        final String testLocation = "99705";
-        final double testLatitude = 64.772;
-        final double testLongitude = -147.355;
         final WeatherDbHelper dbh = new WeatherDbHelper(mContext);
         final SQLiteDatabase db = dbh.getWritableDatabase();
-        final ContentValues cv = new ContentValues();
-        cv.put(LocationEntry.COLUMN_LOCATION_CITY, testCity);
-        cv.put(LocationEntry.COLUMN_LOCATION_SETTING, testLocation);
-        cv.put(LocationEntry.COLUMN_LOCATION_LATITUDE, testLatitude);
-        cv.put(LocationEntry.COLUMN_LOCATION_LONGITUDE, testLongitude);
-        final long rowId = db.insert(LocationEntry.TABLE_NAME, null, cv);
-        assertTrue(rowId != -1);
+        final LocationRow rowIn
+            = new LocationRow("North Pole", "99705", 64.772, -147.355);
+        final ContentValues cv = rowToContentValues(rowIn);
+        final long rowId = db.insert(LocationEntry.TABLE, null, cv);
         Log.d(LOG_TAG, "rowId == " + rowId);
-        final String[] columns = {
-            LocationEntry._ID,
-            LocationEntry.COLUMN_LOCATION_SETTING,
-            LocationEntry.COLUMN_LOCATION_CITY,
-            LocationEntry.COLUMN_LOCATION_LATITUDE,
-            LocationEntry.COLUMN_LOCATION_LONGITUDE
-        };
+        assertTrue(rowId != -1);
         final Cursor cursor = db.query(
-                LocationEntry.TABLE_NAME, columns,
+                LocationEntry.TABLE, locationColumns,
                 null, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            final int cityIndex
-                = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_CITY);
-            final String city = cursor.getString(cityIndex);
-            final int locationIndex
-                = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_SETTING);
-            final String location = cursor.getString(locationIndex);
-            final int latitudeIndex
-                = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_LATITUDE);
-            final double latitude = cursor.getDouble(latitudeIndex);
-            final int longitudeIndex
-                = cursor.getColumnIndex(LocationEntry.COLUMN_LOCATION_LONGITUDE);
-            final double longitude = cursor.getDouble(longitudeIndex);
-            assertEquals(testCity, city);
-            assertEquals(testLocation, location);
-            assertEquals(testLatitude, latitude);
-            assertEquals(testLongitude, longitude);
-        }
+        assertTrue(cursor.moveToFirst());
+        rowIn.assertSame(cursorToRow(cursor));
     }
 
     public TestDb() {
