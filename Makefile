@@ -54,6 +54,25 @@ debug: installDebug
 	$(ADB) logcat
 
 
+INSTRUMENT := $(PACKAGE).test/android.test.InstrumentationTestRunner
+
+test: assembleDebugTest
+	$(ADB) logcat -c
+	$(ADB) shell pm install -r /data/local/tmp/$(PACKAGE)
+	$(ADB) shell pm install -r /data/local/tmp/$(PACKAGE).test
+	$(ADB) shell pm list instrumentation
+	$(ADB) shell am instrument -w -e target $(PACKAGE) $(INSTRUMENT)
+	$(ADB) shell pm uninstall $(PACKAGE).test
+	$(ADB) shell pm uninstall $(PACKAGE)
+	$(ADB) logcat
+.PHONY: test
+
+
+bugreport:
+	$(ADB) bugreport
+.PHONY: bugreport
+
+
 lint lintDebug lintRelease:
 	./gradlew $@
 	open app/build/outputs/lint-results.html
