@@ -92,7 +92,8 @@ dump: installDebug
 
 bugreport:
 	$(MAYBE_RESET_USB)
-	$(ADB) bugreport
+	$(ADB) bugreport > bugreport.txt
+	gzip bugreport.txt
 .PHONY: bugreport
 
 
