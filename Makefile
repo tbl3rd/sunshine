@@ -9,6 +9,8 @@ ANDROIDSOURCES := $(addprefix $(ANDROID_HOME)/sources/,$(ANDROIDAPIS))
 
 PACKAGE := com.example.android.sunshine
 
+MAYBE_RESET_USB := test "$(ANDROID_USB)" && $(ADB) usb && sleep 1 || true
+
 # Task names extracted from output of './gradlew tasks' and re-ordered
 # slightly.
 #
@@ -50,8 +52,10 @@ $(GRADLETASKS):
 
 
 debug: installDebug
-	test "$(ANDROID_USB)" && $(ADB) usb || true
+	$(MAYBE_RESET_USB)
 	$(ADB) logcat -c
+	$(ADB) shell pm path $(PACKAGE)
+	$(ADB) shell pm dump $(PACKAGE)
 	$(ADB) shell am start -n $(PACKAGE)/$(PACKAGE).MainActivity
 	$(ADB) logcat
 .PHONY: debug
@@ -60,15 +64,18 @@ debug: installDebug
 INSTRUMENT := $(PACKAGE).test/android.test.InstrumentationTestRunner
 
 test: assembleDebugTest
+	$(MAYBE_RESET_USB)
 	@echo
 	@echo Look for: Test results for InstrumentationTestRunner=.....
 	@echo Look for: 'OK (5 tests)' ... for some value of 5
 	@echo
-	test "$(ANDROID_USB)" && $(ADB) usb || true
 	$(ADB) logcat -c
-	$(ADB) shell pm install -r /data/local/tmp/$(PACKAGE)
-	$(ADB) shell pm install -r /data/local/tmp/$(PACKAGE).test
+	$(ADB) shell pm install -r -t /data/local/tmp/$(PACKAGE)
+	$(ADB) shell pm install -r -t /data/local/tmp/$(PACKAGE).test
+	$(ADB) shell pm path $(PACKAGE)
+	$(ADB) shell pm path $(PACKAGE).test
 	$(ADB) shell pm list instrumentation
+	$(ADB) shell pm list instrumentation -f
 	$(ADB) shell am instrument -w -e target $(PACKAGE) $(INSTRUMENT)
 	$(ADB) shell pm uninstall $(PACKAGE).test
 	$(ADB) shell pm uninstall $(PACKAGE)
@@ -76,7 +83,15 @@ test: assembleDebugTest
 .PHONY: test
 
 
+dump: installDebug
+	$(MAYBE_RESET_USB)
+	$(ADB) shell pm path $(PACKAGE)
+	$(ADB) shell pm dump $(PACKAGE)
+.PHONY: dump
+
+
 bugreport:
+	$(MAYBE_RESET_USB)
 	$(ADB) bugreport
 .PHONY: bugreport
 
