@@ -64,7 +64,8 @@ debug: installDebug
 INSTRUMENT := $(PACKAGE).test/android.test.InstrumentationTestRunner
 DEBUG_TEST_APK := app/build/outputs/apk/app-debug-test-unaligned.apk
 
-test: installDebug installDebugTest
+test:
+	./gradlew installDebug installDebugTest
 	$(MAYBE_RESET_USB)
 	@echo
 	@echo Look for: Test results for InstrumentationTestRunner=.....
