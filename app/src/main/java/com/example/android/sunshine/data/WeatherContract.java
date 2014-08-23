@@ -23,7 +23,7 @@ public class WeatherContract {
         public static final String COLUMN_MAXIMUM = "maximum";
         public static final String COLUMN_HUMIDITY = "humidity";
         public static final String COLUMN_PRESSURE = "pressure";
-        public static final String COLUMN_WIND_SPEED = "wind";
-        public static final String COLUMN_DEGREES = "degrees";
+        public static final String COLUMN_WIND = "wind";
+        public static final String COLUMN_DIRECTION = "direction";
     }
 }
