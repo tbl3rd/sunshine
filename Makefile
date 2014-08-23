@@ -62,16 +62,15 @@ debug: installDebug
 
 
 INSTRUMENT := $(PACKAGE).test/android.test.InstrumentationTestRunner
+DEBUG_TEST_APK := app/build/outputs/apk/app-debug-test-unaligned.apk
 
-test: assembleDebugTest
+test: installDebug installDebugTest
 	$(MAYBE_RESET_USB)
 	@echo
 	@echo Look for: Test results for InstrumentationTestRunner=.....
 	@echo Look for: 'OK (5 tests)' ... for some value of 5
 	@echo
 	$(ADB) logcat -c
-	$(ADB) shell pm install -r -t /data/local/tmp/$(PACKAGE)
-	$(ADB) shell pm install -r -t /data/local/tmp/$(PACKAGE).test
 	$(ADB) shell pm path $(PACKAGE)
 	$(ADB) shell pm path $(PACKAGE).test
 	$(ADB) shell pm list instrumentation
