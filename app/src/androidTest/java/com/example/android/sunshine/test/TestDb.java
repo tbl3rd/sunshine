@@ -10,6 +10,7 @@ import com.example.android.sunshine.data.WeatherDbHelper;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.TestSuiteBuilder;
@@ -54,8 +55,8 @@ public class TestDb extends AndroidTestCase {
         null,
         "20141205",
         "Asteroids",
-        65.0,
-        75.0,
+        65,
+        75,
         1.2,
         1.3,
         5.5,
@@ -95,43 +96,6 @@ public class TestDb extends AndroidTestCase {
             } else {
                 Log.d(LOG_TAG,
                         "makeContentValues(else): " + key + ", " + value);
-            }
-        }
-        return result;
-    }
-
-    public ContentValues makeContentValues(Cursor c) {
-        final ContentValues result = new ContentValues();
-        final int count = c.getColumnCount();
-        Log.v(LOG_TAG, "makeContentValues(c): count == " + count);
-        for (int index = 0; index < count; ++index) {
-            final String name = c.getColumnName(index);
-            Log.v(LOG_TAG, "makeContentValues(cursor): " + name + ", " + index);
-            final int kind = c.getType(index);
-            Log.v(LOG_TAG, "makeContentValues(cursor): kind == " + kind);
-            switch (kind) {
-            case Cursor.FIELD_TYPE_NULL:
-                Log.v(LOG_TAG, "makeContentValues(cursor): putNull()");
-                result.putNull(name);
-                break;
-            case Cursor.FIELD_TYPE_INTEGER:
-                Log.v(LOG_TAG, "makeContentValues(c): " + c.getLong(index));
-                result.put(name, c.getLong(index));
-                break;
-            case Cursor.FIELD_TYPE_FLOAT:
-                Log.v(LOG_TAG, "makeContentValues(c): " + c.getDouble(index));
-                result.put(name, c.getDouble(index));
-                break;
-            case Cursor.FIELD_TYPE_STRING:
-                Log.v(LOG_TAG, "makeContentValues(c): " + c.getString(index));
-                result.put(name, c.getString(index));
-                break;
-            case Cursor.FIELD_TYPE_BLOB:
-                Log.v(LOG_TAG, "makeContentValues(c): " + c.getBlob(index));
-                result.put(name, c.getBlob(index));
-                break;
-            default:
-                Log.d(LOG_TAG, "Cursor.getType() == " + c.getType(index));
             }
         }
         return result;
@@ -179,7 +143,9 @@ public class TestDb extends AndroidTestCase {
                 LocationEntry.TABLE, locationColumns,
                 null, null, null, null, null);
         assertTrue(locationCursor.moveToFirst());
-        assertEquals(locationIn, makeContentValues(locationCursor));
+        final ContentValues locationOut = new ContentValues();
+        DatabaseUtils.cursorRowToContentValues(locationCursor, locationOut);
+        assertEquals(locationIn, locationOut);
         final ContentValues weatherIn
             = makeContentValues(makeMap(weatherColumns, weatherRow));
         weatherIn.put(WeatherEntry.COLUMN_LOCATION_KEY, locationRowId);
@@ -192,7 +158,9 @@ public class TestDb extends AndroidTestCase {
                 WeatherEntry.TABLE, weatherColumns,
                 null, null, null, null, null);
         assertTrue(weatherCursor.moveToFirst());
-        assertEquals(weatherIn, makeContentValues(weatherCursor));
+        final ContentValues weatherOut = new ContentValues();
+        DatabaseUtils.cursorRowToContentValues(weatherCursor, weatherOut);
+        assertEquals(weatherIn, weatherOut);
     }
 
     public TestDb() {
@@ -200,10 +168,3 @@ public class TestDb extends AndroidTestCase {
         Log.v(LOG_TAG, "TestDb()");
     }
 }
-
-// WTF, Java.  ContentValues equality must be pointer-wise.
-//
-// I/TestRunner( 2551): junit.framework.AssertionFailedError: expected:
-// <setting=99705 longitude=-147.355 latitude=64.772 _id=1 city=North Pole>
-// but was:
-// <setting=99705 longitude=-147.355 latitude=64.772 _id=1 city=North Pole>
