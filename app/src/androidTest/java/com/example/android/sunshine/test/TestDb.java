@@ -65,13 +65,11 @@ public class TestDb extends AndroidTestCase {
     };
 
     public Map<String, Object> makeMap(String[] keys, Object[] values) {
-        Log.v(LOG_TAG, "makeMap(): keys.length == " + keys.length);
         final int size = keys.length;
         final Map<String, Object> result = new HashMap<String, Object>(size);
         for (int index = 0; index < size; ++index) {
             final String k = keys[index];
             final Object v = values[index];
-            Log.v(LOG_TAG, "makeMap(): " + index + ": " + k + ", " + v);
             result.put(k, v);
         }
         return result;
@@ -82,11 +80,6 @@ public class TestDb extends AndroidTestCase {
         for (Map.Entry<String, Object> e: row.entrySet()) {
             final String key = e.getKey();
             final Object value = e.getValue();
-            final String vc = (value == null)
-                ? "NULL"
-                : value.getClass().getSimpleName();
-            Log.v(LOG_TAG, "makeContentValues(map): "
-                    + key + ", " + value + " of " + vc);
             if (value instanceof Double) {
                 result.put(key, (Double)value);
             } else if (value instanceof String) {
@@ -98,6 +91,9 @@ public class TestDb extends AndroidTestCase {
             } else if (value == null) {
                 result.putNull(key);
             } else {
+                final String vc = (value == null)
+                    ? "NULL"
+                    : value.getClass().getSimpleName();
                 Log.d(LOG_TAG, "makeContentValues(else): "
                         + key + ", " + value + " of " + vc);
             }
@@ -108,7 +104,6 @@ public class TestDb extends AndroidTestCase {
     public ContentValues makeContentValues(Cursor c) {
         final ContentValues result = new ContentValues();
         final int count = c.getColumnCount();
-        Log.v(LOG_TAG, "makeContentValues(c): count == " + count);
         for (int index = 0; index < count; ++index) {
             final String name = c.getColumnName(index);
             final int kind = c.getType(index);
@@ -164,7 +159,6 @@ public class TestDb extends AndroidTestCase {
         final ContentValues weatherIn
             = makeContentValues(makeMap(weatherColumns, weatherRow));
         weatherIn.put(WeatherEntry.COLUMN_LOCATION_KEY, locationRowId);
-        Log.v(LOG_TAG, "weatherIn == " + weatherIn);
         final long weatherRowId
             = db.insert(WeatherEntry.TABLE, null, weatherIn);
         Log.d(LOG_TAG, "weatherRowId == " + weatherRowId);
