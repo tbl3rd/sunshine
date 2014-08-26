@@ -3,6 +3,7 @@ package com.example.android.sunshine.test;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Set;
 
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
@@ -34,8 +35,8 @@ public class TestDb extends AndroidTestCase {
         null,
         "99705",
         "North Pole",
-        64.772,
-        -147.355
+        Double.valueOf(64.772),
+        Double.valueOf(-147.355)
     };
 
     final static String[] weatherColumns = {
@@ -55,13 +56,13 @@ public class TestDb extends AndroidTestCase {
         null,
         "20141205",
         "Asteroids",
-        65,
-        75,
-        1.2,
-        1.3,
-        5.5,
-        1.1,
-        321
+        Double.valueOf(65),
+        Double.valueOf(75),
+        Double.valueOf(1.2),
+        Double.valueOf(1.3),
+        Double.valueOf(5.5),
+        Double.valueOf(1.1),
+        Long.valueOf(321)
     };
 
     public Map<String, Object> makeMap(String[] keys, Object[] values) {
@@ -107,15 +108,13 @@ public class TestDb extends AndroidTestCase {
             Log.v(LOG_TAG, "assertEquals(): x.size() == " + x.size());
             Log.v(LOG_TAG, "assertEquals(): y.size() == " + y.size());
             assertEquals(x.size(), y.size());
-            for (Map.Entry<String, Object> e : x.valueSet()) {
-                final String k = e.getKey();
-                final String xs = e.getValue().toString();
-                final String ys = y.get(k).toString();
-                Log.v(LOG_TAG, "assertEquals(): k == " + k);
-                Log.v(LOG_TAG, "assertEquals(): xs == " + xs);
-                Log.v(LOG_TAG, "assertEquals(): ys == " + ys);
-                assertEquals(xs, ys);
-            }
+            final Set<Map.Entry<String, Object>> xs = x.valueSet();
+            final Set<Map.Entry<String, Object>> ys = y.valueSet();
+            Log.v(LOG_TAG, "assertEquals(): xs == " + xs);
+            Log.v(LOG_TAG, "assertEquals(): ys == " + ys);
+            final boolean wtf = xs.containsAll(ys);
+            Log.v(LOG_TAG, "assertEquals(): wtf == " + wtf);
+            assertTrue(wtf);
         }
     }
 
@@ -166,5 +165,15 @@ public class TestDb extends AndroidTestCase {
     public TestDb() {
         super();
         Log.v(LOG_TAG, "TestDb()");
+        final double d = 64.772;
+        final Object d0 = Double.valueOf(d);
+        final Object d1 = Double.valueOf(d);
+        final boolean wtf = d0.equals(d1);
+        Log.v(LOG_TAG, "DOUBLES: " + wtf);
     }
 }
+
+// junit.framework.AssertionFailedError: expected:
+// <setting=99705 longitude=-147.355 latitude=64.772 _id=1 city=North Pole>
+// but was:
+// <setting=99705 longitude=-147.355 latitude=64.772 _id=1 city=North Pole>
