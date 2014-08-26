@@ -1,5 +1,9 @@
 package com.example.android.sunshine.test;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Map;
+
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 import com.example.android.sunshine.data.WeatherDbHelper;
@@ -25,6 +29,14 @@ public class TestDb extends AndroidTestCase {
         LocationEntry.COLUMN_LONGITUDE
     };
 
+    final static Object[] locationRow = {
+        null,
+        "99705",
+        "North Pole",
+        64.772,
+        -147.355
+    };
+
     final static String[] weatherColumns = {
         WeatherEntry.COLUMN_LOCATION_KEY,
         WeatherEntry.COLUMN_DATE,
@@ -38,6 +50,111 @@ public class TestDb extends AndroidTestCase {
         WeatherEntry.COLUMN_WEATHER_ID
     };
 
+    final static Object[] weatherRow = {
+        null,
+        "20141205",
+        "Asteroids",
+        65.0,
+        75.0,
+        1.2,
+        1.3,
+        5.5,
+        1.1,
+        321
+    };
+
+    public Map<String, Object> makeMap(String[] keys, Object[] values) {
+        Log.v(LOG_TAG, "makeMap(): keys.length == " + keys.length);
+        final int size = keys.length;
+        final Map<String, Object> result = new HashMap<String, Object>(size);
+        for (int index = 0; index < size; ++index) {
+            final String k = keys[index];
+            final Object v = values[index];
+            Log.v(LOG_TAG, "makeMap(): " + index + ": " + k + ", " + v);
+            result.put(k, v);
+        }
+        return result;
+    }
+
+    public ContentValues makeContentValues(Map<String, Object> row) {
+        final ContentValues result = new ContentValues();
+        for (Map.Entry<String, Object> e: row.entrySet()) {
+            final String key = e.getKey();
+            final Object value = e.getValue();
+            Log.v(LOG_TAG, "makeContentValues(map): " + key + ", " + value);
+            if (value instanceof Double) {
+                result.put(key, ((Double)value).doubleValue());
+            } else if (value instanceof String) {
+                result.put(key, (String)value);
+            } else if (value instanceof Integer) {
+                result.put(key, ((Integer)value).intValue());
+            } else if (value instanceof Long) {
+                result.put(key, ((Long)value).longValue());
+            } else if (value == null) {
+                result.putNull(key);
+            } else {
+                Log.d(LOG_TAG,
+                        "makeContentValues(else): " + key + ", " + value);
+            }
+        }
+        return result;
+    }
+
+    public ContentValues makeContentValues(Cursor c) {
+        final ContentValues result = new ContentValues();
+        final int count = c.getColumnCount();
+        Log.v(LOG_TAG, "makeContentValues(c): count == " + count);
+        for (int index = 0; index < count; ++index) {
+            final String name = c.getColumnName(index);
+            Log.v(LOG_TAG, "makeContentValues(cursor): " + name + ", " + index);
+            final int kind = c.getType(index);
+            Log.v(LOG_TAG, "makeContentValues(cursor): kind == " + kind);
+            switch (kind) {
+            case Cursor.FIELD_TYPE_NULL:
+                Log.v(LOG_TAG, "makeContentValues(cursor): putNull()");
+                result.putNull(name);
+                break;
+            case Cursor.FIELD_TYPE_INTEGER:
+                Log.v(LOG_TAG, "makeContentValues(c): " + c.getLong(index));
+                result.put(name, c.getLong(index));
+                break;
+            case Cursor.FIELD_TYPE_FLOAT:
+                Log.v(LOG_TAG, "makeContentValues(c): " + c.getDouble(index));
+                result.put(name, c.getDouble(index));
+                break;
+            case Cursor.FIELD_TYPE_STRING:
+                Log.v(LOG_TAG, "makeContentValues(c): " + c.getString(index));
+                result.put(name, c.getString(index));
+                break;
+            case Cursor.FIELD_TYPE_BLOB:
+                Log.v(LOG_TAG, "makeContentValues(c): " + c.getBlob(index));
+                result.put(name, c.getBlob(index));
+                break;
+            default:
+                Log.d(LOG_TAG, "Cursor.getType() == " + c.getType(index));
+            }
+        }
+        return result;
+    }
+
+    public static void assertEquals(ContentValues x, ContentValues y) {
+        Log.v(LOG_TAG, "assertEquals(): x == " + x + ", y == " + y);
+        if (x != y) {
+            Log.v(LOG_TAG, "assertEquals(): x.size() == " + x.size());
+            Log.v(LOG_TAG, "assertEquals(): y.size() == " + y.size());
+            assertEquals(x.size(), y.size());
+            for (Map.Entry<String, Object> e : x.valueSet()) {
+                final String k = e.getKey();
+                final String xs = e.getValue().toString();
+                final String ys = y.get(k).toString();
+                Log.v(LOG_TAG, "assertEquals(): k == " + k);
+                Log.v(LOG_TAG, "assertEquals(): xs == " + xs);
+                Log.v(LOG_TAG, "assertEquals(): ys == " + ys);
+                assertEquals(xs, ys);
+            }
+        }
+    }
+
     public void testCreateDb() throws Throwable {
         Log.v(LOG_TAG, "TestDb.testCreateDb()");
         mContext.deleteDatabase(WeatherDbHelper.DATABASE_NAME);
@@ -47,135 +164,35 @@ public class TestDb extends AndroidTestCase {
         db.close();
     }
 
-    static class LocationRow {
-        public final String city;
-        public final String setting;
-        public final double latitude;
-        public final double longitude;
-        void assertSame(LocationRow that) {
-            assertEquals(that.city, city);
-            assertEquals(that.setting, setting);
-            assertEquals(that.latitude, latitude);
-            assertEquals(that.longitude, longitude);
-        }
-        public LocationRow(String cit, String set, double lat, double lon) {
-            city = cit; setting = set; latitude = lat; longitude = lon;
-        }
-    }
-
-    static ContentValues locationRowToContentValues(LocationRow row) {
-        final ContentValues result = new ContentValues();
-        result.put(LocationEntry.COLUMN_CITY, row.city);
-        result.put(LocationEntry.COLUMN_SETTING, row.setting);
-        result.put(LocationEntry.COLUMN_LATITUDE, row.latitude);
-        result.put(LocationEntry.COLUMN_LONGITUDE, row.longitude);
-        return result;
-    }
-
-    static LocationRow cursorToLocationRow(Cursor c) {
-        return new LocationRow(
-                c.getString(c.getColumnIndex(LocationEntry.COLUMN_CITY)),
-                c.getString(c.getColumnIndex(LocationEntry.COLUMN_SETTING)),
-                c.getDouble(c.getColumnIndex(LocationEntry.COLUMN_LATITUDE)),
-                c.getDouble(c.getColumnIndex(LocationEntry.COLUMN_LONGITUDE))
-        );
-    }
-
-    static class WeatherRow {
-        public final long locationId;
-        public final String date;
-        public final String description;
-        public final double minimum;
-        public final double maximum;
-        public final double humidity;
-        public final double pressure;
-        public final double wind;
-        public final double direction;
-        public final long weatherId;
-        void assertSame(WeatherRow that) {
-            assertEquals(that.locationId, locationId);
-            assertEquals(that.date, date);
-            assertEquals(that.description, description);
-            assertEquals(that.minimum, minimum);
-            assertEquals(that.maximum, maximum);
-            assertEquals(that.humidity, humidity);
-            assertEquals(that.pressure, pressure);
-            assertEquals(that.wind, wind);
-            assertEquals(that.direction, direction);
-            assertEquals(that.weatherId, weatherId);
-        }
-        public WeatherRow(
-                long locId, String date, String desc, double min, double max,
-                double hum, double pres, double wind, double dir, long wId)
-        {
-            this.locationId = locId;
-            this.date = date;
-            this.description = desc;
-            this.minimum = min;
-            this.maximum = max;
-            this.humidity = hum;
-            this.pressure = pres;
-            this.wind = wind;
-            this.direction = dir;
-            this.weatherId = wId;
-        }
-    }
-
-    static ContentValues weatherRowToContentValues(WeatherRow row) {
-        final ContentValues result = new ContentValues();
-        result.put(WeatherEntry.COLUMN_LOCATION_KEY, row.locationId);
-        result.put(WeatherEntry.COLUMN_DATE, row.date);
-        result.put(WeatherEntry.COLUMN_DESCRIPTION, row.description);
-        result.put(WeatherEntry.COLUMN_MINIMUM, row.minimum);
-        result.put(WeatherEntry.COLUMN_MAXIMUM, row.maximum);
-        result.put(WeatherEntry.COLUMN_HUMIDITY, row.humidity);
-        result.put(WeatherEntry.COLUMN_PRESSURE, row.pressure);
-        result.put(WeatherEntry.COLUMN_WIND, row.wind);
-        result.put(WeatherEntry.COLUMN_DIRECTION, row.direction);
-        result.put(WeatherEntry.COLUMN_WEATHER_ID, row.weatherId);
-        return result;
-    }
-
-    static WeatherRow cursorToWeatherRow(Cursor c) {
-        return new WeatherRow(
-                c.getLong(c.getColumnIndex(WeatherEntry.COLUMN_LOCATION_KEY)),
-                c.getString(c.getColumnIndex(WeatherEntry.COLUMN_DATE)),
-                c.getString(c.getColumnIndex(WeatherEntry.COLUMN_DESCRIPTION)),
-                c.getDouble(c.getColumnIndex(WeatherEntry.COLUMN_MINIMUM)),
-                c.getDouble(c.getColumnIndex(WeatherEntry.COLUMN_MAXIMUM)),
-                c.getDouble(c.getColumnIndex(WeatherEntry.COLUMN_HUMIDITY)),
-                c.getDouble(c.getColumnIndex(WeatherEntry.COLUMN_PRESSURE)),
-                c.getDouble(c.getColumnIndex(WeatherEntry.COLUMN_WIND)),
-                c.getDouble(c.getColumnIndex(WeatherEntry.COLUMN_DIRECTION)),
-                c.getLong(c.getColumnIndex(WeatherEntry.COLUMN_WEATHER_ID))
-        );
-    }
-
     public void testInsertAndReadDb() throws Throwable {
         Log.v(LOG_TAG, "TestDb.testInsertAndReadDb()");
         final WeatherDbHelper dbh = new WeatherDbHelper(mContext);
         final SQLiteDatabase db = dbh.getWritableDatabase();
-        final LocationRow locationIn
-            = new LocationRow("North Pole", "99705", 64.772, -147.355);
-        final long locationRowId = db.insert(LocationEntry.TABLE, null,
-                locationRowToContentValues(locationIn));
+        final ContentValues locationIn
+            = makeContentValues(makeMap(locationColumns, locationRow));
+        final long locationRowId
+            = db.insert(LocationEntry.TABLE, null, locationIn);
+        locationIn.put(LocationEntry._ID, locationRowId);
         Log.d(LOG_TAG, "locationRowId == " + locationRowId);
         assertTrue(locationRowId != -1);
         final Cursor locationCursor = db.query(
                 LocationEntry.TABLE, locationColumns,
                 null, null, null, null, null);
         assertTrue(locationCursor.moveToFirst());
-        locationIn.assertSame(cursorToLocationRow(locationCursor));
-        final WeatherRow weatherIn = new WeatherRow(
-                locationRowId, "20141205", "Asteroids",
-                65, 75, 1.2, 1.3, 5.5, 1.1, 321);
-        final long weatherRowId = db.insert(WeatherEntry.TABLE, null,
-                weatherRowToContentValues(weatherIn));
+        assertEquals(locationIn, makeContentValues(locationCursor));
+        final ContentValues weatherIn
+            = makeContentValues(makeMap(weatherColumns, weatherRow));
+        weatherIn.put(WeatherEntry.COLUMN_LOCATION_KEY, locationRowId);
+        Log.v(LOG_TAG, "weatherIn == " + weatherIn);
+        final long weatherRowId
+            = db.insert(WeatherEntry.TABLE, null, weatherIn);
+        Log.d(LOG_TAG, "weatherRowId == " + weatherRowId);
+        assertTrue(weatherRowId != -1);
         final Cursor weatherCursor = db.query(
                 WeatherEntry.TABLE, weatherColumns,
                 null, null, null, null, null);
         assertTrue(weatherCursor.moveToFirst());
-        weatherIn.assertSame(cursorToWeatherRow(weatherCursor));
+        assertEquals(weatherIn, makeContentValues(weatherCursor));
     }
 
     public TestDb() {
@@ -183,3 +200,10 @@ public class TestDb extends AndroidTestCase {
         Log.v(LOG_TAG, "TestDb()");
     }
 }
+
+// WTF, Java.  ContentValues equality must be pointer-wise.
+//
+// I/TestRunner( 2551): junit.framework.AssertionFailedError: expected:
+// <setting=99705 longitude=-147.355 latitude=64.772 _id=1 city=North Pole>
+// but was:
+// <setting=99705 longitude=-147.355 latitude=64.772 _id=1 city=North Pole>
