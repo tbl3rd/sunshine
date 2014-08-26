@@ -11,7 +11,6 @@ import com.example.android.sunshine.data.WeatherDbHelper;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.TestSuiteBuilder;
@@ -83,20 +82,61 @@ public class TestDb extends AndroidTestCase {
         for (Map.Entry<String, Object> e: row.entrySet()) {
             final String key = e.getKey();
             final Object value = e.getValue();
-            Log.v(LOG_TAG, "makeContentValues(map): " + key + ", " + value);
+            final String vc = (value == null)
+                ? "NULL"
+                : value.getClass().getSimpleName();
+            Log.v(LOG_TAG, "makeContentValues(map): "
+                    + key + ", " + value + " of " + vc);
             if (value instanceof Double) {
-                result.put(key, ((Double)value).doubleValue());
+                result.put(key, (Double)value);
             } else if (value instanceof String) {
                 result.put(key, (String)value);
             } else if (value instanceof Integer) {
-                result.put(key, ((Integer)value).intValue());
+                result.put(key, (Integer)value);
             } else if (value instanceof Long) {
-                result.put(key, ((Long)value).longValue());
+                result.put(key, (Long)value);
             } else if (value == null) {
                 result.putNull(key);
             } else {
-                Log.d(LOG_TAG,
-                        "makeContentValues(else): " + key + ", " + value);
+                Log.d(LOG_TAG, "makeContentValues(else): "
+                        + key + ", " + value + " of " + vc);
+            }
+        }
+        return result;
+    }
+
+    public ContentValues makeContentValues(Cursor c) {
+        final ContentValues result = new ContentValues();
+        final int count = c.getColumnCount();
+        Log.v(LOG_TAG, "makeContentValues(c): count == " + count);
+        for (int index = 0; index < count; ++index) {
+            final String name = c.getColumnName(index);
+            Log.v(LOG_TAG, "makeContentValues(cursor): " + name + ", " + index);
+            final int kind = c.getType(index);
+            Log.v(LOG_TAG, "makeContentValues(cursor): kind == " + kind);
+            switch (kind) {
+            case Cursor.FIELD_TYPE_NULL:
+                Log.v(LOG_TAG, "makeContentValues(cursor): putNull()");
+                result.putNull(name);
+                break;
+            case Cursor.FIELD_TYPE_INTEGER:
+                Log.v(LOG_TAG, "makeContentValues(c): " + c.getLong(index));
+                result.put(name, c.getLong(index));
+                break;
+            case Cursor.FIELD_TYPE_FLOAT:
+                Log.v(LOG_TAG, "makeContentValues(c): " + c.getDouble(index));
+                result.put(name, c.getDouble(index));
+                break;
+            case Cursor.FIELD_TYPE_STRING:
+                Log.v(LOG_TAG, "makeContentValues(c): " + c.getString(index));
+                result.put(name, c.getString(index));
+                break;
+            case Cursor.FIELD_TYPE_BLOB:
+                Log.v(LOG_TAG, "makeContentValues(c): " + c.getBlob(index));
+                result.put(name, c.getBlob(index));
+                break;
+            default:
+                Log.d(LOG_TAG, "Cursor.getType() == " + c.getType(index));
             }
         }
         return result;
@@ -110,11 +150,21 @@ public class TestDb extends AndroidTestCase {
             assertEquals(x.size(), y.size());
             final Set<Map.Entry<String, Object>> xs = x.valueSet();
             final Set<Map.Entry<String, Object>> ys = y.valueSet();
-            Log.v(LOG_TAG, "assertEquals(): xs == " + xs);
-            Log.v(LOG_TAG, "assertEquals(): ys == " + ys);
-            final boolean wtf = xs.containsAll(ys);
-            Log.v(LOG_TAG, "assertEquals(): wtf == " + wtf);
-            assertTrue(wtf);
+            for (Map.Entry<String, Object> xe : xs) {
+                final boolean wtf = ys.contains(xe);
+                final String xc = xe.getValue().getClass().getSimpleName();
+                Log.v(LOG_TAG, "assertEquals(): xe == " + xe);
+                Log.v(LOG_TAG, "assertEquals(): xc == " + xc);
+                Log.v(LOG_TAG, "assertEquals(): wtf == " + wtf);
+            }
+            for (Map.Entry<String, Object> ye : ys) {
+                final boolean wtf = xs.contains(ye);
+                final String yc = ye.getValue().getClass().getSimpleName();
+                Log.v(LOG_TAG, "assertEquals(): ye == " + ye);
+                Log.v(LOG_TAG, "assertEquals(): yc == " + yc);
+                Log.v(LOG_TAG, "assertEquals(): wtf == " + wtf);
+            }
+            assertEquals(xs, ys);
         }
     }
 
@@ -142,8 +192,7 @@ public class TestDb extends AndroidTestCase {
                 LocationEntry.TABLE, locationColumns,
                 null, null, null, null, null);
         assertTrue(locationCursor.moveToFirst());
-        final ContentValues locationOut = new ContentValues();
-        DatabaseUtils.cursorRowToContentValues(locationCursor, locationOut);
+        final ContentValues locationOut = makeContentValues(locationCursor);
         assertEquals(locationIn, locationOut);
         final ContentValues weatherIn
             = makeContentValues(makeMap(weatherColumns, weatherRow));
@@ -157,23 +206,12 @@ public class TestDb extends AndroidTestCase {
                 WeatherEntry.TABLE, weatherColumns,
                 null, null, null, null, null);
         assertTrue(weatherCursor.moveToFirst());
-        final ContentValues weatherOut = new ContentValues();
-        DatabaseUtils.cursorRowToContentValues(weatherCursor, weatherOut);
+        final ContentValues weatherOut = makeContentValues(weatherCursor);
         assertEquals(weatherIn, weatherOut);
     }
 
     public TestDb() {
         super();
         Log.v(LOG_TAG, "TestDb()");
-        final double d = 64.772;
-        final Object d0 = Double.valueOf(d);
-        final Object d1 = Double.valueOf(d);
-        final boolean wtf = d0.equals(d1);
-        Log.v(LOG_TAG, "DOUBLES: " + wtf);
     }
 }
-
-// junit.framework.AssertionFailedError: expected:
-// <setting=99705 longitude=-147.355 latitude=64.772 _id=1 city=North Pole>
-// but was:
-// <setting=99705 longitude=-147.355 latitude=64.772 _id=1 city=North Pole>

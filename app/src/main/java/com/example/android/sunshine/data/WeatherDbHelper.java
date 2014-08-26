@@ -20,8 +20,8 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
             + LocationEntry._ID + " INTEGER PRIMARY KEY, "
             + LocationEntry.COLUMN_SETTING + " TEXT UNIQUE NOT NULL, "
             + LocationEntry.COLUMN_CITY + " TEXT NOT NULL, "
-            + LocationEntry.COLUMN_LATITUDE + " TEXT NOT NULL, "
-            + LocationEntry.COLUMN_LONGITUDE + " TEXT NOT NULL, "
+            + LocationEntry.COLUMN_LATITUDE + " REAL NOT NULL, "
+            + LocationEntry.COLUMN_LONGITUDE + " REAL NOT NULL, "
             + "UNIQUE ("
             + LocationEntry.COLUMN_SETTING
             + ") ON CONFLICT IGNORE" + ");";
