@@ -111,28 +111,21 @@ public class TestDb extends AndroidTestCase {
         Log.v(LOG_TAG, "makeContentValues(c): count == " + count);
         for (int index = 0; index < count; ++index) {
             final String name = c.getColumnName(index);
-            Log.v(LOG_TAG, "makeContentValues(cursor): " + name + ", " + index);
             final int kind = c.getType(index);
-            Log.v(LOG_TAG, "makeContentValues(cursor): kind == " + kind);
             switch (kind) {
             case Cursor.FIELD_TYPE_NULL:
-                Log.v(LOG_TAG, "makeContentValues(cursor): putNull()");
                 result.putNull(name);
                 break;
             case Cursor.FIELD_TYPE_INTEGER:
-                Log.v(LOG_TAG, "makeContentValues(c): " + c.getLong(index));
                 result.put(name, c.getLong(index));
                 break;
             case Cursor.FIELD_TYPE_FLOAT:
-                Log.v(LOG_TAG, "makeContentValues(c): " + c.getDouble(index));
                 result.put(name, c.getDouble(index));
                 break;
             case Cursor.FIELD_TYPE_STRING:
-                Log.v(LOG_TAG, "makeContentValues(c): " + c.getString(index));
                 result.put(name, c.getString(index));
                 break;
             case Cursor.FIELD_TYPE_BLOB:
-                Log.v(LOG_TAG, "makeContentValues(c): " + c.getBlob(index));
                 result.put(name, c.getBlob(index));
                 break;
             default:
@@ -140,32 +133,6 @@ public class TestDb extends AndroidTestCase {
             }
         }
         return result;
-    }
-
-    public static void assertEquals(ContentValues x, ContentValues y) {
-        Log.v(LOG_TAG, "assertEquals(): x == " + x + ", y == " + y);
-        if (x != y) {
-            Log.v(LOG_TAG, "assertEquals(): x.size() == " + x.size());
-            Log.v(LOG_TAG, "assertEquals(): y.size() == " + y.size());
-            assertEquals(x.size(), y.size());
-            final Set<Map.Entry<String, Object>> xs = x.valueSet();
-            final Set<Map.Entry<String, Object>> ys = y.valueSet();
-            for (Map.Entry<String, Object> xe : xs) {
-                final boolean wtf = ys.contains(xe);
-                final String xc = xe.getValue().getClass().getSimpleName();
-                Log.v(LOG_TAG, "assertEquals(): xe == " + xe);
-                Log.v(LOG_TAG, "assertEquals(): xc == " + xc);
-                Log.v(LOG_TAG, "assertEquals(): wtf == " + wtf);
-            }
-            for (Map.Entry<String, Object> ye : ys) {
-                final boolean wtf = xs.contains(ye);
-                final String yc = ye.getValue().getClass().getSimpleName();
-                Log.v(LOG_TAG, "assertEquals(): ye == " + ye);
-                Log.v(LOG_TAG, "assertEquals(): yc == " + yc);
-                Log.v(LOG_TAG, "assertEquals(): wtf == " + wtf);
-            }
-            assertEquals(xs, ys);
-        }
     }
 
     public void testCreateDb() throws Throwable {
