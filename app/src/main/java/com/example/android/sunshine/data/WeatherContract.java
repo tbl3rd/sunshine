@@ -15,9 +15,9 @@ public class WeatherContract {
         = new Uri.Builder().scheme("content")
         .authority(CONTENT_AUTHORITY).build();
 
-    public static final String KIND_CURSOR = "vnd.android.cursor";
-    public static final String KIND_CURSOR_DIR = KIND_CURSOR + ".dir";
-    public static final String KIND_CURSOR_ITEM = KIND_CURSOR + ".item";
+    public static final String CURSOR_TYPE = "vnd.android.cursor";
+    public static final String CURSOR_TYPE_DIR = CURSOR_TYPE + ".dir";
+    public static final String CURSOR_TYPE_ITEM = CURSOR_TYPE + ".item";
 
     public static final class LocationEntry implements BaseColumns {
 
@@ -34,10 +34,10 @@ public class WeatherContract {
             = BASE_CONTENT_URI.buildUpon().appendPath(TABLE).build();
 
         public static final String CONTENT_TYPE_DIR
-            = KIND_CURSOR_DIR + "/" + CONTENT_AUTHORITY + "/" + TABLE;
+            = CURSOR_TYPE_DIR + "/" + CONTENT_AUTHORITY + "/" + TABLE;
 
         public static final String CONTENT_TYPE_ITEM
-            = KIND_CURSOR_ITEM + "/" + CONTENT_AUTHORITY + "/" + TABLE;
+            = CURSOR_TYPE_ITEM + "/" + CONTENT_AUTHORITY + "/" + TABLE;
 
         public static Uri buildLocationById(long id) {
             Log.v(LOG_TAG, "CONTENT_URI == " + CONTENT_URI);
@@ -65,10 +65,10 @@ public class WeatherContract {
             BASE_CONTENT_URI.buildUpon().appendPath(TABLE).build();
 
         public static final String CONTENT_TYPE_DIR =
-            KIND_CURSOR_DIR + "/" + CONTENT_AUTHORITY + "/" + TABLE;
+            CURSOR_TYPE_DIR + "/" + CONTENT_AUTHORITY + "/" + TABLE;
 
         public static final String CONTENT_TYPE_ITEM =
-            KIND_CURSOR_ITEM + "/" + CONTENT_AUTHORITY + "/" + TABLE;
+            CURSOR_TYPE_ITEM + "/" + CONTENT_AUTHORITY + "/" + TABLE;
 
         public static Uri buildWeatherById(long id) {
             Log.v(LOG_TAG, "CONTENT_URI == " + CONTENT_URI);

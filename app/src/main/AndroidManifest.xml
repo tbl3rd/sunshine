@@ -51,7 +51,7 @@
         </activity>
 
         <provider
-            android:authorities="com.example.android.sunshine"
+            android:authorities="com.example.android.sunshine.data"
             android:name=".data.WeatherProvider"
             />
 

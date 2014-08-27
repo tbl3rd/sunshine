@@ -49,7 +49,21 @@ public class WeatherProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        return null;
+        switch (sMatcher.match(uri)) {
+        case WEATHER:
+            return WeatherContract.WeatherEntry.CONTENT_TYPE_DIR;
+        case WEATHER_WITH_LOCATION:
+            return WeatherContract.WeatherEntry.CONTENT_TYPE_DIR;
+        case WEATHER_WITH_LOCATION_AND_DATE:
+            return WeatherContract.WeatherEntry.CONTENT_TYPE_ITEM;
+        case LOCATION:
+            return WeatherContract.LocationEntry.CONTENT_TYPE_DIR;
+        case LOCATION_ID:
+            return WeatherContract.LocationEntry.CONTENT_TYPE_ITEM;
+        default:
+            throw new UnsupportedOperationException(
+                    "getType(): Unmatched URI: " + uri);
+        }
     }
 
     @Override
