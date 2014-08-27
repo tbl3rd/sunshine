@@ -30,9 +30,12 @@ public class WeatherProvider extends ContentProvider {
 
     private static UriMatcher sMatcher = buildUriMatcher();
 
+    private WeatherDbHelper mDbHelper;
+
     @Override
     public boolean onCreate() {
-        return false;
+        mDbHelper = new WeatherDbHelper(getContext());
+        return true;
     }
 
     @Override
