@@ -12,7 +12,8 @@ public class WeatherContract {
         = WeatherContract.class.getPackage().getName();
 
     public static final Uri BASE_CONTENT_URI
-        = new Uri.Builder().scheme("content").authority(CONTENT_AUTHORITY).build();
+        = new Uri.Builder().scheme("content")
+        .authority(CONTENT_AUTHORITY).build();
 
     public static final String KIND_CURSOR = "vnd.android.cursor";
     public static final String KIND_CURSOR_DIR = KIND_CURSOR + ".dir";
@@ -20,7 +21,8 @@ public class WeatherContract {
 
     public static final class LocationEntry implements BaseColumns {
 
-        public static final String LOG_TAG = LocationEntry.class.getSimpleName();
+        public static final String LOG_TAG
+            = LocationEntry.class.getSimpleName();
 
         public static final String TABLE = "location";
         public static final String COLUMN_SETTING = "setting";
@@ -83,8 +85,11 @@ public class WeatherContract {
                 .appendQueryParameter(COLUMN_DATE, startDate).build();
         }
 
-        public static Uri buildWeatherLocationWithDate(String locationSetting, String date) {
-            return CONTENT_URI.buildUpon().appendPath(locationSetting).appendPath(date).build();
+        public static Uri buildWeatherLocationWithDate(
+                String locationSetting, String date)
+        {
+            return CONTENT_URI.buildUpon()
+                .appendPath(locationSetting).appendPath(date).build();
         }
 
         public static String getLocationSettingFromUri(Uri uri) {

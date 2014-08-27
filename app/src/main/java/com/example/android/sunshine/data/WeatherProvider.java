@@ -9,10 +9,26 @@ import android.net.Uri;
 
 public class WeatherProvider extends ContentProvider {
 
+    private static final int WEATHER = 100;
+    private static final int WEATHER_WITH_LOCATION = 101;
+    private static final int WEATHER_WITH_LOCATION_AND_DATE = 102;
+    private static final int LOCATION = 300;
+    private static final int LOCATION_ID = 301;
+
     private static UriMatcher buildUriMatcher() {
-        final UriMatcher result = new UriMatcher(0);
+        final String auth = WeatherContract.CONTENT_AUTHORITY;
+        final String weather = WeatherContract.WeatherEntry.TABLE;
+        final String location = WeatherContract.LocationEntry.TABLE;
+        final UriMatcher result = new UriMatcher(UriMatcher.NO_MATCH);
+        result.addURI(auth, weather,            WEATHER);
+        result.addURI(auth, weather   + "/*",   WEATHER_WITH_LOCATION);
+        result.addURI(auth, weather   + "/*/*", WEATHER_WITH_LOCATION_AND_DATE);
+        result.addURI(auth, location,           LOCATION);
+        result.addURI(auth, location  + "/#",   LOCATION_ID);
         return result;
     }
+
+    private static UriMatcher sMatcher = buildUriMatcher();
 
     @Override
     public boolean onCreate() {
