@@ -140,26 +140,17 @@ public class TestProvider extends AndroidTestCase {
         final ContentResolver resolver = mContext.getContentResolver();
         final String location = "94074";
         final String date = "20140612";
-        Log.v(LOG_TAG,
-                "testGetType(): mime == " + WeatherEntry.CONTENT_TYPE_DIR);
-        Log.v(LOG_TAG,
-                "testGetType(): uri  == " + WeatherEntry.CONTENT_URI);
-        Log.v(LOG_TAG,
-                "testGetType(): type == "
-                + resolver.getType(WeatherEntry.CONTENT_URI));
         assertEquals(WeatherEntry.CONTENT_TYPE_DIR,
                 resolver.getType(WeatherEntry.CONTENT_URI));
         assertEquals(WeatherEntry.CONTENT_TYPE_DIR,
-                resolver.getType(
-                        WeatherEntry.buildWeatherLocation(location)));
+                resolver.getType(WeatherEntry.buildWeatherLocation(location)));
         assertEquals(WeatherEntry.CONTENT_TYPE_ITEM,
                 resolver.getType(
-                        WeatherEntry.buildWeatherLocationWithDate(
-                                location, date)));
+                        WeatherEntry.buildWeatherLocationDate(location, date)));
         assertEquals(LocationEntry.CONTENT_TYPE_DIR,
                 resolver.getType(LocationEntry.CONTENT_URI));
         assertEquals(LocationEntry.CONTENT_TYPE_ITEM,
-                resolver.getType(LocationEntry.buildLocationById(1L)));
+                resolver.getType(LocationEntry.buildLocationId(1L)));
     }
 
     public void testInsertAndReadDb() throws Throwable {

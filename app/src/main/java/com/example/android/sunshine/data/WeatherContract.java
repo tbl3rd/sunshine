@@ -39,7 +39,7 @@ public class WeatherContract {
         public static final String CONTENT_TYPE_ITEM
             = CURSOR_TYPE_ITEM + "/" + CONTENT_AUTHORITY + "/" + TABLE;
 
-        public static Uri buildLocationById(long id) {
+        public static Uri buildLocationId(long id) {
             Log.v(LOG_TAG, "CONTENT_URI == " + CONTENT_URI);
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
@@ -70,7 +70,7 @@ public class WeatherContract {
         public static final String CONTENT_TYPE_ITEM =
             CURSOR_TYPE_ITEM + "/" + CONTENT_AUTHORITY + "/" + TABLE;
 
-        public static Uri buildWeatherById(long id) {
+        public static Uri buildWeatherId(long id) {
             Log.v(LOG_TAG, "CONTENT_URI == " + CONTENT_URI);
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
@@ -79,13 +79,13 @@ public class WeatherContract {
             return CONTENT_URI.buildUpon().appendPath(locationSetting).build();
         }
 
-        public static Uri buildWeatherLocationWithStartDate(
+        public static Uri buildWeatherLocationStartDate(
                 String locationSetting, String startDate) {
             return CONTENT_URI.buildUpon().appendPath(locationSetting)
                 .appendQueryParameter(COLUMN_DATE, startDate).build();
         }
 
-        public static Uri buildWeatherLocationWithDate(
+        public static Uri buildWeatherLocationDate(
                 String locationSetting, String date)
         {
             return CONTENT_URI.buildUpon()
