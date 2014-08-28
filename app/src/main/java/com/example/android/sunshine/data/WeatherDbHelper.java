@@ -15,29 +15,32 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        final String INTEGER = " INTEGER NOT NULL, ";
+        final String REAL    = " REAL NOT NULL, ";
+        final String TEXT    = " TEXT NOT NULL, ";
         final String LOCATION
             = "CREATE TABLE " + LocationEntry.TABLE + " ("
-            + LocationEntry._ID + " INTEGER PRIMARY KEY, "
-            + LocationEntry.COLUMN_SETTING + " TEXT UNIQUE NOT NULL, "
-            + LocationEntry.COLUMN_CITY + " TEXT NOT NULL, "
-            + LocationEntry.COLUMN_LATITUDE + " REAL NOT NULL, "
-            + LocationEntry.COLUMN_LONGITUDE + " REAL NOT NULL, "
+            + LocationEntry._ID                + " INTEGER PRIMARY KEY, "
+            + LocationEntry.COLUMN_SETTING     + " TEXT UNIQUE NOT NULL, "
+            + LocationEntry.COLUMN_CITY        + TEXT
+            + LocationEntry.COLUMN_LATITUDE    + REAL
+            + LocationEntry.COLUMN_LONGITUDE   + REAL
             + "UNIQUE ("
             + LocationEntry.COLUMN_SETTING
             + ") ON CONFLICT IGNORE" + ");";
         final String WEATHER
             = "CREATE TABLE " + WeatherEntry.TABLE + " ("
             + WeatherEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + WeatherEntry.COLUMN_LOCATION_KEY + " INTEGER NOT NULL, "
-            + WeatherEntry.COLUMN_DATE + " TEXT NOT NULL, "
-            + WeatherEntry.COLUMN_DESCRIPTION + " TEXT NOT NULL, "
-            + WeatherEntry.COLUMN_WEATHER_ID + " INTEGER NOT NULL, "
-            + WeatherEntry.COLUMN_MINIMUM + " REAL NOT NULL, "
-            + WeatherEntry.COLUMN_MAXIMUM + " REAL NOT NULL, "
-            + WeatherEntry.COLUMN_HUMIDITY + " REAL NOT NULL, "
-            + WeatherEntry.COLUMN_PRESSURE + " REAL NOT NULL, "
-            + WeatherEntry.COLUMN_WIND + " REAL NOT NULL, "
-            + WeatherEntry.COLUMN_DIRECTION + " REAL NOT NULL, "
+            + WeatherEntry.COLUMN_LOCATION_KEY + INTEGER
+            + WeatherEntry.COLUMN_DATE         + TEXT
+            + WeatherEntry.COLUMN_DESCRIPTION  + TEXT
+            + WeatherEntry.COLUMN_WEATHER_ID   + INTEGER
+            + WeatherEntry.COLUMN_MINIMUM      + REAL
+            + WeatherEntry.COLUMN_MAXIMUM      + REAL
+            + WeatherEntry.COLUMN_HUMIDITY     + REAL
+            + WeatherEntry.COLUMN_PRESSURE     + REAL
+            + WeatherEntry.COLUMN_WIND         + REAL
+            + WeatherEntry.COLUMN_DIRECTION    + REAL
             + "FOREIGN KEY ("
             + WeatherEntry.COLUMN_LOCATION_KEY
             + ") REFERENCES "
@@ -52,10 +55,9 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        final String LOCATION = "DROP TABLE IF EXISTS " + LocationEntry.TABLE;
-        final String WEATHER = "DROP TABLE IF EXISTS " + WeatherEntry.TABLE;
-        db.execSQL(LOCATION);
-        db.execSQL(WEATHER);
+        final String DROP = "DROP TABLE IF EXISTS ";
+        db.execSQL(DROP + LocationEntry.TABLE);
+        db.execSQL(DROP + WeatherEntry.TABLE);
         onCreate(db);
     }
 
