@@ -3,7 +3,6 @@ package com.example.android.sunshine.test;
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 import com.example.android.sunshine.data.WeatherDbHelper;
-import com.example.android.sunshine.test.Util;
 
 import android.content.ContentValues;
 import android.database.Cursor;
