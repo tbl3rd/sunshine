@@ -9,6 +9,7 @@ import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 
@@ -60,7 +61,7 @@ public class Util extends junit.framework.Assert {
         Long.valueOf(321)
     };
 
-    static public Map<String, Object> makeMap(String[] keys, Object[] values) {
+    static Map<String, Object> makeMap(String[] keys, Object[] values) {
         final int size = keys.length;
         final Map<String, Object> result = new HashMap<String, Object>(size);
         for (int index = 0; index < size; ++index) {
@@ -71,7 +72,7 @@ public class Util extends junit.framework.Assert {
         return result;
     }
 
-    static public ContentValues makeContentValues(Map<String, Object> row) {
+    static ContentValues makeContentValues(Map<String, Object> row) {
         final ContentValues result = new ContentValues();
         for (Map.Entry<String, Object> e: row.entrySet()) {
             final String key = e.getKey();
@@ -97,7 +98,7 @@ public class Util extends junit.framework.Assert {
         return result;
     }
 
-    static public ContentValues makeContentValues(Cursor c) {
+    static ContentValues makeContentValues(Cursor c) {
         final ContentValues result = new ContentValues();
         final int count = c.getColumnCount();
         for (int index = 0; index < count; ++index) {
@@ -133,5 +134,21 @@ public class Util extends junit.framework.Assert {
     static ContentValues makeWeatherIn() {
         assertEquals(weatherColumns.length, weatherRow.length);
         return makeContentValues(makeMap(weatherColumns, weatherRow));
+    }
+
+    static long insertLocation(SQLiteDatabase db) {
+        Log.v(LOG_TAG, "insertLocation()");
+        final ContentValues in = Util.makeLocationIn();
+        final long result = db.insert(LocationEntry.TABLE, null, in);
+        in.put(LocationEntry._ID, result);
+        assertTrue(result != -1);
+        Log.d(LOG_TAG, "insertLocation(): result == " + result);
+        final Cursor cursor = db.query(
+                LocationEntry.TABLE, Util.locationColumns,
+                null, null, null, null, null);
+        assertTrue(cursor.moveToFirst());
+        final ContentValues out = Util.makeContentValues(cursor);
+        assertEquals(in, out);
+        return result;
     }
 }

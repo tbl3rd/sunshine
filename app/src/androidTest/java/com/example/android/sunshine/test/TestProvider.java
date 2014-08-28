@@ -37,22 +37,6 @@ public class TestProvider extends AndroidTestCase {
                 resolver.getType(LocationEntry.buildLocationId(1L)));
     }
 
-    public long insertLocation(SQLiteDatabase db) {
-        Log.v(LOG_TAG, "insertLocation()");
-        final ContentValues in = Util.makeLocationIn();
-        final long result = db.insert(LocationEntry.TABLE, null, in);
-        in.put(LocationEntry._ID, result);
-        assertTrue(result != -1);
-        Log.d(LOG_TAG, "insertLocation(): result == " + result);
-        final Cursor cursor = db.query(
-                LocationEntry.TABLE, Util.locationColumns,
-                null, null, null, null, null);
-        assertTrue(cursor.moveToFirst());
-        final ContentValues out = Util.makeContentValues(cursor);
-        assertEquals(in, out);
-        return result;
-    }
-
     public long insertWeather(SQLiteDatabase db, long locationId) {
         Log.v(LOG_TAG, "insertWeather()");
         final ContentValues in = Util.makeWeatherIn();
@@ -74,7 +58,7 @@ public class TestProvider extends AndroidTestCase {
         Log.v(LOG_TAG, "testInsertReadProvider()");
         final WeatherDbHelper helper = new WeatherDbHelper(mContext);
         final SQLiteDatabase db = helper.getWritableDatabase();
-        final long locationId = insertLocation(db);
+        final long locationId = Util.insertLocation(db);
         final long weatherIdIgnored = insertWeather(db, locationId);
         db.close();
         helper.close();
