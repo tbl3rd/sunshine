@@ -103,6 +103,15 @@ public class WeatherProvider extends ContentProvider {
         Cursor result = null;
         final SQLiteDatabase db = mDbHelper.getReadableDatabase();
         switch (sMatcher.match(uri)) {
+        case WEATHER:
+            result = db.query(WeatherContract.WeatherEntry.TABLE,
+                    projection, selection, selectionArgs,
+                    null, null, sortOrder);
+            break;
+        case WEATHER_WITH_LOCATION:
+        case WEATHER_WITH_LOCATION_AND_DATE:
+            result = getWeatherByLocationSetting(uri, projection, sortOrder);
+            break;
         case LOCATION:
             result = db.query(WeatherContract.LocationEntry.TABLE,
                     projection, selection, selectionArgs,
@@ -117,15 +126,6 @@ public class WeatherProvider extends ContentProvider {
                     projection, select, args, null, null, sortOrder);
             break;
         }
-        case WEATHER:
-            result = db.query(WeatherContract.WeatherEntry.TABLE,
-                    projection, selection, selectionArgs,
-                    null, null, sortOrder);
-            break;
-        case WEATHER_WITH_LOCATION:
-        case WEATHER_WITH_LOCATION_AND_DATE:
-            result = getWeatherByLocationSetting(uri, projection, sortOrder);
-            break;
         default:
             throw new UnsupportedOperationException("URI == " + uri);
         }
