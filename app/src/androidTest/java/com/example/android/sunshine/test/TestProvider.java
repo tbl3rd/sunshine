@@ -16,7 +16,7 @@ public class TestProvider extends AndroidTestCase {
 
     final static String LOG_TAG = TestProvider.class.getSimpleName();
 
-    public void testDeleteDb() throws Throwable {
+    public void testDeleteDb() {
         Log.v(LOG_TAG, "TestProvider.testDeleteDb()");
         mContext.deleteDatabase(WeatherDbHelper.DATABASE);
     }
@@ -46,7 +46,6 @@ public class TestProvider extends AndroidTestCase {
         final ContentResolver resolver = mContext.getContentResolver();
         final Cursor cursor = resolver.query(WeatherEntry.CONTENT_URI,
                 Util.weatherColumns, null, null, null);
-        assertTrue(cursor.moveToFirst());
         final ContentValues weatherOut = Util.makeContentValues(cursor);
         assertEquals(weatherIn, weatherOut);
         db.close();

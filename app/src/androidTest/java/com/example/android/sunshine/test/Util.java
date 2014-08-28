@@ -101,6 +101,7 @@ public class Util extends junit.framework.Assert {
     static ContentValues makeContentValues(Cursor c) {
         final ContentValues result = new ContentValues();
         final int count = c.getColumnCount();
+        assertTrue(c.moveToFirst());
         for (int index = 0; index < count; ++index) {
             final String name = c.getColumnName(index);
             switch (c.getType(index)) {
@@ -146,7 +147,6 @@ public class Util extends junit.framework.Assert {
         final Cursor cursor = db.query(
                 LocationEntry.TABLE, Util.locationColumns,
                 null, null, null, null, null);
-        assertTrue(cursor.moveToFirst());
         final ContentValues out = Util.makeContentValues(cursor);
         assertEquals(in, out);
         return result;

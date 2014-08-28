@@ -15,7 +15,7 @@ public class TestDb extends AndroidTestCase {
 
     final static String LOG_TAG = TestDb.class.getSimpleName();
 
-    public void testCreateDb() throws Throwable {
+    public void testCreateDb() {
         Log.v(LOG_TAG, "TestDb.testCreateDb()");
         mContext.deleteDatabase(WeatherDbHelper.DATABASE);
         final WeatherDbHelper helper = new WeatherDbHelper(mContext);
@@ -25,7 +25,7 @@ public class TestDb extends AndroidTestCase {
         helper.close();
     }
 
-    public void testInsertReadDb() throws Throwable {
+    public void testInsertReadDb() {
         Log.v(LOG_TAG, "TestDb.testInsertReadDb()");
         final WeatherDbHelper helper = new WeatherDbHelper(mContext);
         final SQLiteDatabase db = helper.getWritableDatabase();
@@ -34,7 +34,6 @@ public class TestDb extends AndroidTestCase {
         final Cursor cursor = db.query(
                 WeatherEntry.TABLE, Util.weatherColumns,
                 null, null, null, null, null);
-        assertTrue(cursor.moveToFirst());
         final ContentValues weatherOut = Util.makeContentValues(cursor);
         assertEquals(weatherIn, weatherOut);
         db.close();
