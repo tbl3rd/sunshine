@@ -18,10 +18,11 @@ public class TestDb extends AndroidTestCase {
     public void testCreateDb() throws Throwable {
         Log.v(LOG_TAG, "TestDb.testCreateDb()");
         mContext.deleteDatabase(WeatherDbHelper.DATABASE_NAME);
-        final SQLiteDatabase db
-            = new WeatherDbHelper(mContext).getWritableDatabase();
+        final WeatherDbHelper helper = new WeatherDbHelper(mContext);
+        final SQLiteDatabase db = helper.getWritableDatabase();
         assertEquals(true, db.isOpen());
         db.close();
+        helper.close();
     }
 
     public long insertLocation(SQLiteDatabase db)
@@ -67,6 +68,7 @@ public class TestDb extends AndroidTestCase {
         final SQLiteDatabase db = helper.getWritableDatabase();
         final long locationId = insertLocation(db);
         final long weatherIdIgnored = insertWeather(db, locationId);
+        db.close();
         helper.close();
     }
 
