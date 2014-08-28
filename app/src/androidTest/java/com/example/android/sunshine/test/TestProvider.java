@@ -5,6 +5,7 @@ import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 import com.example.android.sunshine.data.WeatherDbHelper;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -39,15 +40,31 @@ public class TestProvider extends AndroidTestCase {
 
     public void testInsertReadProvider() {
         Log.v(LOG_TAG, "testInsertReadProvider()");
+        final ContentResolver resolver = mContext.getContentResolver();
         final WeatherDbHelper helper = new WeatherDbHelper(mContext);
         final SQLiteDatabase db = helper.getWritableDatabase();
-        final long locationId = Util.insertCheckLocation(db);
+        final ContentValues locationIn = Util.makeLocationIn();
+        final long locationId = db.insert(LocationEntry.TABLE, null, locationIn);
+        locationIn.put(LocationEntry._ID, locationId);
+        assertTrue(locationId != -1);
+        Log.d(LOG_TAG, "testInsertReadProvider(): locationId == " + locationId);
+        assertEquals(locationIn,
+                Util.makeContentValues(
+                        resolver.query(
+                                LocationEntry.CONTENT_URI,
+                                Util.locationColumns, null, null, null)));
+        assertEquals(locationIn,
+                Util.makeContentValues(
+                        resolver.query(
+                                ContentUris.withAppendedId(
+                                        LocationEntry.CONTENT_URI, locationId),
+                                Util.locationColumns, null, null, null)));
         final ContentValues weatherIn = Util.insertWeather(db, locationId);
-        final ContentResolver resolver = mContext.getContentResolver();
-        final Cursor cursor = resolver.query(WeatherEntry.CONTENT_URI,
-                Util.weatherColumns, null, null, null);
-        final ContentValues weatherOut = Util.makeContentValues(cursor);
-        assertEquals(weatherIn, weatherOut);
+        assertEquals(weatherIn,
+                Util.makeContentValues(
+                        resolver.query(
+                                WeatherEntry.CONTENT_URI,
+                                Util.weatherColumns, null, null, null)));
         db.close();
         helper.close();
     }

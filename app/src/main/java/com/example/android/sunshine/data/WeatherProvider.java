@@ -2,11 +2,13 @@ package com.example.android.sunshine.data;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
 
@@ -18,7 +20,7 @@ public class WeatherProvider extends ContentProvider {
     private static final int LOCATION = 300;
     private static final int LOCATION_ID = 301;
 
-    private static UriMatcher buildUriMatcher() {
+    private static UriMatcher makeUriMatcher() {
         final String auth = WeatherContract.CONTENT_AUTHORITY;
         final String weather = WeatherContract.WeatherEntry.TABLE;
         final String location = WeatherContract.LocationEntry.TABLE;
@@ -31,7 +33,7 @@ public class WeatherProvider extends ContentProvider {
         return result;
     }
 
-    private static UriMatcher sMatcher = buildUriMatcher();
+    private static UriMatcher sMatcher = makeUriMatcher();
 
     private Context mContext;
     private WeatherDbHelper mDbHelper;
@@ -54,7 +56,17 @@ public class WeatherProvider extends ContentProvider {
         final SQLiteDatabase db = mDbHelper.getReadableDatabase();
         switch (sMatcher.match(uri)) {
         case LOCATION:
-        case LOCATION_ID:
+            result = db.query(WeatherContract.LocationEntry.TABLE,
+                    projection, selection, selectionArgs,
+                    null, null, sortOrder);
+            break;
+        case LOCATION_ID: {
+            final String select = WeatherContract.LocationEntry._ID + " = ? ";
+            final String[] args = { String.valueOf(ContentUris.parseId(uri)) };
+            result = db.query(WeatherContract.LocationEntry.TABLE,
+                    projection, select, args, null, null, sortOrder);
+            break;
+        }
         case WEATHER:
             result = db.query(WeatherContract.WeatherEntry.TABLE,
                     projection, selection, selectionArgs,
