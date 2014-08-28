@@ -39,6 +39,7 @@ public class TestDb extends AndroidTestCase {
     };
 
     final static String[] weatherColumns = {
+        WeatherEntry._ID,
         WeatherEntry.COLUMN_LOCATION_KEY,
         WeatherEntry.COLUMN_DATE,
         WeatherEntry.COLUMN_DESCRIPTION,
@@ -52,6 +53,7 @@ public class TestDb extends AndroidTestCase {
     };
 
     final static Object[] weatherRow = {
+        null,
         null,
         "20141205",
         "Asteroids",
@@ -165,6 +167,7 @@ public class TestDb extends AndroidTestCase {
         Log.d(LOG_TAG, "testInsertReadDb(): weatherRowId == "
                 + weatherRowId);
         assertTrue(weatherRowId != -1);
+        weatherIn.put(WeatherEntry._ID, weatherRowId);
         final Cursor weatherCursor = db.query(
                 WeatherEntry.TABLE, weatherColumns,
                 null, null, null, null, null);
@@ -176,5 +179,7 @@ public class TestDb extends AndroidTestCase {
     public TestDb() {
         super();
         Log.v(LOG_TAG, "TestDb()");
+        assertEquals(locationColumns.length, locationRow.length);
+        assertEquals(weatherColumns.length, weatherRow.length);
     }
 }

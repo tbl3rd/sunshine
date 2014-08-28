@@ -40,6 +40,7 @@ public class TestProvider extends AndroidTestCase {
     };
 
     final static String[] weatherColumns = {
+        WeatherEntry._ID,
         WeatherEntry.COLUMN_LOCATION_KEY,
         WeatherEntry.COLUMN_DATE,
         WeatherEntry.COLUMN_DESCRIPTION,
@@ -53,6 +54,7 @@ public class TestProvider extends AndroidTestCase {
     };
 
     final static Object[] weatherRow = {
+        null,
         null,
         "20141205",
         "Asteroids",
@@ -177,6 +179,7 @@ public class TestProvider extends AndroidTestCase {
             = db.insert(WeatherEntry.TABLE, null, weatherIn);
         Log.d(LOG_TAG, "weatherRowId == " + weatherRowId);
         assertTrue(weatherRowId != -1);
+        weatherIn.put(WeatherEntry._ID, weatherRowId);
         final ContentResolver resolver = mContext.getContentResolver();
         final Cursor weatherCursor
             = resolver.query(WeatherEntry.CONTENT_URI,
