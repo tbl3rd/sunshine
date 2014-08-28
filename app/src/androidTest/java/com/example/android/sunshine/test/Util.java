@@ -136,19 +136,30 @@ public class Util extends junit.framework.Assert {
         return makeContentValues(makeMap(weatherColumns, weatherRow));
     }
 
-    static long insertLocation(SQLiteDatabase db) {
-        Log.v(LOG_TAG, "insertLocation()");
+    static long insertCheckLocation(SQLiteDatabase db) {
+        Log.v(LOG_TAG, "insertCheckLocation()");
         final ContentValues in = Util.makeLocationIn();
         final long result = db.insert(LocationEntry.TABLE, null, in);
         in.put(LocationEntry._ID, result);
         assertTrue(result != -1);
-        Log.d(LOG_TAG, "insertLocation(): result == " + result);
+        Log.d(LOG_TAG, "insertCheckLocation(): result == " + result);
         final Cursor cursor = db.query(
                 LocationEntry.TABLE, Util.locationColumns,
                 null, null, null, null, null);
         assertTrue(cursor.moveToFirst());
         final ContentValues out = Util.makeContentValues(cursor);
         assertEquals(in, out);
+        return result;
+    }
+
+    static ContentValues insertWeather(SQLiteDatabase db, long locationId) {
+        Log.v(LOG_TAG, "insertWeather()");
+        final ContentValues result = Util.makeWeatherIn();
+        result.put(WeatherEntry.COLUMN_LOCATION_KEY, locationId);
+        final long id = db.insert(WeatherEntry.TABLE, null, result);
+        Log.d(LOG_TAG, "insertWeather(): id == " + id);
+        assertTrue(id != -1);
+        result.put(WeatherEntry._ID, id);
         return result;
     }
 }

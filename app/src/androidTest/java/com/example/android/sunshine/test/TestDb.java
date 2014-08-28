@@ -25,29 +25,18 @@ public class TestDb extends AndroidTestCase {
         helper.close();
     }
 
-    public long insertWeather(SQLiteDatabase db, long locationId) {
-        Log.v(LOG_TAG, "TestDb.insertWeather()");
-        final ContentValues in = Util.makeWeatherIn();
-        in.put(WeatherEntry.COLUMN_LOCATION_KEY, locationId);
-        final long result = db.insert(WeatherEntry.TABLE, null, in);
-        Log.d(LOG_TAG, "insertWeather(): result == " + result);
-        assertTrue(result != -1);
-        in.put(WeatherEntry._ID, result);
-        final Cursor cursor = db.query(
-                WeatherEntry.TABLE, Util.weatherColumns,
-                null, null, null, null, null);
-        assertTrue(cursor.moveToFirst());
-        final ContentValues out = Util.makeContentValues(cursor);
-        assertEquals(in, out);
-        return result;
-    }
-
     public void testInsertReadDb() throws Throwable {
         Log.v(LOG_TAG, "TestDb.testInsertReadDb()");
         final WeatherDbHelper helper = new WeatherDbHelper(mContext);
         final SQLiteDatabase db = helper.getWritableDatabase();
-        final long locationId = Util.insertLocation(db);
-        final long weatherIdIgnored = insertWeather(db, locationId);
+        final long locationId = Util.insertCheckLocation(db);
+        final ContentValues weatherIn = Util.insertWeather(db, locationId);
+        final Cursor cursor = db.query(
+                WeatherEntry.TABLE, Util.weatherColumns,
+                null, null, null, null, null);
+        assertTrue(cursor.moveToFirst());
+        final ContentValues weatherOut = Util.makeContentValues(cursor);
+        assertEquals(weatherIn, weatherOut);
         db.close();
         helper.close();
     }
