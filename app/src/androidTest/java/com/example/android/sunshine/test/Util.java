@@ -3,23 +3,18 @@ package com.example.android.sunshine.test;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Map;
-import java.util.Set;
 
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
-import com.example.android.sunshine.data.WeatherDbHelper;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.test.AndroidTestCase;
 import android.util.Log;
-import junit.framework.Test;
 
 
-public class TestDb extends AndroidTestCase {
+public class Util {
 
-    final static String LOG_TAG = TestDb.class.getSimpleName();
+    final static String LOG_TAG = Util.class.getSimpleName();
 
     final static String[] locationColumns = {
         LocationEntry._ID,
@@ -65,7 +60,7 @@ public class TestDb extends AndroidTestCase {
         Long.valueOf(321)
     };
 
-    public Map<String, Object> makeMap(String[] keys, Object[] values) {
+    static public Map<String, Object> makeMap(String[] keys, Object[] values) {
         final int size = keys.length;
         final Map<String, Object> result = new HashMap<String, Object>(size);
         for (int index = 0; index < size; ++index) {
@@ -76,7 +71,7 @@ public class TestDb extends AndroidTestCase {
         return result;
     }
 
-    public ContentValues makeContentValues(Map<String, Object> row) {
+    static public ContentValues makeContentValues(Map<String, Object> row) {
         final ContentValues result = new ContentValues();
         for (Map.Entry<String, Object> e: row.entrySet()) {
             final String key = e.getKey();
@@ -102,7 +97,7 @@ public class TestDb extends AndroidTestCase {
         return result;
     }
 
-    public ContentValues makeContentValues(Cursor c) {
+    static public ContentValues makeContentValues(Cursor c) {
         final ContentValues result = new ContentValues();
         final int count = c.getColumnCount();
         for (int index = 0; index < count; ++index) {
@@ -124,61 +119,9 @@ public class TestDb extends AndroidTestCase {
                 result.put(name, c.getBlob(index));
                 break;
             default:
-                Log.d(LOG_TAG, "makeContentValues(): Cursor.getType() == "
-                        + c.getType(index));
+                Log.d(LOG_TAG, "Cursor.getType() == " + c.getType(index));
             }
         }
         return result;
-    }
-
-    public void testCreateDb() throws Throwable {
-        Log.v(LOG_TAG, "TestDb.testCreateDb()");
-        mContext.deleteDatabase(WeatherDbHelper.DATABASE_NAME);
-        final SQLiteDatabase db
-            = new WeatherDbHelper(mContext).getWritableDatabase();
-        assertEquals(true, db.isOpen());
-        db.close();
-    }
-
-    public void testInsertReadDb() throws Throwable {
-        Log.v(LOG_TAG, "TestDb.testInsertReadDb()");
-        final WeatherDbHelper dbh = new WeatherDbHelper(mContext);
-        final SQLiteDatabase db = dbh.getWritableDatabase();
-        final ContentValues locationIn
-            = makeContentValues(makeMap(locationColumns, locationRow));
-        final long locationRowId
-            = db.insert(LocationEntry.TABLE, null, locationIn);
-        locationIn.put(LocationEntry._ID, locationRowId);
-        Log.d(LOG_TAG, "testInsertReadDb(): locationRowId == "
-                + locationRowId);
-        assertTrue(locationRowId != -1);
-        final Cursor locationCursor = db.query(
-                LocationEntry.TABLE, locationColumns,
-                null, null, null, null, null);
-        assertTrue(locationCursor.moveToFirst());
-        final ContentValues locationOut = makeContentValues(locationCursor);
-        assertEquals(locationIn, locationOut);
-        final ContentValues weatherIn
-            = makeContentValues(makeMap(weatherColumns, weatherRow));
-        weatherIn.put(WeatherEntry.COLUMN_LOCATION_KEY, locationRowId);
-        final long weatherRowId
-            = db.insert(WeatherEntry.TABLE, null, weatherIn);
-        Log.d(LOG_TAG, "testInsertReadDb(): weatherRowId == "
-                + weatherRowId);
-        assertTrue(weatherRowId != -1);
-        weatherIn.put(WeatherEntry._ID, weatherRowId);
-        final Cursor weatherCursor = db.query(
-                WeatherEntry.TABLE, weatherColumns,
-                null, null, null, null, null);
-        assertTrue(weatherCursor.moveToFirst());
-        final ContentValues weatherOut = makeContentValues(weatherCursor);
-        assertEquals(weatherIn, weatherOut);
-    }
-
-    public TestDb() {
-        super();
-        Log.v(LOG_TAG, "TestDb()");
-        assertEquals(locationColumns.length, locationRow.length);
-        assertEquals(weatherColumns.length, weatherRow.length);
     }
 }

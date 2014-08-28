@@ -14,7 +14,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
-import android.test.suitebuilder.TestSuiteBuilder;
 import android.util.Log;
 import junit.framework.Test;
 
