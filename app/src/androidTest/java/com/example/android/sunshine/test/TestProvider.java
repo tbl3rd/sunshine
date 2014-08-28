@@ -107,8 +107,7 @@ public class TestProvider extends AndroidTestCase {
         final int count = c.getColumnCount();
         for (int index = 0; index < count; ++index) {
             final String name = c.getColumnName(index);
-            final int kind = c.getType(index);
-            switch (kind) {
+            switch (c.getType(index)) {
             case Cursor.FIELD_TYPE_NULL:
                 result.putNull(name);
                 break;
@@ -153,17 +152,18 @@ public class TestProvider extends AndroidTestCase {
                 resolver.getType(LocationEntry.buildLocationId(1L)));
     }
 
-    public void testInsertAndReadDb() throws Throwable {
-        Log.v(LOG_TAG, "TestProvider.testInsertAndReadDb()");
-        final WeatherDbHelper dbh = new WeatherDbHelper(mContext);
-        final SQLiteDatabase db = dbh.getWritableDatabase();
+    public void testInsertReadProvider() {
+        Log.v(LOG_TAG, "testInsertReadProvider()");
+        final WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
         final ContentValues locationIn
             = makeContentValues(makeMap(locationColumns, locationRow));
         final long locationRowId
             = db.insert(LocationEntry.TABLE, null, locationIn);
         locationIn.put(LocationEntry._ID, locationRowId);
-        Log.d(LOG_TAG, "locationRowId == " + locationRowId);
         assertTrue(locationRowId != -1);
+        Log.d(LOG_TAG, "testInsertReadProvider(): locationRowId == "
+                + locationRowId);
         final Cursor locationCursor = db.query(
                 LocationEntry.TABLE, locationColumns,
                 null, null, null, null, null);
@@ -177,12 +177,14 @@ public class TestProvider extends AndroidTestCase {
             = db.insert(WeatherEntry.TABLE, null, weatherIn);
         Log.d(LOG_TAG, "weatherRowId == " + weatherRowId);
         assertTrue(weatherRowId != -1);
-        final Cursor weatherCursor = db.query(
-                WeatherEntry.TABLE, weatherColumns,
-                null, null, null, null, null);
+        final ContentResolver resolver = mContext.getContentResolver();
+        final Cursor weatherCursor
+            = resolver.query(WeatherEntry.CONTENT_URI,
+                    weatherColumns, null, null, null);
         assertTrue(weatherCursor.moveToFirst());
         final ContentValues weatherOut = makeContentValues(weatherCursor);
         assertEquals(weatherIn, weatherOut);
+        dbHelper.close();
     }
 
     public TestProvider() {

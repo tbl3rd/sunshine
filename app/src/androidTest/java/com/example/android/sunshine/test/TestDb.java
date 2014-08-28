@@ -106,8 +106,7 @@ public class TestDb extends AndroidTestCase {
         final int count = c.getColumnCount();
         for (int index = 0; index < count; ++index) {
             final String name = c.getColumnName(index);
-            final int kind = c.getType(index);
-            switch (kind) {
+            switch (c.getType(index)) {
             case Cursor.FIELD_TYPE_NULL:
                 result.putNull(name);
                 break;
@@ -124,7 +123,8 @@ public class TestDb extends AndroidTestCase {
                 result.put(name, c.getBlob(index));
                 break;
             default:
-                Log.d(LOG_TAG, "Cursor.getType() == " + c.getType(index));
+                Log.d(LOG_TAG, "makeContentValues(): Cursor.getType() == "
+                        + c.getType(index));
             }
         }
         return result;
@@ -139,8 +139,8 @@ public class TestDb extends AndroidTestCase {
         db.close();
     }
 
-    public void testInsertAndReadDb() throws Throwable {
-        Log.v(LOG_TAG, "TestDb.testInsertAndReadDb()");
+    public void testInsertReadDb() throws Throwable {
+        Log.v(LOG_TAG, "TestDb.testInsertReadDb()");
         final WeatherDbHelper dbh = new WeatherDbHelper(mContext);
         final SQLiteDatabase db = dbh.getWritableDatabase();
         final ContentValues locationIn
@@ -148,7 +148,8 @@ public class TestDb extends AndroidTestCase {
         final long locationRowId
             = db.insert(LocationEntry.TABLE, null, locationIn);
         locationIn.put(LocationEntry._ID, locationRowId);
-        Log.d(LOG_TAG, "locationRowId == " + locationRowId);
+        Log.d(LOG_TAG, "testInsertReadDb(): locationRowId == "
+                + locationRowId);
         assertTrue(locationRowId != -1);
         final Cursor locationCursor = db.query(
                 LocationEntry.TABLE, locationColumns,
@@ -161,7 +162,8 @@ public class TestDb extends AndroidTestCase {
         weatherIn.put(WeatherEntry.COLUMN_LOCATION_KEY, locationRowId);
         final long weatherRowId
             = db.insert(WeatherEntry.TABLE, null, weatherIn);
-        Log.d(LOG_TAG, "weatherRowId == " + weatherRowId);
+        Log.d(LOG_TAG, "testInsertReadDb(): weatherRowId == "
+                + weatherRowId);
         assertTrue(weatherRowId != -1);
         final Cursor weatherCursor = db.query(
                 WeatherEntry.TABLE, weatherColumns,
