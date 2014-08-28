@@ -15,7 +15,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 import android.util.Log;
-import junit.framework.Test;
 
 
 public class TestProvider extends AndroidTestCase {

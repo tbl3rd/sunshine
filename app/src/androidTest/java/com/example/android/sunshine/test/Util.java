@@ -12,7 +12,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 
-public class Util {
+public class Util extends junit.framework.Assert {
 
     final static String LOG_TAG = Util.class.getSimpleName();
 
@@ -123,5 +123,15 @@ public class Util {
             }
         }
         return result;
+    }
+
+    static ContentValues makeLocationIn() {
+        assertEquals(locationColumns.length, locationRow.length);
+        return makeContentValues(makeMap(locationColumns, locationRow));
+    }
+
+    static ContentValues makeWeatherIn() {
+        assertEquals(weatherColumns.length, weatherRow.length);
+        return makeContentValues(makeMap(weatherColumns, weatherRow));
     }
 }
