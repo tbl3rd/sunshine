@@ -82,10 +82,10 @@ public class WeatherContract {
             return CONTENT_URI.buildUpon().appendPath(locationSetting).build();
         }
 
-        public static Uri buildWeatherLocationStartDate(
-                String locationSetting, String startDate) {
+        public static Uri buildWeatherLocationQueryDate(
+                String locationSetting, String date) {
             return CONTENT_URI.buildUpon().appendPath(locationSetting)
-                .appendQueryParameter(COLUMN_DATE, startDate).build();
+                .appendQueryParameter(COLUMN_DATE, date).build();
         }
 
         public static Uri buildWeatherLocationDate(
@@ -101,14 +101,14 @@ public class WeatherContract {
             return (segments.size() < 2) ? null : segments.get(1);
         }
 
-        public static String getDateFromUri(Uri uri) {
-            Log.v(TAG, "getDateFromUri(): uri == " + uri);
+        public static String getDateFromUriPath(Uri uri) {
+            Log.v(TAG, "getDateFromUriPath(): uri == " + uri);
             final List<String> segments = uri.getPathSegments();
             return (segments.size() < 3) ? null : segments.get(2);
         }
 
-        public static String getStartDateFromUri(Uri uri) {
-            Log.v(TAG, "getStartDateFromUri(): uri == " + uri);
+        public static String getDateFromUriQuery(Uri uri) {
+            Log.v(TAG, "getDateFromUriQuery(): uri == " + uri);
             return uri.getQueryParameter(COLUMN_DATE);
         }
     }

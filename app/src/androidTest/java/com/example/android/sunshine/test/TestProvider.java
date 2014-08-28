@@ -7,7 +7,6 @@ import com.example.android.sunshine.data.WeatherDbHelper;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 import android.util.Log;
@@ -50,33 +49,33 @@ public class TestProvider extends AndroidTestCase {
         assertTrue(locationId != -1);
         Log.d(TAG, "testInsertReadProvider(): locationId == " + locationId);
         assertEquals(locationIn,
-                Util.makeContentValues(
-                        resolver.query(
+                Util.makeContentValues(resolver.query(
                                 LocationEntry.CONTENT_URI,
                                 Util.locationColumns, null, null, null)));
         assertEquals(locationIn,
-                Util.makeContentValues(
-                        resolver.query(
+                Util.makeContentValues(resolver.query(
                                 ContentUris.withAppendedId(
                                         LocationEntry.CONTENT_URI, locationId),
                                 Util.locationColumns, null, null, null)));
         final ContentValues weatherIn = Util.insertWeather(db, locationId);
         assertEquals(weatherIn,
-                Util.makeContentValues(
-                        resolver.query(
+                Util.makeContentValues(resolver.query(
                                 WeatherEntry.CONTENT_URI,
                                 Util.weatherColumns, null, null, null)));
         final ContentValues joined = new ContentValues(locationIn);
         joined.putAll(weatherIn);
         assertEquals(joined,
-                Util.makeContentValues(
-                        resolver.query(
+                Util.makeContentValues(resolver.query(
                                 WeatherEntry.buildWeatherLocation(Util.WHERE),
                                 null, null, null, null)));
         assertEquals(joined,
-                Util.makeContentValues(
-                        resolver.query(
+                Util.makeContentValues(resolver.query(
                                 WeatherEntry.buildWeatherLocationDate(
+                                        Util.WHERE, Util.WHEN),
+                                null, null, null, null)));
+        assertEquals(joined,
+                Util.makeContentValues(resolver.query(
+                                WeatherEntry.buildWeatherLocationQueryDate(
                                         Util.WHERE, Util.WHEN),
                                 null, null, null, null)));
         db.close();

@@ -75,8 +75,11 @@ public class WeatherProvider extends ContentProvider {
     {
         final String setting
             = WeatherContract.WeatherEntry.getLocationSettingFromUri(uri);
-        final String date
-            = WeatherContract.WeatherEntry.getDateFromUri(uri);
+        final String dateFromUri
+            = WeatherContract.WeatherEntry.getDateFromUriPath(uri);
+        final String date = (dateFromUri == null)
+            ? WeatherContract.WeatherEntry.getDateFromUriQuery(uri)
+            : dateFromUri;
         Log.v(TAG, "getWeatherByLocationSetting(): setting == " + setting);
         Log.v(TAG, "getWeatherByLocationSetting(): date == " + date);
         final String select = (date == null)
