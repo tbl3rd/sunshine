@@ -10,9 +10,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 
 public class WeatherProvider extends ContentProvider {
+
+    private static final String TAG = WeatherProvider.class.getSimpleName();
 
     private static final int WEATHER = 100;
     private static final int WEATHER_WITH_LOCATION = 101;
@@ -38,11 +41,53 @@ public class WeatherProvider extends ContentProvider {
     private Context mContext;
     private WeatherDbHelper mDbHelper;
 
-    @Override
-    public boolean onCreate() {
-        mContext = getContext();
-        mDbHelper = new WeatherDbHelper(mContext);
-        return true;
+    private static SQLiteQueryBuilder makeWeatherByLocationQueryBuilder() {
+        final SQLiteQueryBuilder result = new SQLiteQueryBuilder();
+        result.setTables(
+                WeatherContract.WeatherEntry.TABLE
+                + " INNER JOIN "
+                + WeatherContract.LocationEntry.TABLE
+                + " ON "
+                + WeatherContract.WeatherEntry.TABLE
+                + "."
+                + WeatherContract.WeatherEntry.COLUMN_LOCATION_KEY
+                + " = "
+                + WeatherContract.LocationEntry.TABLE
+                + "."
+                + WeatherContract.LocationEntry._ID);
+        return result;
+    }
+
+    private static SQLiteQueryBuilder sWeatherByLocationQueryBuilder
+        = makeWeatherByLocationQueryBuilder();
+
+    private static final String sLocationSettingSelection
+        = WeatherContract.LocationEntry.TABLE + "."
+        + WeatherContract.LocationEntry.COLUMN_SETTING + " = ? ";
+
+    private static final String sLocationSettingStartDateSelection
+        = WeatherContract.LocationEntry.TABLE + "."
+        + WeatherContract.LocationEntry.COLUMN_SETTING + " = ? AND "
+        + WeatherContract.WeatherEntry.COLUMN_DATE + " >= ? ";
+
+    private Cursor getWeatherByLocationSetting(
+            Uri uri, String[] projection, String sortOrder)
+    {
+        final String setting
+            = WeatherContract.WeatherEntry.getLocationSettingFromUri(uri);
+        final String date
+            = WeatherContract.WeatherEntry.getDateFromUri(uri);
+        Log.v(TAG, "getWeatherByLocationSetting(): setting == " + setting);
+        Log.v(TAG, "getWeatherByLocationSetting(): date == " + date);
+        final String select = (date == null)
+            ? sLocationSettingSelection
+            : sLocationSettingStartDateSelection;
+        final String[] args = (date == null)
+            ? (new String[]{ setting })
+            : (new String[]{ setting, date });
+        return sWeatherByLocationQueryBuilder.query(
+                mDbHelper.getReadableDatabase(), projection,
+                select, args, null, null, null, null);
     }
 
     @Override
@@ -61,7 +106,9 @@ public class WeatherProvider extends ContentProvider {
                     null, null, sortOrder);
             break;
         case LOCATION_ID: {
-            final String select = WeatherContract.LocationEntry._ID + " = ? ";
+            final String select
+                = WeatherContract.LocationEntry.TABLE + "."
+                + WeatherContract.LocationEntry._ID + " = ? ";
             final String[] args = { String.valueOf(ContentUris.parseId(uri)) };
             result = db.query(WeatherContract.LocationEntry.TABLE,
                     projection, select, args, null, null, sortOrder);
@@ -74,6 +121,8 @@ public class WeatherProvider extends ContentProvider {
             break;
         case WEATHER_WITH_LOCATION:
         case WEATHER_WITH_LOCATION_AND_DATE:
+            result = getWeatherByLocationSetting(uri, projection, sortOrder);
+            break;
         default:
             throw new UnsupportedOperationException("URI == " + uri);
         }
@@ -116,5 +165,12 @@ public class WeatherProvider extends ContentProvider {
             String selection,
             String[] selectionArgs) {
         return 0;
+    }
+
+    @Override
+    public boolean onCreate() {
+        mContext = getContext();
+        mDbHelper = new WeatherDbHelper(mContext);
+        return true;
     }
 }

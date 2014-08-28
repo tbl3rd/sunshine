@@ -14,10 +14,10 @@ import android.util.Log;
  */
 public class ApplicationTest extends ApplicationTestCase<Application> {
 
-    final static String LOG_TAG = ApplicationTest.class.getSimpleName();
+    final static String TAG = ApplicationTest.class.getSimpleName();
 
     public void testCreateDb() throws Throwable {
-        Log.v(LOG_TAG, "testCreateDb()");
+        Log.v(TAG, "testCreateDb()");
         mContext.deleteDatabase(WeatherDbHelper.DATABASE);
         final SQLiteDatabase db
             = new WeatherDbHelper(mContext).getWritableDatabase();

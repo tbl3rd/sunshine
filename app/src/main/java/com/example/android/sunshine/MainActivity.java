@@ -15,8 +15,7 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
-    private static final String LOG_TAG
-        = MainActivity.class.getSimpleName();
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     public String getLocationPreference() {
         final String key = getString(R.string.preference_location_key);
@@ -51,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreate()");
+        Log.v(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
@@ -64,37 +63,37 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onStart() {
-        Log.v(LOG_TAG, "onStart()");
+        Log.v(TAG, "onStart()");
         super.onStart();
     }
 
     @Override
     protected void onRestart() {
-        Log.v(LOG_TAG, "onRestart()");
+        Log.v(TAG, "onRestart()");
         super.onRestart();
     }
 
     @Override
     protected void onPause() {
-        Log.v(LOG_TAG, "onPause()");
+        Log.v(TAG, "onPause()");
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        Log.v(LOG_TAG, "onResume()");
+        Log.v(TAG, "onResume()");
         super.onResume();
     }
 
     @Override
     protected void onStop() {
-        Log.v(LOG_TAG, "onStop()");
+        Log.v(TAG, "onStop()");
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Log.v(LOG_TAG, "onDestroy()");
+        Log.v(TAG, "onDestroy()");
         super.onDestroy();
     }
 

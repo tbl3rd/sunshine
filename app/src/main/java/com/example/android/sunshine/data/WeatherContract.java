@@ -1,5 +1,7 @@
 package com.example.android.sunshine.data;
 
+import java.util.List;
+
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -7,6 +9,8 @@ import android.util.Log;
 
 
 public class WeatherContract {
+
+    private static final String TAG = WeatherContract.class.getSimpleName();
 
     public static final String CONTENT_AUTHORITY
         = WeatherContract.class.getPackage().getName();
@@ -21,8 +25,7 @@ public class WeatherContract {
 
     public static final class LocationEntry implements BaseColumns {
 
-        public static final String LOG_TAG
-            = LocationEntry.class.getSimpleName();
+        public static final String TAG = LocationEntry.class.getSimpleName();
 
         public static final String TABLE = "location";
         public static final String COLUMN_SETTING = "setting";
@@ -40,14 +43,14 @@ public class WeatherContract {
             = CURSOR_TYPE_ITEM + "/" + CONTENT_AUTHORITY + "/" + TABLE;
 
         public static Uri buildLocationId(long id) {
-            Log.v(LOG_TAG, "CONTENT_URI == " + CONTENT_URI);
+            Log.v(TAG, "CONTENT_URI == " + CONTENT_URI);
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }
 
     public static final class WeatherEntry implements BaseColumns {
 
-        public static final String LOG_TAG = WeatherEntry.class.getSimpleName();
+        public static final String TAG = WeatherEntry.class.getSimpleName();
 
         public static final String TABLE = "weather";
         public static final String COLUMN_LOCATION_KEY = "location_id";
@@ -71,7 +74,7 @@ public class WeatherContract {
             CURSOR_TYPE_ITEM + "/" + CONTENT_AUTHORITY + "/" + TABLE;
 
         public static Uri buildWeatherId(long id) {
-            Log.v(LOG_TAG, "CONTENT_URI == " + CONTENT_URI);
+            Log.v(TAG, "CONTENT_URI == " + CONTENT_URI);
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
@@ -93,14 +96,19 @@ public class WeatherContract {
         }
 
         public static String getLocationSettingFromUri(Uri uri) {
-            return uri.getPathSegments().get(1);
+            Log.v(TAG, "getLocationSettingFromUri(): uri == " + uri);
+            final List<String> segments = uri.getPathSegments();
+            return (segments.size() < 2) ? null : segments.get(1);
         }
 
         public static String getDateFromUri(Uri uri) {
-            return uri.getPathSegments().get(2);
+            Log.v(TAG, "getDateFromUri(): uri == " + uri);
+            final List<String> segments = uri.getPathSegments();
+            return (segments.size() < 3) ? null : segments.get(2);
         }
 
         public static String getStartDateFromUri(Uri uri) {
+            Log.v(TAG, "getStartDateFromUri(): uri == " + uri);
             return uri.getQueryParameter(COLUMN_DATE);
         }
     }

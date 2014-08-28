@@ -37,8 +37,7 @@ import android.widget.Toast;
 
 public class ForecastFragment extends Fragment {
 
-    private static final String LOG_TAG
-        = ForecastFragment.class.getSimpleName();
+    private static final String TAG = ForecastFragment.class.getSimpleName();
 
     ArrayAdapter<String> mForecastAdapter = null;
 
@@ -89,13 +88,13 @@ public class ForecastFragment extends Fragment {
             }
             return buffer.toString();
         } catch (final Exception e) {
-            Log.e(LOG_TAG, "catch in fetchForecast()", e);
+            Log.e(TAG, "catch in fetchForecast()", e);
         } finally {
             try {
                 if (connection != null) connection.disconnect();
                 if (reader != null) reader.close();
             } catch (final Exception e) {
-                Log.e(LOG_TAG, "finally in fetchForecast()", e);
+                Log.e(TAG, "finally in fetchForecast()", e);
             }
         }
         return null;
@@ -144,7 +143,7 @@ public class ForecastFragment extends Fragment {
                 result[i] = day + " - " + description + " -- " + highLow;
             }
         } catch (final Exception e) {
-            Log.e(LOG_TAG, "parseWeather() catch", e);
+            Log.e(TAG, "parseWeather() catch", e);
         }
         return result;
     }
@@ -168,13 +167,13 @@ public class ForecastFragment extends Fragment {
 
     private void asyncFetchForecast() {
         final String url = getFetchForecastUrl();
-        Log.i(LOG_TAG, "asyncFetchForecast() url == " + url);
+        Log.i(TAG, "asyncFetchForecast() url == " + url);
         new AsyncTask<Void, Void, String[]>() {
             protected String[] doInBackground(Void... ignored) {
                 return parseWeather(fetchForecast(url));
             }
             protected void onPostExecute(String[] forecast) {
-                Log.v(LOG_TAG, "onPostExecute()");
+                Log.v(TAG, "onPostExecute()");
                 mForecastAdapter.clear();
                 mForecastAdapter.addAll(forecast);
             }
@@ -209,12 +208,12 @@ public class ForecastFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.i(LOG_TAG, "onCreateOptionsMenu()");
+        Log.i(TAG, "onCreateOptionsMenu()");
         inflater.inflate(R.menu.forecastfragment, menu);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i(LOG_TAG, "onOptionsItemSelected()");
+        Log.i(TAG, "onOptionsItemSelected()");
         switch (item.getItemId()) {
         case R.id.action_refresh:
             asyncFetchForecast();

@@ -15,7 +15,10 @@ import android.util.Log;
 
 public class Util extends junit.framework.Assert {
 
-    final static String LOG_TAG = Util.class.getSimpleName();
+    final static String TAG = Util.class.getSimpleName();
+
+    final static String WHERE = "02138";
+    final static String WHEN = "20140612";
 
     final static String[] locationColumns = {
         LocationEntry._ID,
@@ -27,7 +30,7 @@ public class Util extends junit.framework.Assert {
 
     final static Object[] locationRow = {
         null,
-        "99705",
+        WHERE,
         "North Pole",
         Double.valueOf(64.772),
         Double.valueOf(-147.355)
@@ -50,7 +53,7 @@ public class Util extends junit.framework.Assert {
     final static Object[] weatherRow = {
         null,
         null,
-        "20141205",
+        WHEN,
         "Asteroids",
         Double.valueOf(65),
         Double.valueOf(75),
@@ -64,11 +67,7 @@ public class Util extends junit.framework.Assert {
     static Map<String, Object> makeMap(String[] keys, Object[] values) {
         final int size = keys.length;
         final Map<String, Object> result = new HashMap<String, Object>(size);
-        for (int index = 0; index < size; ++index) {
-            final String k = keys[index];
-            final Object v = values[index];
-            result.put(k, v);
-        }
+        for (int i = 0; i < size; ++i) result.put(keys[i], values[i]);
         return result;
     }
 
@@ -91,7 +90,7 @@ public class Util extends junit.framework.Assert {
                 final String vc = (value == null)
                     ? "NULL"
                     : value.getClass().getSimpleName();
-                Log.d(LOG_TAG, "makeContentValues(else): "
+                Log.d(TAG, "makeContentValues(else): "
                         + key + ", " + value + " of " + vc);
             }
         }
@@ -121,7 +120,7 @@ public class Util extends junit.framework.Assert {
                 result.put(name, c.getBlob(index));
                 break;
             default:
-                Log.d(LOG_TAG, "Cursor.getType() == " + c.getType(index));
+                Log.d(TAG, "Cursor.getType() == " + c.getType(index));
             }
         }
         return result;
@@ -138,12 +137,12 @@ public class Util extends junit.framework.Assert {
     }
 
     static long insertCheckLocation(SQLiteDatabase db) {
-        Log.v(LOG_TAG, "insertCheckLocation()");
+        Log.v(TAG, "insertCheckLocation()");
         final ContentValues in = Util.makeLocationIn();
         final long result = db.insert(LocationEntry.TABLE, null, in);
         in.put(LocationEntry._ID, result);
         assertTrue(result != -1);
-        Log.d(LOG_TAG, "insertCheckLocation(): result == " + result);
+        Log.d(TAG, "insertCheckLocation(): result == " + result);
         final Cursor cursor = db.query(
                 LocationEntry.TABLE, Util.locationColumns,
                 null, null, null, null, null);
@@ -153,11 +152,11 @@ public class Util extends junit.framework.Assert {
     }
 
     static ContentValues insertWeather(SQLiteDatabase db, long locationId) {
-        Log.v(LOG_TAG, "insertWeather()");
+        Log.v(TAG, "insertWeather()");
         final ContentValues result = Util.makeWeatherIn();
         result.put(WeatherEntry.COLUMN_LOCATION_KEY, locationId);
         final long id = db.insert(WeatherEntry.TABLE, null, result);
-        Log.d(LOG_TAG, "insertWeather(): id == " + id);
+        Log.d(TAG, "insertWeather(): id == " + id);
         assertTrue(id != -1);
         result.put(WeatherEntry._ID, id);
         return result;

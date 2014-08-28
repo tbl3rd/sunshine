@@ -13,10 +13,10 @@ import android.util.Log;
 
 public class TestDb extends AndroidTestCase {
 
-    final static String LOG_TAG = TestDb.class.getSimpleName();
+    final static String TAG = TestDb.class.getSimpleName();
 
     public void testCreateDb() {
-        Log.v(LOG_TAG, "TestDb.testCreateDb()");
+        Log.v(TAG, "TestDb.testCreateDb()");
         mContext.deleteDatabase(WeatherDbHelper.DATABASE);
         final WeatherDbHelper helper = new WeatherDbHelper(mContext);
         final SQLiteDatabase db = helper.getWritableDatabase();
@@ -26,7 +26,7 @@ public class TestDb extends AndroidTestCase {
     }
 
     public void testInsertReadDb() {
-        Log.v(LOG_TAG, "TestDb.testInsertReadDb()");
+        Log.v(TAG, "TestDb.testInsertReadDb()");
         final WeatherDbHelper helper = new WeatherDbHelper(mContext);
         final SQLiteDatabase db = helper.getWritableDatabase();
         final long locationId = Util.insertCheckLocation(db);
@@ -42,6 +42,6 @@ public class TestDb extends AndroidTestCase {
 
     public TestDb() {
         super();
-        Log.v(LOG_TAG, "TestDb()");
+        Log.v(TAG, "TestDb()");
     }
 }
