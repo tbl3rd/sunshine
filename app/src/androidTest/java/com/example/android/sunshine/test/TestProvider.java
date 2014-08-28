@@ -18,7 +18,7 @@ public class TestProvider extends AndroidTestCase {
 
     public void testDeleteDb() throws Throwable {
         Log.v(LOG_TAG, "TestProvider.testDeleteDb()");
-        mContext.deleteDatabase(WeatherDbHelper.DATABASE_NAME);
+        mContext.deleteDatabase(WeatherDbHelper.DATABASE);
     }
 
     public void testGetType() {
@@ -56,6 +56,6 @@ public class TestProvider extends AndroidTestCase {
     public TestProvider() {
         super();
         Log.v(LOG_TAG, "TestProvider()");
-        // mResolver = mContext.getContentResolver(); // TBL: mContext == null
+        // mResolver = mContext.getContentResolver(); // WTF: mContext == null
     }
 }

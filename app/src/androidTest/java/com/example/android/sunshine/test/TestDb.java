@@ -17,7 +17,7 @@ public class TestDb extends AndroidTestCase {
 
     public void testCreateDb() throws Throwable {
         Log.v(LOG_TAG, "TestDb.testCreateDb()");
-        mContext.deleteDatabase(WeatherDbHelper.DATABASE_NAME);
+        mContext.deleteDatabase(WeatherDbHelper.DATABASE);
         final WeatherDbHelper helper = new WeatherDbHelper(mContext);
         final SQLiteDatabase db = helper.getWritableDatabase();
         assertEquals(true, db.isOpen());
