@@ -186,26 +186,22 @@ public class WeatherProvider extends ContentProvider {
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         switch (sMatcher.match(uri)) {
         case WEATHER: {
-            final String where
-                = WeatherEntry.TABLE + "." + WeatherEntry._ID + " = ? ";
             final long id = ContentUris.parseId(uri);
             if (id > 0) {
+                final String where
+                    = WeatherEntry.TABLE + "." + WeatherEntry._ID + " = ? ";
                 final String[] ids = { String.valueOf(id) };
                 result += db.delete(WeatherEntry.TABLE, where, ids);
-            } else {
-                throw new android.database.SQLException(where + id);
             }
             break;
         }
         case LOCATION: {
-            final String where
-                = LocationEntry.TABLE + "." + LocationEntry._ID + " = ? ";
             final long id = ContentUris.parseId(uri);
             if (id > 0) {
+                final String where
+                    = LocationEntry.TABLE + "." + LocationEntry._ID + " = ? ";
                 final String[] ids = { String.valueOf(id) };
                 result += db.delete(LocationEntry.TABLE, where, ids);
-            } else {
-                throw new android.database.SQLException(where + id);
             }
             break;
         }
@@ -226,26 +222,22 @@ public class WeatherProvider extends ContentProvider {
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         switch (sMatcher.match(uri)) {
         case WEATHER: {
-            final String where
-                = WeatherEntry.TABLE + "." + WeatherEntry._ID + " = ? ";
             final long id = ContentUris.parseId(uri);
             if (id > 0) {
+                final String where
+                    = WeatherEntry.TABLE + "." + WeatherEntry._ID + " = ? ";
                 final String[] ids = { String.valueOf(id) };
                 result += db.update(WeatherEntry.TABLE, values, where, ids);
-            } else {
-                throw new android.database.SQLException(where + id);
             }
             break;
         }
         case LOCATION: {
-            final String where
-                = LocationEntry.TABLE + "." + LocationEntry._ID + " = ? ";
             final long id = ContentUris.parseId(uri);
             if (id > 0) {
+                final String where
+                    = LocationEntry.TABLE + "." + LocationEntry._ID + " = ? ";
                 final String[] ids = { String.valueOf(id) };
                 result += db.update(LocationEntry.TABLE, values, where, ids);
-            } else {
-                throw new android.database.SQLException(where + id);
             }
             break;
         }
