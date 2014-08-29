@@ -1,5 +1,8 @@
 package com.example.android.sunshine.data;
 
+import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
+import com.example.android.sunshine.data.WeatherContract.LocationEntry;
+
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -41,7 +44,7 @@ public class WeatherProvider extends ContentProvider {
     private Context mContext;
     private WeatherDbHelper mDbHelper;
 
-    private static SQLiteQueryBuilder makeWeatherByLocationQueryBuilder() {
+    private static SQLiteQueryBuilder makeJoinOnLocationId() {
         final SQLiteQueryBuilder result = new SQLiteQueryBuilder();
         result.setTables(
                 WeatherContract.WeatherEntry.TABLE
@@ -58,39 +61,41 @@ public class WeatherProvider extends ContentProvider {
         return result;
     }
 
-    private static SQLiteQueryBuilder sWeatherByLocationQueryBuilder
-        = makeWeatherByLocationQueryBuilder();
+    private static SQLiteQueryBuilder sJoinOnLocationId
+        = makeJoinOnLocationId();
 
-    private static final String sLocationSettingSelection
-        = WeatherContract.LocationEntry.TABLE + "."
-        + WeatherContract.LocationEntry.COLUMN_SETTING + " = ? ";
-
-    private static final String sLocationSettingStartDateSelection
-        = WeatherContract.LocationEntry.TABLE + "."
-        + WeatherContract.LocationEntry.COLUMN_SETTING + " = ? AND "
-        + WeatherContract.WeatherEntry.COLUMN_DATE + " >= ? ";
+    private static String getSelector(String path, String query) {
+        final int inPath  = (path == null)  ? 0 : 1;
+        final int inQuery = (query == null) ? 0 : 2;
+        switch (inPath + inQuery) {
+        case 0:  return LocationEntry.TABLE + "."
+                +       LocationEntry.COLUMN_SETTING + " = ? ";
+        case 1:  return LocationEntry.TABLE + "."
+                +       LocationEntry.COLUMN_SETTING + " = ? AND "
+                +       WeatherEntry.COLUMN_DATE + " = ? ";
+        default: return LocationEntry.TABLE + "."
+                +       LocationEntry.COLUMN_SETTING + " = ? AND "
+                +       WeatherEntry.COLUMN_DATE + " >= ? ";
+        }
+    }
 
     private Cursor getWeatherByLocationSetting(
             Uri uri, String[] projection, String sortOrder)
     {
-        final String setting
-            = WeatherContract.WeatherEntry.getLocationSettingFromUri(uri);
-        final String dateFromUri
-            = WeatherContract.WeatherEntry.getDateFromUriPath(uri);
-        final String date = (dateFromUri == null)
-            ? WeatherContract.WeatherEntry.getDateFromUriQuery(uri)
-            : dateFromUri;
+        final String setting = WeatherEntry.getLocationSettingFromUri(uri);
+        final String datePath = WeatherEntry.getDateFromUriPath(uri);
+        final String dateQuery = WeatherEntry.getDateFromUriQuery(uri);
+        final String date = (datePath == null) ? dateQuery : datePath;
         Log.v(TAG, "getWeatherByLocationSetting(): setting == " + setting);
         Log.v(TAG, "getWeatherByLocationSetting(): date == " + date);
-        final String select = (date == null)
-            ? sLocationSettingSelection
-            : sLocationSettingStartDateSelection;
+        final String selector = getSelector(datePath, dateQuery);
+        Log.v(TAG, "getWeatherByLocationSetting(): selector == " + selector);
         final String[] args = (date == null)
             ? (new String[]{ setting })
             : (new String[]{ setting, date });
-        return sWeatherByLocationQueryBuilder.query(
+        return sJoinOnLocationId.query(
                 mDbHelper.getReadableDatabase(), projection,
-                select, args, null, null, null, null);
+                selector, args, null, null, null, null);
     }
 
     @Override
@@ -104,26 +109,24 @@ public class WeatherProvider extends ContentProvider {
         final SQLiteDatabase db = mDbHelper.getReadableDatabase();
         switch (sMatcher.match(uri)) {
         case WEATHER:
-            result = db.query(WeatherContract.WeatherEntry.TABLE,
-                    projection, selection, selectionArgs,
-                    null, null, sortOrder);
+            result = db.query(WeatherEntry.TABLE, projection,
+                    selection, selectionArgs, null, null, sortOrder);
             break;
         case WEATHER_WITH_LOCATION:
         case WEATHER_WITH_LOCATION_AND_DATE:
             result = getWeatherByLocationSetting(uri, projection, sortOrder);
             break;
         case LOCATION:
-            result = db.query(WeatherContract.LocationEntry.TABLE,
-                    projection, selection, selectionArgs,
-                    null, null, sortOrder);
+            result = db.query(LocationEntry.TABLE, projection,
+                    selection, selectionArgs, null, null, sortOrder);
             break;
         case LOCATION_ID: {
             final String select
-                = WeatherContract.LocationEntry.TABLE + "."
-                + WeatherContract.LocationEntry._ID + " = ? ";
+                = LocationEntry.TABLE + "."
+                + LocationEntry._ID + " = ? ";
             final String[] args = { String.valueOf(ContentUris.parseId(uri)) };
-            result = db.query(WeatherContract.LocationEntry.TABLE,
-                    projection, select, args, null, null, sortOrder);
+            result = db.query(LocationEntry.TABLE, projection,
+                    select, args, null, null, sortOrder);
             break;
         }
         default:
