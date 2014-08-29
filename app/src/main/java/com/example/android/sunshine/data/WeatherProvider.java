@@ -126,8 +126,7 @@ public class WeatherProvider extends ContentProvider {
         default:
             throw new UnsupportedOperationException("URI == " + uri);
         }
-        final ContentResolver resolver = mContext.getContentResolver();
-        result.setNotificationUri(resolver, uri);
+        result.setNotificationUri(mContext.getContentResolver(), uri);
         return result;
     }
 
@@ -183,15 +182,78 @@ public class WeatherProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+        int result = 0;
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        switch (sMatcher.match(uri)) {
+        case WEATHER: {
+            final String where
+                = WeatherEntry.TABLE + "." + WeatherEntry._ID + " = ? ";
+            final long id = ContentUris.parseId(uri);
+            if (id > 0) {
+                final String[] ids = { String.valueOf(id) };
+                result += db.delete(WeatherEntry.TABLE, where, ids);
+            } else {
+                throw new android.database.SQLException(where + id);
+            }
+            break;
+        }
+        case LOCATION: {
+            final String where
+                = LocationEntry.TABLE + "." + LocationEntry._ID + " = ? ";
+            final long id = ContentUris.parseId(uri);
+            if (id > 0) {
+                final String[] ids = { String.valueOf(id) };
+                result += db.delete(LocationEntry.TABLE, where, ids);
+            } else {
+                throw new android.database.SQLException(where + id);
+            }
+            break;
+        }
+        default:
+            throw new UnsupportedOperationException("URI == " + uri);
+        }
+        mContext.getContentResolver().notifyChange(uri, null);
+        return result;
     }
 
     @Override
     public int update(Uri uri,
             ContentValues values,
             String selection,
-            String[] selectionArgs) {
-        return 0;
+            String[] selectionArgs)
+    {
+        int result = 0;
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        switch (sMatcher.match(uri)) {
+        case WEATHER: {
+            final String where
+                = WeatherEntry.TABLE + "." + WeatherEntry._ID + " = ? ";
+            final long id = ContentUris.parseId(uri);
+            if (id > 0) {
+                final String[] ids = { String.valueOf(id) };
+                result += db.update(WeatherEntry.TABLE, values, where, ids);
+            } else {
+                throw new android.database.SQLException(where + id);
+            }
+            break;
+        }
+        case LOCATION: {
+            final String where
+                = LocationEntry.TABLE + "." + LocationEntry._ID + " = ? ";
+            final long id = ContentUris.parseId(uri);
+            if (id > 0) {
+                final String[] ids = { String.valueOf(id) };
+                result += db.update(LocationEntry.TABLE, values, where, ids);
+            } else {
+                throw new android.database.SQLException(where + id);
+            }
+            break;
+        }
+        default:
+            throw new UnsupportedOperationException("URI == " + uri);
+        }
+        mContext.getContentResolver().notifyChange(uri, null);
+        return result;
     }
 
     @Override
