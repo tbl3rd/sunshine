@@ -38,32 +38,22 @@ public class TestProvider extends AndroidTestCase {
                 resolver.getType(LocationEntry.buildLocationId(1L)));
     }
 
-    public void testInsertReadProvider() {
-        Log.v(TAG, "testInsertReadProvider()");
-        final ContentResolver resolver = mContext.getContentResolver();
-        final WeatherDbHelper helper = new WeatherDbHelper(mContext);
-        final SQLiteDatabase db = helper.getWritableDatabase();
-        final ContentValues locationIn = Util.makeLocationIn();
-        final long locationId = db.insert(LocationEntry.TABLE, null, locationIn);
-        locationIn.put(LocationEntry._ID, locationId);
-        assertTrue(locationId != -1);
-        Log.d(TAG, "testInsertReadProvider(): locationId == " + locationId);
-        assertEquals(locationIn,
+    public void assertLocation(ContentValues location, long id,
+            ContentResolver resolver)
+    {
+        assertEquals(location,
                 Util.makeContentValues(resolver.query(
                                 LocationEntry.CONTENT_URI,
                                 Util.locationColumns, null, null, null)));
-        assertEquals(locationIn,
+        assertEquals(location,
                 Util.makeContentValues(resolver.query(
                                 ContentUris.withAppendedId(
-                                        LocationEntry.CONTENT_URI, locationId),
+                                        LocationEntry.CONTENT_URI, id),
                                 Util.locationColumns, null, null, null)));
-        final ContentValues weatherIn = Util.insertWeather(db, locationId);
-        assertEquals(weatherIn,
-                Util.makeContentValues(resolver.query(
-                                WeatherEntry.CONTENT_URI,
-                                Util.weatherColumns, null, null, null)));
-        final ContentValues joined = new ContentValues(locationIn);
-        joined.putAll(weatherIn);
+    }
+
+    public void assertJoined(ContentValues joined, ContentResolver resolver)
+    {
         assertEquals(joined,
                 Util.makeContentValues(resolver.query(
                                 WeatherEntry.buildWeatherLocation(Util.WHERE),
@@ -78,6 +68,27 @@ public class TestProvider extends AndroidTestCase {
                                 WeatherEntry.buildWeatherLocationQueryDate(
                                         Util.WHERE, Util.WHEN),
                                 null, null, null, null)));
+    }
+
+    public void testInsertReadProvider() {
+        Log.v(TAG, "testInsertReadProvider()");
+        final ContentResolver resolver = mContext.getContentResolver();
+        final WeatherDbHelper helper = new WeatherDbHelper(mContext);
+        final SQLiteDatabase db = helper.getWritableDatabase();
+        final ContentValues locationIn = Util.makeLocationIn();
+        final long locationId = db.insert(LocationEntry.TABLE, null, locationIn);
+        locationIn.put(LocationEntry._ID, locationId);
+        assertTrue(locationId != -1);
+        Log.d(TAG, "testInsertReadProvider(): locationId == " + locationId);
+        assertLocation(locationIn, locationId, resolver);
+        final ContentValues weatherIn = Util.insertWeather(db, locationId);
+        assertEquals(weatherIn,
+                Util.makeContentValues(resolver.query(
+                                WeatherEntry.CONTENT_URI,
+                                Util.weatherColumns, null, null, null)));
+        final ContentValues joined = new ContentValues(locationIn);
+        joined.putAll(weatherIn);
+        assertJoined(joined, resolver);
         db.close();
         helper.close();
     }
