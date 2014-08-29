@@ -135,15 +135,4 @@ public class Util extends junit.framework.Assert {
         assertEquals(weatherColumns.length, weatherRow.length);
         return makeContentValues(makeMap(weatherColumns, weatherRow));
     }
-
-    static ContentValues insertWeather(SQLiteDatabase db, long locationId) {
-        Log.v(TAG, "insertWeather()");
-        final ContentValues result = Util.makeWeatherIn();
-        result.put(WeatherEntry.COLUMN_LOCATION_KEY, locationId);
-        final long id = db.insert(WeatherEntry.TABLE, null, result);
-        Log.d(TAG, "insertWeather(): id == " + id);
-        assertTrue(id != -1);
-        result.put(WeatherEntry._ID, id);
-        return result;
-    }
 }
