@@ -151,7 +151,34 @@ public class WeatherProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        return null;
+        Uri result = null;
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        switch (sMatcher.match(uri)) {
+        case WEATHER: {
+            final long id = db.insert(WeatherEntry.TABLE, null, values);
+            if (id > 0) {
+                result = WeatherEntry.buildWeatherId(id);
+            } else {
+                throw new android.database.SQLException(
+                        WeatherEntry.TABLE + " id == " + id);
+            }
+            break;
+        }
+        case LOCATION: {
+            final long id = db.insert(LocationEntry.TABLE, null, values);
+            if (id > 0) {
+                result = LocationEntry.buildLocationId(id);
+            } else {
+                throw new android.database.SQLException(
+                        LocationEntry.TABLE + " id == " + id);
+            }
+            break;
+        }
+        default:
+            throw new UnsupportedOperationException("URI == " + uri);
+        }
+        getContext().getContentResolver().notifyChange(result, null);
+        return result;
     }
 
     @Override

@@ -73,15 +73,20 @@ public class TestProvider extends AndroidTestCase {
     public void testInsertReadProvider() {
         Log.v(TAG, "testInsertReadProvider()");
         final ContentResolver resolver = mContext.getContentResolver();
-        final WeatherDbHelper helper = new WeatherDbHelper(mContext);
-        final SQLiteDatabase db = helper.getWritableDatabase();
         final ContentValues locationIn = Util.makeLocationIn();
-        final long locationId = db.insert(LocationEntry.TABLE, null, locationIn);
+        final long locationId = ContentUris.parseId(
+                resolver.insert(LocationEntry.CONTENT_URI, locationIn));
         locationIn.put(LocationEntry._ID, locationId);
         assertTrue(locationId != -1);
         Log.d(TAG, "testInsertReadProvider(): locationId == " + locationId);
         assertLocation(locationIn, locationId, resolver);
-        final ContentValues weatherIn = Util.insertWeather(db, locationId);
+        final ContentValues weatherIn = Util.makeWeatherIn();
+        weatherIn.put(WeatherEntry.COLUMN_LOCATION_KEY, locationId);
+        final long weatherId = ContentUris.parseId(
+                resolver.insert(WeatherEntry.CONTENT_URI, weatherIn));
+        Log.d(TAG, "testInsertReadProvider(): weatherId == " + weatherId);
+        assertTrue(weatherId != -1);
+        weatherIn.put(WeatherEntry._ID, weatherId);
         assertEquals(weatherIn,
                 Util.makeContentValues(resolver.query(
                                 WeatherEntry.CONTENT_URI,
@@ -89,8 +94,6 @@ public class TestProvider extends AndroidTestCase {
         final ContentValues joined = new ContentValues(locationIn);
         joined.putAll(weatherIn);
         assertJoined(joined, resolver);
-        db.close();
-        helper.close();
     }
 
     public TestProvider() {
@@ -99,9 +102,3 @@ public class TestProvider extends AndroidTestCase {
         // mResolver = mContext.getContentResolver(); // WTF: mContext == null
     }
 }
-
-// junit.framework.AssertionFailedError: expected:
-// <wind=5.5 humidity=1.2 _id=1 pressure=1.3 minimum=65.0 description=Asteroids maximum=75.0 direction=1.1 weather_id=321 date=20140612 location_id=1>
-// but was:
-// <wind=5.5 pressure=1.3 minimum=65.0 direction=1.1 date=20140612 city=North Pole location_id=1 setting=02138 humidity=1.2 _id=1 maximum=75.0
-//           description=Asteroids longitude=-147.355 weather_id=321 latitude=64.772>
