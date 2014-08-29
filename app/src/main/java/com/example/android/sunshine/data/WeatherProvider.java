@@ -47,17 +47,11 @@ public class WeatherProvider extends ContentProvider {
     private static SQLiteQueryBuilder makeJoinOnLocationId() {
         final SQLiteQueryBuilder result = new SQLiteQueryBuilder();
         result.setTables(
-                WeatherContract.WeatherEntry.TABLE
-                + " INNER JOIN "
-                + WeatherContract.LocationEntry.TABLE
+                WeatherEntry.TABLE + " INNER JOIN " + LocationEntry.TABLE
                 + " ON "
-                + WeatherContract.WeatherEntry.TABLE
-                + "."
-                + WeatherContract.WeatherEntry.COLUMN_LOCATION_KEY
+                + WeatherEntry.TABLE + "." + WeatherEntry.COLUMN_LOCATION_KEY
                 + " = "
-                + WeatherContract.LocationEntry.TABLE
-                + "."
-                + WeatherContract.LocationEntry._ID);
+                + LocationEntry.TABLE + "." + LocationEntry._ID);
         return result;
     }
 
@@ -141,15 +135,15 @@ public class WeatherProvider extends ContentProvider {
     public String getType(Uri uri) {
         switch (sMatcher.match(uri)) {
         case LOCATION:
-            return WeatherContract.LocationEntry.CONTENT_TYPE_DIR;
+            return LocationEntry.CONTENT_TYPE_DIR;
         case LOCATION_ID:
-            return WeatherContract.LocationEntry.CONTENT_TYPE_ITEM;
+            return LocationEntry.CONTENT_TYPE_ITEM;
         case WEATHER:
-            return WeatherContract.WeatherEntry.CONTENT_TYPE_DIR;
+            return WeatherEntry.CONTENT_TYPE_DIR;
         case WEATHER_WITH_LOCATION:
-            return WeatherContract.WeatherEntry.CONTENT_TYPE_DIR;
+            return WeatherEntry.CONTENT_TYPE_DIR;
         case WEATHER_WITH_LOCATION_AND_DATE:
-            return WeatherContract.WeatherEntry.CONTENT_TYPE_ITEM;
+            return WeatherEntry.CONTENT_TYPE_ITEM;
         default:
             throw new UnsupportedOperationException("URI == " + uri);
         }

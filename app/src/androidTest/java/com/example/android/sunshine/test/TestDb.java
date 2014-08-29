@@ -29,13 +29,22 @@ public class TestDb extends AndroidTestCase {
         Log.v(TAG, "TestDb.testInsertReadDb()");
         final WeatherDbHelper helper = new WeatherDbHelper(mContext);
         final SQLiteDatabase db = helper.getWritableDatabase();
-        final long locationId = Util.insertCheckLocation(db);
+        final ContentValues locationIn = Util.makeLocationIn();
+        final long locationId = db.insert(LocationEntry.TABLE, null, locationIn);
+        locationIn.put(LocationEntry._ID, locationId);
+        assertTrue(locationId != -1);
+        Log.d(TAG, "insertCheckLocation(): locationId == " + locationId);
+        final Cursor locationCursor = db.query(
+                LocationEntry.TABLE, Util.locationColumns,
+                null, null, null, null, null);
+        assertEquals(locationIn, Util.makeContentValues(locationCursor));
+        locationCursor.close();
         final ContentValues weatherIn = Util.insertWeather(db, locationId);
-        final Cursor cursor = db.query(
+        final Cursor weatherCursor = db.query(
                 WeatherEntry.TABLE, Util.weatherColumns,
                 null, null, null, null, null);
-        final ContentValues weatherOut = Util.makeContentValues(cursor);
-        assertEquals(weatherIn, weatherOut);
+        assertEquals(weatherIn, Util.makeContentValues(weatherCursor));
+        weatherCursor.close();
         db.close();
         helper.close();
     }
