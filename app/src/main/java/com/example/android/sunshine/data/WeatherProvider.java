@@ -185,30 +185,16 @@ public class WeatherProvider extends ContentProvider {
         int result = 0;
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         switch (sMatcher.match(uri)) {
-        case WEATHER: {
-            final long id = ContentUris.parseId(uri);
-            if (id > 0) {
-                final String where
-                    = WeatherEntry.TABLE + "." + WeatherEntry._ID + " = ? ";
-                final String[] ids = { String.valueOf(id) };
-                result += db.delete(WeatherEntry.TABLE, where, ids);
-            }
+        case WEATHER:
+            result += db.delete(WeatherEntry.TABLE, selection, selectionArgs);
             break;
-        }
-        case LOCATION: {
-            final long id = ContentUris.parseId(uri);
-            if (id > 0) {
-                final String where
-                    = LocationEntry.TABLE + "." + LocationEntry._ID + " = ? ";
-                final String[] ids = { String.valueOf(id) };
-                result += db.delete(LocationEntry.TABLE, where, ids);
-            }
+        case LOCATION:
+            result += db.delete(LocationEntry.TABLE, selection, selectionArgs);
             break;
-        }
         default:
             throw new UnsupportedOperationException("URI == " + uri);
         }
-        mContext.getContentResolver().notifyChange(uri, null);
+        if (result > 0) mContext.getContentResolver().notifyChange(uri, null);
         return result;
     }
 
@@ -221,30 +207,18 @@ public class WeatherProvider extends ContentProvider {
         int result = 0;
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         switch (sMatcher.match(uri)) {
-        case WEATHER: {
-            final long id = ContentUris.parseId(uri);
-            if (id > 0) {
-                final String where
-                    = WeatherEntry.TABLE + "." + WeatherEntry._ID + " = ? ";
-                final String[] ids = { String.valueOf(id) };
-                result += db.update(WeatherEntry.TABLE, values, where, ids);
-            }
+        case WEATHER:
+            result += db.update(
+                    WeatherEntry.TABLE, values, selection, selectionArgs);
             break;
-        }
-        case LOCATION: {
-            final long id = ContentUris.parseId(uri);
-            if (id > 0) {
-                final String where
-                    = LocationEntry.TABLE + "." + LocationEntry._ID + " = ? ";
-                final String[] ids = { String.valueOf(id) };
-                result += db.update(LocationEntry.TABLE, values, where, ids);
-            }
+        case LOCATION:
+            result += db.update(
+                    LocationEntry.TABLE, values, selection, selectionArgs);
             break;
-        }
         default:
             throw new UnsupportedOperationException("URI == " + uri);
         }
-        mContext.getContentResolver().notifyChange(uri, null);
+        if (result > 0) mContext.getContentResolver().notifyChange(uri, null);
         return result;
     }
 

@@ -31,7 +31,7 @@ public class Util extends junit.framework.Assert {
     final static Object[] locationRow = {
         null,
         WHERE,
-        "North Pole",
+        "Cambridge MA",
         Double.valueOf(64.772),
         Double.valueOf(-147.355)
     };
