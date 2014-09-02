@@ -17,22 +17,10 @@ public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    public String getLocationPreference() {
-        final String key = getString(R.string.preference_location_key);
-        final String or = getString(R.string.preference_location_default);
-        return PreferenceManager.getDefaultSharedPreferences(this)
-            .getString(key, or);
-    }
-
-    public String getUnitsPreference() {
-        final String key = getString(R.string.preference_units_key);
-        final String or = getString(R.string.preference_units_default);
-        return PreferenceManager.getDefaultSharedPreferences(this)
-            .getString(key, or);
-    }
-
     public void showMap() {
-        final String location = getLocationPreference();
+        final String location = getPreferences(MODE_PRIVATE).getString(
+                getString(R.string.preference_location_key),
+                getString(R.string.preference_location_default));
         final Uri geo = new Uri.Builder()
             .scheme("geo")
             .appendPath("0,0")
