@@ -131,24 +131,6 @@ public class WeatherProvider extends ContentProvider {
     }
 
     @Override
-    public String getType(Uri uri) {
-        switch (sMatcher.match(uri)) {
-        case LOCATION:
-            return LocationEntry.CONTENT_TYPE_DIR;
-        case LOCATION_ID:
-            return LocationEntry.CONTENT_TYPE_ITEM;
-        case WEATHER:
-            return WeatherEntry.CONTENT_TYPE_DIR;
-        case WEATHER_WITH_LOCATION:
-            return WeatherEntry.CONTENT_TYPE_DIR;
-        case WEATHER_WITH_LOCATION_AND_DATE:
-            return WeatherEntry.CONTENT_TYPE_ITEM;
-        default:
-            throw new UnsupportedOperationException("URI == " + uri);
-        }
-    }
-
-    @Override
     public Uri insert(Uri uri, ContentValues values) {
         Uri result = null;
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -206,6 +188,8 @@ public class WeatherProvider extends ContentProvider {
     {
         int result = 0;
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Log.v(TAG, "update(): uri == " + uri);
+        Log.v(TAG, "update(): values == " + values);
         switch (sMatcher.match(uri)) {
         case WEATHER:
             result += db.update(
@@ -220,6 +204,24 @@ public class WeatherProvider extends ContentProvider {
         }
         if (result > 0) mContext.getContentResolver().notifyChange(uri, null);
         return result;
+    }
+
+    @Override
+    public String getType(Uri uri) {
+        switch (sMatcher.match(uri)) {
+        case LOCATION:
+            return LocationEntry.CONTENT_TYPE_DIR;
+        case LOCATION_ID:
+            return LocationEntry.CONTENT_TYPE_ITEM;
+        case WEATHER:
+            return WeatherEntry.CONTENT_TYPE_DIR;
+        case WEATHER_WITH_LOCATION:
+            return WeatherEntry.CONTENT_TYPE_DIR;
+        case WEATHER_WITH_LOCATION_AND_DATE:
+            return WeatherEntry.CONTENT_TYPE_ITEM;
+        default:
+            throw new UnsupportedOperationException("URI == " + uri);
+        }
     }
 
     @Override

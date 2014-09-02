@@ -122,20 +122,33 @@ public class TestProvider extends AndroidTestCase {
         assertJoined(joined, resolver);
     }
 
+    public void testUpdateProvider() {
+        Log.v(TAG, "testUpdateProvider()");
+        testDeleteAllRecords();
+        final ContentResolver resolver = mContext.getContentResolver();
+        final ContentValues location = Util.makeLocationIn();
+        Log.v(TAG, "testUpdateProvider(): location == " + location);
+        final long id = ContentUris.parseId(
+                resolver.insert(LocationEntry.CONTENT_URI, location));
+        location.put(LocationEntry._ID, id);
+        Log.d(TAG, "testUpdateProvider(): id == " + id);
+        assertTrue(id != -1);
+        assertLocation(location, id, resolver);
+        location.put(LocationEntry.COLUMN_CITY, "OpinionVille");
+        Log.v(TAG, "testUpdateProvider(): location == " + location);
+        final int count = resolver.update(
+                LocationEntry.CONTENT_URI, location, null, null);
+        Log.d(TAG, "testUpdateProvider(): count == " + count);
+        assertEquals(count, 1);
+        assertEquals(location, Util.makeContentValues(resolver.query(
+                                ContentUris.withAppendedId(
+                                        LocationEntry.CONTENT_URI, id),
+                                Util.locationColumns, null, null, null)));
+    }
+
     public TestProvider() {
         super();
         Log.v(TAG, "TestProvider()");
         // mResolver = mContext.getContentResolver(); // WTF: mContext == null
     }
 }
-
-
-// junit.framework.AssertionFailedError: expected:
-// <wind=5.5 pressure=1.3 minimum=65.0 direction=1.1 date=20140612 location_id=1 city=North Pole setting=02138 humidity=1.2 _id=2 maximum=75.0 description=Asteroids weather_id=321 longitude=-147.355 latitude=64.772>
-// but was:
-// <wind=5.5 pressure=1.3 minimum=65.0 direction=1.1 date=20140612 city=North Pole location_id=1 setting=02138 humidity=1.2 _id=1 maximum=75.0 description=Asteroids longitude=-147.355 weather_id=321 latitude=64.772>
-
-// junit.framework.AssertionFailedError: expected:
-// <wind=5.5 pressure=1.3 minimum=65.0 direction=1.1 date=20140612 location_id=1 city=Cambridge MA setting=02138 humidity=1.2 maximum=75.0 description=Asteroids weather_id=321 longitude=-147.355 latitude=64.772>
-// but was:
-// <wind=5.5 pressure=1.3 minimum=65.0 direction=1.1 date=20140612 city=Cambridge MA location_id=1 setting=02138 humidity=1.2 _id=1 maximum=75.0 description=Asteroids longitude=-147.355 weather_id=321 latitude=64.772>
