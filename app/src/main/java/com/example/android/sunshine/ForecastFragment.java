@@ -54,7 +54,7 @@ public class ForecastFragment extends Fragment {
     }
 
     private void fetchForecast() {
-        new FetchWeatherTask(getActivity(), mForecastAdapter).fetch();
+        FetchWeatherTask.fetch(getActivity(), mForecastAdapter);
     }
 
     @Override
