@@ -65,9 +65,7 @@ public class FetchWeatherTask {
         return Math.round(high) + "/" + Math.round(low);
     }
 
-    private String adjustTemperature(double max, double min)
-        throws JSONException
-    {
+    private String adjustTemperature(double max, double min) {
         final String units = getUnitsPreference();
         final String metric = getString(R.string.preference_units_default);
         if (units == metric) return highlowString(max, min);

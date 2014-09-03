@@ -1,5 +1,6 @@
 package com.example.android.sunshine.data;
 
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -84,8 +85,14 @@ public class WeatherContract {
             return CONTENT_URI.buildUpon().appendPath(locationSetting).build();
         }
 
-        public static String dbDate(Date d) {
-            return new SimpleDateFormat("yyyyMMdd").format(d);
+        // Convert a COLUMN_DATE string from and to a java.util.Date.
+        //
+        public static String dbDate(Date date) {
+            return new SimpleDateFormat("yyyyMMdd").format(date);
+        }
+        public static Date dbDate(String date) {
+            return new SimpleDateFormat("yyyyMMdd")
+                .parse(date, new ParsePosition(0));
         }
 
         public static Uri buildWeatherLocationQueryDate(

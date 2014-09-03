@@ -1,6 +1,6 @@
 package com.example.android.sunshine;
 
-import java.util.ArrayList;
+import java.text.DateFormat;
 import java.util.Date;
 
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -25,8 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 
 public class ForecastFragment
@@ -59,6 +58,15 @@ public class ForecastFragment
 
     SimpleCursorAdapter mForecastAdapter;
 
+    private double fromCelsius(double t) {
+        final String metric = getString(R.string.preference_units_default);
+        final String units
+            = PreferenceManager.getDefaultSharedPreferences(getActivity())
+            .getString(getString(R.string.preference_units_key), metric);
+        if (units == metric) return t;
+        return 32.0 + 1.8 * t;
+    }
+
     private SimpleCursorAdapter makeSimpleCursorAdapter() {
         return new SimpleCursorAdapter(
                 getActivity(), R.layout.listview_forecast, null,
@@ -77,6 +85,28 @@ public class ForecastFragment
                 0);
     }
 
+    private SimpleCursorAdapter.ViewBinder makeViewBinder() {
+        return new SimpleCursorAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View v, Cursor c, int n)
+            {
+                final TextView tv = (TextView)v;
+                switch (n) {
+                case COLUMN_MAXIMUM:
+                case COLUMN_MINIMUM:
+                    tv.setText(String.valueOf(fromCelsius(c.getDouble(n))));
+                    return true;
+                case COLUMN_DATE:
+                    tv.setText(
+                            DateFormat.getDateInstance().format(
+                                    WeatherEntry.dbDate(c.getString(n))));
+                    return true;
+                }
+                return false;
+            }
+        };
+    }
+
     private SimpleCursorAdapter makeForecastAdapter(View v)
     {
         final SimpleCursorAdapter result = makeSimpleCursorAdapter();
@@ -93,6 +123,7 @@ public class ForecastFragment
                                         "mForecastAdapter.getItem(n)"));
                     }
                 });
+        result.setViewBinder(makeViewBinder());
         return result;
     }
 
