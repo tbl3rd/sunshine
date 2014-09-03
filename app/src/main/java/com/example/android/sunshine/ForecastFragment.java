@@ -61,7 +61,7 @@ public class ForecastFragment
 
     private SimpleCursorAdapter makeSimpleCursorAdapter() {
         return new SimpleCursorAdapter(
-                getActivity(), R.layout.list_item_forecast, null,
+                getActivity(), R.layout.listview_forecast, null,
                 new String[] {
                     WeatherEntry.COLUMN_DATE,
                     WeatherEntry.COLUMN_DESCRIPTION,
