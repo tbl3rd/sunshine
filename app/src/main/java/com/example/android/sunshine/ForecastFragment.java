@@ -68,7 +68,7 @@ public class ForecastFragment
 
     private SimpleCursorAdapter makeSimpleCursorAdapter() {
         return new SimpleCursorAdapter(
-                getActivity(), R.layout.listview_forecast, null,
+                getActivity(), R.layout.list_item_forecast, null,
                 new String[] {
                     WeatherEntry.COLUMN_DATE,
                     WeatherEntry.COLUMN_DESCRIPTION,
@@ -106,22 +106,29 @@ public class ForecastFragment
         };
     }
 
+    private AdapterView.OnItemClickListener makeOnItemClickListener() {
+        return new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView av, View view, int n, long id)
+            {
+                final SimpleCursorAdapter sca
+                    = (SimpleCursorAdapter)av.getAdapter();
+                final Cursor cursor = sca.getCursor();
+                startActivity(new Intent(getActivity(),
+                                DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT,
+                                "mForecastAdapter.getItem(n)"));
+            }
+        };
+    }
+
     private SimpleCursorAdapter makeForecastAdapter(View v)
     {
         final SimpleCursorAdapter result = makeSimpleCursorAdapter();
         final ListView lv = (ListView)v.findViewById(R.id.listview_forecast);
+        Log.v(TAG, "makeForecastAdapter(): lv == " + lv);
         lv.setAdapter(result);
-        lv.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapter,
-                            View viewIgnored, int n, long ignoredId) {
-                        startActivity(new Intent(getActivity(),
-                                        DetailActivity.class)
-                                .putExtra(Intent.EXTRA_TEXT,
-                                        "mForecastAdapter.getItem(n)"));
-                    }
-                });
+        lv.setOnItemClickListener(makeOnItemClickListener());
         result.setViewBinder(makeViewBinder());
         return result;
     }
@@ -145,6 +152,7 @@ public class ForecastFragment
     {
         final View result
             = inflater.inflate(R.layout.fragment_main, container, false);
+        Log.v(TAG, "onCreateView(): result == " + result);
         mForecastAdapter = makeForecastAdapter(result);
         return result;
     }
