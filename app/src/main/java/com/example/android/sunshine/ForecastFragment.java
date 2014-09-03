@@ -96,8 +96,7 @@ public class ForecastFragment
                     tv.setText(String.valueOf(fromCelsius(c.getDouble(n))));
                     return true;
                 case COLUMN_DATE:
-                    tv.setText(
-                            DateFormat.getDateInstance().format(
+                    tv.setText(DateFormat.getDateInstance().format(
                                     WeatherEntry.dbDate(c.getString(n))));
                     return true;
                 }
@@ -111,13 +110,17 @@ public class ForecastFragment
             @Override
             public void onItemClick(AdapterView av, View view, int n, long id)
             {
-                final SimpleCursorAdapter sca
-                    = (SimpleCursorAdapter)av.getAdapter();
-                final Cursor cursor = sca.getCursor();
-                startActivity(new Intent(getActivity(),
-                                DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT,
-                                "mForecastAdapter.getItem(n)"));
+                final Cursor c
+                    = ((SimpleCursorAdapter)av.getAdapter()).getCursor();
+                final String extra
+                    = DateFormat.getDateInstance().format(
+                            WeatherEntry.dbDate(c.getString(COLUMN_DATE)))
+                    + " - " + c.getString(COLUMN_DESCRIPTION) + " -- "
+                    + fromCelsius(c.getDouble(COLUMN_MAXIMUM)) + " / "
+                    + fromCelsius(c.getDouble(COLUMN_MINIMUM));
+                    startActivity(new Intent(getActivity(),
+                                    DetailActivity.class)
+                            .putExtra(Intent.EXTRA_TEXT, extra));
             }
         };
     }
