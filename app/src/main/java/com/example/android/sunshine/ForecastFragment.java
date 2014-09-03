@@ -85,13 +85,11 @@ public class ForecastFragment
         lv.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(
-                            AdapterView<?> adapter,
+                    public void onItemClick(AdapterView<?> adapter,
                             View viewIgnored, int n, long ignoredId) {
-                        startActivity(
-                                new Intent(getActivity(), DetailActivity.class)
-                                .putExtra(
-                                        Intent.EXTRA_TEXT,
+                        startActivity(new Intent(getActivity(),
+                                        DetailActivity.class)
+                                .putExtra(Intent.EXTRA_TEXT,
                                         "mForecastAdapter.getItem(n)"));
                     }
                 });
