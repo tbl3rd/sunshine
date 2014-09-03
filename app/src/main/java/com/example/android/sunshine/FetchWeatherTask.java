@@ -90,14 +90,13 @@ public class FetchWeatherTask {
         return result;
     }
 
-    private long addLocation(String setting, String city,
-            double latitude, double longitude)
+    private long addLocation(ContentResolver resolver,
+            String city, double latitude, double longitude)
     {
-        final ContentResolver resolver = mContext.getContentResolver();
-        long result = findLocation(resolver, setting);
+        long result = findLocation(resolver, locationPreference);
         if (result < 0) {
             final ContentValues location = new ContentValues();
-            location.put(LocationEntry.COLUMN_SETTING, setting);
+            location.put(LocationEntry.COLUMN_SETTING, locationPreference);
             location.put(LocationEntry.COLUMN_CITY, city);
             location.put(LocationEntry.COLUMN_LATITUDE, latitude);
             location.put(LocationEntry.COLUMN_LONGITUDE, longitude);
@@ -109,7 +108,7 @@ public class FetchWeatherTask {
         return result;
     }
 
-    private long parseLocation(JSONObject forecast)
+    private long parseLocation(ContentResolver resolver, JSONObject forecast)
         throws JSONException
     {
         final JSONObject city = forecast.getJSONObject("city");
@@ -117,7 +116,7 @@ public class FetchWeatherTask {
         final String name = city.getString("name");
         final double lat = coord.getDouble("lat");
         final double lon = coord.getDouble("lon");
-        final long result = addLocation(locationPreference, name, lat, lon);
+        final long result = addLocation(resolver, name, lat, lon);
         Log.v(TAG, "parseLocation(): result == " + result);
         return result;
     }
@@ -145,34 +144,30 @@ public class FetchWeatherTask {
         return result;
     }
 
-    private long addWeather(ContentValues cv) {
-        final ContentResolver resolver = mContext.getContentResolver();
-        final Uri uri = resolver.insert(WeatherEntry.CONTENT_URI, cv);
-        Log.v(TAG, "addWeather(): uri == " + uri);
-        final long result = ContentUris.parseId(uri);
-        return result;
-    }
-
     private String[] parseWeather(String json) {
+        final ContentResolver resolver = mContext.getContentResolver();
         Log.v(TAG, "parseWeather(): json == " + json);
         String[] result = new String[0];
         try {
             final JSONObject forecast = new JSONObject(json);
-            final long locationId = parseLocation(forecast);
+            final long locationId = parseLocation(resolver, forecast);
             final JSONArray list = forecast.getJSONArray("list");
+            final ContentValues[] cvs = new ContentValues[list.length()];
             result = new String[list.length()];
             for (int i = 0; i < list.length(); ++i) {
                 final JSONObject day = list.getJSONObject(i);
                 final ContentValues cv = makeWeather(locationId, day);
-                final long weatherIdIgnored = addWeather(cv);
                 final double max = cv.getAsDouble(WeatherEntry.COLUMN_MAXIMUM);
                 final double min = cv.getAsDouble(WeatherEntry.COLUMN_MINIMUM);
                 final Date date = new Date(day.getLong("dt") * 1000);
+                cvs[i] = cv;
                 result[i]
                     = new SimpleDateFormat("E, MMM d").format(date).toString()
                     + " - " + cv.getAsString(WeatherEntry.COLUMN_DESCRIPTION)
                     + " -- " + adjustTemperature(max, min);
             }
+            final int count = resolver.bulkInsert(WeatherEntry.CONTENT_URI, cvs);
+            Log.v(TAG, "parseWeather(): count == " + count);
         } catch (final Exception e) {
             Log.e(TAG, "parseWeather() catch", e);
         }
