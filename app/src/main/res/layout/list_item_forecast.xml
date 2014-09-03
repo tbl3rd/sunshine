@@ -1,7 +1,57 @@
-<TextView
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/list_item_forecast_textview"
+    android:id="@+id/list_item_forecast"
+    android:orientation="horizontal"
     >
-</TextView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Today"
+        android:id="@+id/list_item_date_textview"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="widely scattered dark"
+        android:id="@+id/list_item_forecast_textview"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="--"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="123"
+        android:id="@+id/list_item_high_textview"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="/"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="42"
+        android:id="@+id/list_item_low_textview"
+        />
+
+</LinearLayout>
