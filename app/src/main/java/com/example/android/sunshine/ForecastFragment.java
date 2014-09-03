@@ -63,8 +63,7 @@ public class ForecastFragment
         final String units
             = PreferenceManager.getDefaultSharedPreferences(getActivity())
             .getString(getString(R.string.preference_units_key), metric);
-        if (units == metric) return t;
-        return 32.0 + 1.8 * t;
+        return (units.equals(metric)) ? t : (32.0 + 1.8 * t);
     }
 
     private SimpleCursorAdapter makeSimpleCursorAdapter() {
@@ -181,7 +180,7 @@ public class ForecastFragment
     }
 
     @Override
-    public Loader onCreateLoader(int i, Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         mLocation = PreferenceManager
             .getDefaultSharedPreferences(getActivity()).getString(
                     getString(R.string.preference_location_key),
@@ -206,6 +205,9 @@ public class ForecastFragment
 
     public ForecastFragment() {
         super();
-        assert COLUMN_COUNT == FORECAST_COLUMNS.length;
+        if (COLUMN_COUNT != FORECAST_COLUMNS.length) {
+            throw new RuntimeException(
+                    "COLUMN_COUNT != FORECAST_COLUMNS.length");
+        }
     }
 }
