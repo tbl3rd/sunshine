@@ -152,21 +152,21 @@ public class FetchWeatherTask {
             final JSONObject forecast = new JSONObject(json);
             final long locationId = parseLocation(resolver, forecast);
             final JSONArray list = forecast.getJSONArray("list");
-            final ContentValues[] cvs = new ContentValues[list.length()];
-            result = new String[list.length()];
-            for (int i = 0; i < list.length(); ++i) {
+            final int length = list.length();
+            final ContentValues[] w = new ContentValues[length];
+            result = new String[length];
+            for (int i = 0; i < length; ++i) {
                 final JSONObject day = list.getJSONObject(i);
-                final ContentValues cv = makeWeather(locationId, day);
-                final double max = cv.getAsDouble(WeatherEntry.COLUMN_MAXIMUM);
-                final double min = cv.getAsDouble(WeatherEntry.COLUMN_MINIMUM);
                 final Date date = new Date(day.getLong("dt") * 1000);
-                cvs[i] = cv;
+                w[i] = makeWeather(locationId, day);
                 result[i]
                     = new SimpleDateFormat("E, MMM d").format(date).toString()
-                    + " - " + cv.getAsString(WeatherEntry.COLUMN_DESCRIPTION)
-                    + " -- " + adjustTemperature(max, min);
+                    + " - " + w[i].getAsString(WeatherEntry.COLUMN_DESCRIPTION)
+                    + " -- " + adjustTemperature(
+                            w[i].getAsDouble(WeatherEntry.COLUMN_MAXIMUM),
+                            w[i].getAsDouble(WeatherEntry.COLUMN_MINIMUM));
             }
-            final int count = resolver.bulkInsert(WeatherEntry.CONTENT_URI, cvs);
+            final int count = resolver.bulkInsert(WeatherEntry.CONTENT_URI, w);
             Log.v(TAG, "parseWeather(): count == " + count);
         } catch (final Exception e) {
             Log.e(TAG, "parseWeather() catch", e);
