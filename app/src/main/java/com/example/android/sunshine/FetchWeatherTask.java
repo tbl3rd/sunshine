@@ -33,7 +33,6 @@ public class FetchWeatherTask {
     private final String TAG = FetchWeatherTask.class.getSimpleName();
 
     private final Context mContext;
-    private final String mLocation;
 
     private String getString(int resourceId) {
         return mContext.getString(resourceId);
@@ -70,12 +69,12 @@ public class FetchWeatherTask {
     }
 
     private long addLocation(ContentResolver resolver,
-            String city, double latitude, double longitude)
+            String setting, String city, double latitude, double longitude)
     {
-        long result = findLocation(resolver, mLocation);
+        long result = findLocation(resolver, setting);
         if (result < 0) {
             final ContentValues location = new ContentValues();
-            location.put(LocationEntry.COLUMN_SETTING, mLocation);
+            location.put(LocationEntry.COLUMN_SETTING, setting);
             location.put(LocationEntry.COLUMN_CITY, city);
             location.put(LocationEntry.COLUMN_LATITUDE, latitude);
             location.put(LocationEntry.COLUMN_LONGITUDE, longitude);
@@ -88,7 +87,8 @@ public class FetchWeatherTask {
         return result;
     }
 
-    private long parseLocation(ContentResolver resolver, JSONObject forecast)
+    private long parseLocation(
+            ContentResolver resolver, String setting, JSONObject forecast)
         throws JSONException
     {
         final JSONObject city = forecast.getJSONObject("city");
@@ -96,7 +96,7 @@ public class FetchWeatherTask {
         final String name = city.getString("name");
         final double lat = coord.getDouble("lat");
         final double lon = coord.getDouble("lon");
-        final long result = addLocation(resolver, name, lat, lon);
+        final long result = addLocation(resolver, setting, name, lat, lon);
         Log.v(TAG, "parseLocation(): result == " + result);
         return result;
     }
@@ -123,12 +123,12 @@ public class FetchWeatherTask {
         return result;
     }
 
-    private void parseWeather(String json) {
+    private void parseWeather(String setting, String json) {
         final ContentResolver resolver = mContext.getContentResolver();
         Log.v(TAG, "parseWeather(): json == " + json);
         try {
             final JSONObject forecast = new JSONObject(json);
-            final long locationId = parseLocation(resolver, forecast);
+            final long locationId = parseLocation(resolver, setting, forecast);
             final JSONArray list = forecast.getJSONArray("list");
             final int length = list.length();
             final ContentValues[] w = new ContentValues[length];
@@ -144,7 +144,7 @@ public class FetchWeatherTask {
         }
     }
 
-    private String getFetchForecastUrl() {
+    private String getFetchForecastUrl(String location) {
         return new Uri.Builder()
             .scheme("http")
             .authority("api.openweathermap.org")
@@ -155,7 +155,7 @@ public class FetchWeatherTask {
             .appendQueryParameter("mode", "json")
             .appendQueryParameter("units", "metric")
             .appendQueryParameter("cnt", "14")
-            .appendQueryParameter("q", mLocation)
+            .appendQueryParameter("q", location)
             .build().toString();
     }
 
@@ -190,12 +190,13 @@ public class FetchWeatherTask {
     }
 
     private void fetch() {
-        final String url = getFetchForecastUrl();
+        final String location = getLocationPreference();
+        final String url = getFetchForecastUrl(location);
         Log.i(TAG, "fetch() url == " + url);
         new AsyncTask<Void, Void, Void>() {
             protected Void doInBackground(Void... ignored) {
                 Log.v(TAG, "doInBackground()");
-                parseWeather(fetchForecast(url));
+                parseWeather(location, fetchForecast(url));
                 return null;
             }
         }.execute();
@@ -204,7 +205,6 @@ public class FetchWeatherTask {
     private FetchWeatherTask(Context context) {
         Log.v(TAG, "constructor: context == " + context);
         mContext = context;
-        mLocation = getLocationPreference();
     }
 
     static public void fetch(Context context) {
