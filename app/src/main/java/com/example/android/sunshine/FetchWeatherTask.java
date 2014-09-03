@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
+import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -64,12 +65,10 @@ public class FetchWeatherTask {
         return Math.round(high) + "/" + Math.round(low);
     }
 
-    private String adjustTemperature(final JSONObject temperature)
+    private String adjustTemperature(double max, double min)
         throws JSONException
     {
         final String units = getUnitsPreference();
-        final double max = temperature.getDouble("max");
-        final double min = temperature.getDouble("min");
         final String metric = getString(R.string.preference_units_default);
         if (units == metric) return highlowString(max, min);
         final double high = celsiusToFahrenheit(max);
@@ -110,7 +109,7 @@ public class FetchWeatherTask {
         return result;
     }
 
-    private void parseLocation(JSONObject forecast)
+    private long parseLocation(JSONObject forecast)
         throws JSONException
     {
         final JSONObject city = forecast.getJSONObject("city");
@@ -118,8 +117,9 @@ public class FetchWeatherTask {
         final String name = city.getString("name");
         final double lat = coord.getDouble("lat");
         final double lon = coord.getDouble("lon");
-        final long id = addLocation(locationPreference, name, lat, lon);
-        Log.v(TAG, "parseLocation(): id == " + id);
+        final long result = addLocation(locationPreference, name, lat, lon);
+        Log.v(TAG, "parseLocation(): result == " + result);
+        return result;
     }
 
     private String[] parseWeather(String jsonString) {
@@ -128,21 +128,40 @@ public class FetchWeatherTask {
         try {
             final JSONObject forecast = new JSONObject(jsonString);
             final JSONArray list = forecast.getJSONArray("list");
-            parseLocation(forecast);
+            final long locationId = parseLocation(forecast);
             result = new String[list.length()];
             for (int i = 0; i < list.length(); ++i) {
-                final JSONObject forDay = list.getJSONObject(i);
-                final Date date = new Date(forDay.getLong("dt") * 1000);
-                final String day
-                    = new SimpleDateFormat("E, MMM d").format(date).toString();
+                final ContentValues cv = new ContentValues();
+                cv.put(WeatherEntry.COLUMN_LOCATION_KEY, locationId);
+                final JSONObject day = list.getJSONObject(i);
+                final long milliseconds = day.getLong("dt") * 1000;
+                final String dbDate
+                    = new SimpleDateFormat("yyyyMMdd").format(milliseconds);
+                cv.put(WeatherEntry.COLUMN_DATE, dbDate);
                 final String description
-                    = forDay
+                    = day
                     .getJSONArray("weather")
                     .getJSONObject(0)
                     .getString("main");
-                final JSONObject temperature = forDay.getJSONObject("temp");
-                final String highLow = adjustTemperature(temperature);
-                result[i] = day + " - " + description + " -- " + highLow;
+                cv.put(WeatherEntry.COLUMN_DESCRIPTION, description);
+                final JSONObject temperature = day.getJSONObject("temp");
+                final double max = temperature.getDouble("max");
+                cv.put(WeatherEntry.COLUMN_MAXIMUM, max);
+                final double min = temperature.getDouble("min");
+                cv.put(WeatherEntry.COLUMN_MINIMUM, min);
+                final double humidity = day.getDouble("humidity");
+                cv.put(WeatherEntry.COLUMN_HUMIDITY, humidity);
+                final double pressure = day.getDouble("pressure");
+                cv.put(WeatherEntry.COLUMN_PRESSURE, pressure);
+                final double speed = day.getDouble("speed");
+                cv.put(WeatherEntry.COLUMN_WIND, speed);
+                final double deg = day.getDouble("deg");
+                cv.put(WeatherEntry.COLUMN_DIRECTION, deg);
+                final Date date = new Date(milliseconds);
+                final String displayDate
+                    = new SimpleDateFormat("E, MMM d").format(date).toString();
+                final String highLow = adjustTemperature(max, min);
+                result[i] = displayDate + " - " + description + " -- " + highLow;
             }
         } catch (final Exception e) {
             Log.e(TAG, "parseWeather() catch", e);
