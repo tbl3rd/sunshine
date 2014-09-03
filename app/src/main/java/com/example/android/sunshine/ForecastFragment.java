@@ -59,8 +59,7 @@ public class ForecastFragment
 
     SimpleCursorAdapter mForecastAdapter;
 
-    private SimpleCursorAdapter makeForecastAdapter()
-    {
+    private SimpleCursorAdapter makeSimpleCursorAdapter() {
         return new SimpleCursorAdapter(
                 getActivity(), R.layout.list_item_forecast, null,
                 new String[] {
@@ -76,6 +75,27 @@ public class ForecastFragment
                     R.id.list_item_low_textview
                 },
                 0);
+    }
+
+    private SimpleCursorAdapter makeForecastAdapter(View v)
+    {
+        final SimpleCursorAdapter result = makeSimpleCursorAdapter();
+        final ListView lv = (ListView)v.findViewById(R.id.listview_forecast);
+        lv.setAdapter(result);
+        lv.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(
+                            AdapterView<?> adapter,
+                            View viewIgnored, int n, long ignoredId) {
+                        startActivity(
+                                new Intent(getActivity(), DetailActivity.class)
+                                .putExtra(
+                                        Intent.EXTRA_TEXT,
+                                        "mForecastAdapter.getItem(n)"));
+                    }
+                });
+        return result;
     }
 
     private void fetchForecast() {
@@ -97,7 +117,7 @@ public class ForecastFragment
     {
         final View result
             = inflater.inflate(R.layout.fragment_main, container, false);
-        mForecastAdapter = makeForecastAdapter();
+        mForecastAdapter = makeForecastAdapter(result);
         return result;
     }
 
