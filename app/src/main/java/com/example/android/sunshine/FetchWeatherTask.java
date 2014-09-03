@@ -126,9 +126,8 @@ public class FetchWeatherTask {
     {
         final ContentValues result = new ContentValues();
         result.put(WeatherEntry.COLUMN_LOCATION_KEY, locationId);
-        result.put(WeatherEntry.COLUMN_DATE,
-                new SimpleDateFormat("yyyyMMdd").format(
-                        day.getLong("dt") * 1000));
+        result.put(WeatherEntry.COLUMN_DATE, WeatherEntry.dbDate(
+                        new Date(day.getLong("dt") * 1000)));
         final JSONObject weather
             = day.getJSONArray("weather").getJSONObject(0);
         result.put(WeatherEntry.COLUMN_DESCRIPTION,

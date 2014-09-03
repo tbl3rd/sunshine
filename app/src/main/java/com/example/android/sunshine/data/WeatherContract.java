@@ -1,5 +1,7 @@
 package com.example.android.sunshine.data;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import android.content.ContentUris;
@@ -82,10 +84,27 @@ public class WeatherContract {
             return CONTENT_URI.buildUpon().appendPath(locationSetting).build();
         }
 
+        public static String dbDate(Date d) {
+            return new SimpleDateFormat("yyyyMMdd").format(d);
+        }
+
+        public static Uri buildWeatherLocationQueryDate(
+                String locationSetting, Date date) {
+            return CONTENT_URI.buildUpon().appendPath(locationSetting)
+                .appendQueryParameter(COLUMN_DATE, dbDate(date)).build();
+        }
+
         public static Uri buildWeatherLocationQueryDate(
                 String locationSetting, String date) {
             return CONTENT_URI.buildUpon().appendPath(locationSetting)
                 .appendQueryParameter(COLUMN_DATE, date).build();
+        }
+
+        public static Uri buildWeatherLocationDate(
+                String locationSetting, Date date)
+        {
+            return CONTENT_URI.buildUpon()
+                .appendPath(locationSetting).appendPath(dbDate(date)).build();
         }
 
         public static Uri buildWeatherLocationDate(
