@@ -130,9 +130,10 @@ public class FetchWeatherTask {
         result.put(WeatherEntry.COLUMN_DATE,
                 new SimpleDateFormat("yyyyMMdd").format(
                         day.getLong("dt") * 1000));
+        final JSONObject weather
+            = day.getJSONArray("weather").getJSONObject(0);
         result.put(WeatherEntry.COLUMN_DESCRIPTION,
-                day.getJSONArray("weather").getJSONObject(0)
-                .getString("main"));
+                weather.getString("description"));
         final JSONObject temperature = day.getJSONObject("temp");
         result.put(WeatherEntry.COLUMN_MAXIMUM, temperature.getDouble("max"));
         result.put(WeatherEntry.COLUMN_MINIMUM, temperature.getDouble("min"));
@@ -140,6 +141,15 @@ public class FetchWeatherTask {
         result.put(WeatherEntry.COLUMN_PRESSURE, day.getDouble("pressure"));
         result.put(WeatherEntry.COLUMN_WIND, day.getDouble("speed"));
         result.put(WeatherEntry.COLUMN_DIRECTION, day.getDouble("deg"));
+        result.put(WeatherEntry.COLUMN_WEATHER_ID, weather.getString("id"));
+        return result;
+    }
+
+    private long addWeather(ContentValues cv) {
+        final ContentResolver resolver = mContext.getContentResolver();
+        final Uri uri = resolver.insert(WeatherEntry.CONTENT_URI, cv);
+        Log.v(TAG, "addWeather(): uri == " + uri);
+        final long result = ContentUris.parseId(uri);
         return result;
     }
 
@@ -154,6 +164,7 @@ public class FetchWeatherTask {
             for (int i = 0; i < list.length(); ++i) {
                 final JSONObject day = list.getJSONObject(i);
                 final ContentValues cv = makeWeather(locationId, day);
+                final long weatherIdIgnored = addWeather(cv);
                 final double max = cv.getAsDouble(WeatherEntry.COLUMN_MAXIMUM);
                 final double min = cv.getAsDouble(WeatherEntry.COLUMN_MINIMUM);
                 final Date date = new Date(day.getLong("dt") * 1000);
@@ -167,7 +178,6 @@ public class FetchWeatherTask {
         }
         return result;
     }
-
 
     private String getFetchForecastUrl() {
         return new Uri.Builder()
