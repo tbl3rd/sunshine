@@ -33,7 +33,7 @@ public class FetchWeatherTask {
     private final String TAG = FetchWeatherTask.class.getSimpleName();
 
     private final Context mContext;
-    private final String mLocationPreference;
+    private final String mLocation;
 
     private String getString(int resourceId) {
         return mContext.getString(resourceId);
@@ -55,23 +55,6 @@ public class FetchWeatherTask {
         return sharedPreferences().getString(key, or);
     }
 
-    private static double celsiusToFahrenheit(double t) {
-        return 32.0 + 1.8 * t;
-    }
-
-    private static String highlowString(double high, double low) {
-        return Math.round(high) + "/" + Math.round(low);
-    }
-
-    private String adjustTemperature(double max, double min) {
-        final String units = getUnitsPreference();
-        final String metric = getString(R.string.preference_units_default);
-        if (units == metric) return highlowString(max, min);
-        final double high = celsiusToFahrenheit(max);
-        final double low = celsiusToFahrenheit(min);
-        return highlowString(high, low);
-    }
-
     private static long findLocation(ContentResolver resolver, String setting) {
         final Cursor cursor = resolver.query(
                 LocationEntry.CONTENT_URI,
@@ -89,14 +72,15 @@ public class FetchWeatherTask {
     private long addLocation(ContentResolver resolver,
             String city, double latitude, double longitude)
     {
-        long result = findLocation(resolver, mLocationPreference);
+        long result = findLocation(resolver, mLocation);
         if (result < 0) {
             final ContentValues location = new ContentValues();
-            location.put(LocationEntry.COLUMN_SETTING, mLocationPreference);
+            location.put(LocationEntry.COLUMN_SETTING, mLocation);
             location.put(LocationEntry.COLUMN_CITY, city);
             location.put(LocationEntry.COLUMN_LATITUDE, latitude);
             location.put(LocationEntry.COLUMN_LONGITUDE, longitude);
-            final Uri uri = resolver.insert(LocationEntry.CONTENT_URI, location);
+            final Uri uri
+                = resolver.insert(LocationEntry.CONTENT_URI, location);
             Log.v(TAG, "addLocation(): uri == " + uri);
             result = ContentUris.parseId(uri);
         }
@@ -139,34 +123,25 @@ public class FetchWeatherTask {
         return result;
     }
 
-    private String[] parseWeather(String json) {
+    private void parseWeather(String json) {
         final ContentResolver resolver = mContext.getContentResolver();
         Log.v(TAG, "parseWeather(): json == " + json);
-        String[] result = new String[0];
         try {
             final JSONObject forecast = new JSONObject(json);
             final long locationId = parseLocation(resolver, forecast);
             final JSONArray list = forecast.getJSONArray("list");
             final int length = list.length();
             final ContentValues[] w = new ContentValues[length];
-            result = new String[length];
             for (int i = 0; i < length; ++i) {
                 final JSONObject day = list.getJSONObject(i);
                 final Date date = new Date(day.getLong("dt") * 1000);
                 w[i] = makeWeather(locationId, day);
-                result[i]
-                    = new SimpleDateFormat("E, MMM d").format(date).toString()
-                    + " - " + w[i].getAsString(WeatherEntry.COLUMN_DESCRIPTION)
-                    + " -- " + adjustTemperature(
-                            w[i].getAsDouble(WeatherEntry.COLUMN_MAXIMUM),
-                            w[i].getAsDouble(WeatherEntry.COLUMN_MINIMUM));
             }
             final int count = resolver.bulkInsert(WeatherEntry.CONTENT_URI, w);
             Log.v(TAG, "parseWeather(): count == " + count);
         } catch (final Exception e) {
             Log.e(TAG, "parseWeather() catch", e);
         }
-        return result;
     }
 
     private String getFetchForecastUrl() {
@@ -180,7 +155,7 @@ public class FetchWeatherTask {
             .appendQueryParameter("mode", "json")
             .appendQueryParameter("units", "metric")
             .appendQueryParameter("cnt", "14")
-            .appendQueryParameter("q", mLocationPreference)
+            .appendQueryParameter("q", mLocation)
             .build().toString();
     }
 
@@ -217,13 +192,11 @@ public class FetchWeatherTask {
     private void fetch() {
         final String url = getFetchForecastUrl();
         Log.i(TAG, "fetch() url == " + url);
-        new AsyncTask<Void, Void, String[]>() {
-            protected String[] doInBackground(Void... ignored) {
+        new AsyncTask<Void, Void, Void>() {
+            protected Void doInBackground(Void... ignored) {
                 Log.v(TAG, "doInBackground()");
-                return parseWeather(fetchForecast(url));
-            }
-            protected void onPostExecute(String[] forecast) {
-                Log.v(TAG, "onPostExecute()");
+                parseWeather(fetchForecast(url));
+                return null;
             }
         }.execute();
     }
@@ -231,7 +204,7 @@ public class FetchWeatherTask {
     private FetchWeatherTask(Context context) {
         Log.v(TAG, "constructor: context == " + context);
         mContext = context;
-        mLocationPreference = getLocationPreference();
+        mLocation = getLocationPreference();
     }
 
     static public void fetch(Context context) {
