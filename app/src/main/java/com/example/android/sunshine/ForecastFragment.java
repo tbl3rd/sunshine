@@ -1,13 +1,22 @@
 package com.example.android.sunshine;
 
+import java.util.ArrayList;
+import java.util.Date;
+
+import com.example.android.sunshine.data.WeatherContract.LocationEntry;
+import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
+
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,16 +28,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.android.sunshine.data.WeatherContract.LocationEntry;
-import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
-
-import java.util.ArrayList;
-import java.util.Date;
-
 
 public class ForecastFragment
     extends Fragment
-    implements LoaderManager.LoaderCallbacks
+    implements LoaderCallbacks<Cursor>
 {
 
     private static final String TAG = ForecastFragment.class.getSimpleName();
@@ -54,35 +57,25 @@ public class ForecastFragment
 
     private static final int FORECAST_LOADER = 0;
 
-    ArrayAdapter<String> mForecastAdapter = null;
+    SimpleCursorAdapter mForecastAdapter;
 
-    // Set up and return adapter for the forecast in rootView.
-    //
-    private ArrayAdapter<String> makeForecastAdapter(View rootView)
+    private SimpleCursorAdapter makeForecastAdapter()
     {
-        final ArrayAdapter<String> result = new ArrayAdapter<String>(
-                getActivity(),
-                R.layout.list_item_forecast,
-                R.id.list_item_forecast_textview,
-                new ArrayList<String>());
-        final ListView lv =
-            (ListView)rootView.findViewById(R.id.listview_forecast);
-        final AdapterView.OnItemClickListener ocl
-            = new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(
-                            AdapterView<?> adapter,
-                            View view, int n, long ignoredId) {
-                        startActivity(
-                                new Intent(getActivity(), DetailActivity.class)
-                                .putExtra(
-                                        Intent.EXTRA_TEXT,
-                                        mForecastAdapter.getItem(n)));
-                    }
-                };
-        lv.setAdapter(result);
-        lv.setOnItemClickListener(ocl);
-        return result;
+        return new SimpleCursorAdapter(
+                getActivity(), R.layout.list_item_forecast, null,
+                new String[] {
+                    WeatherEntry.COLUMN_DATE,
+                    WeatherEntry.COLUMN_DESCRIPTION,
+                    WeatherEntry.COLUMN_MAXIMUM,
+                    WeatherEntry.COLUMN_MINIMUM
+                },
+                new int[] {
+                    R.id.list_item_date_textview,
+                    R.id.list_item_forecast_textview,
+                    R.id.list_item_high_textview,
+                    R.id.list_item_low_textview
+                },
+                0);
     }
 
     private void fetchForecast() {
@@ -104,7 +97,7 @@ public class ForecastFragment
     {
         final View result
             = inflater.inflate(R.layout.fragment_main, container, false);
-        mForecastAdapter = makeForecastAdapter(result);
+        mForecastAdapter = makeForecastAdapter();
         return result;
     }
 
@@ -153,13 +146,13 @@ public class ForecastFragment
     }
 
     @Override
-    public void onLoadFinished(Loader loader, Object o) {
-
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mForecastAdapter.swapCursor(data);
     }
 
     @Override
-    public void onLoaderReset(Loader loader) {
-
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mForecastAdapter.swapCursor(null);
     }
 
     public ForecastFragment() {

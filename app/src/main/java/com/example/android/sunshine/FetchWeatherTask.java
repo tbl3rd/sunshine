@@ -25,8 +25,8 @@ import android.database.SQLException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 
 public class FetchWeatherTask {
@@ -34,7 +34,7 @@ public class FetchWeatherTask {
     private final String TAG = FetchWeatherTask.class.getSimpleName();
 
     private final Context mContext;
-    private final ArrayAdapter<String> mForecastAdapter;
+    private final SimpleCursorAdapter mForecastAdapter;
     private final String locationPreference;
 
     private String getString(int resourceId) {
@@ -228,13 +228,13 @@ public class FetchWeatherTask {
             }
             protected void onPostExecute(String[] forecast) {
                 Log.v(TAG, "onPostExecute()");
-                mForecastAdapter.clear();
-                mForecastAdapter.addAll(forecast);
+                // mForecastAdapter.clear();
+                // mForecastAdapter.addAll(forecast);
             }
         }.execute();
     }
 
-    private FetchWeatherTask(Context context, ArrayAdapter<String> adapter) {
+    private FetchWeatherTask(Context context, SimpleCursorAdapter adapter) {
         Log.v(TAG, "constructor: context == " + context);
         Log.v(TAG, "constructor: adapter == " + adapter);
         mContext = context;
@@ -242,7 +242,7 @@ public class FetchWeatherTask {
         locationPreference = getLocationPreference();
     }
 
-    static public void fetch(Context context, ArrayAdapter<String> adapter) {
+    static public void fetch(Context context, SimpleCursorAdapter adapter) {
         new FetchWeatherTask(context, adapter).fetch();
     }
 }
