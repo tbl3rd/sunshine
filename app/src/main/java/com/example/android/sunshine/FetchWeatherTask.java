@@ -127,25 +127,19 @@ public class FetchWeatherTask {
     {
         final ContentValues result = new ContentValues();
         result.put(WeatherEntry.COLUMN_LOCATION_KEY, locationId);
-        final long msec = day.getLong("dt") * 1000;
-        final String date = new SimpleDateFormat("yyyyMMdd").format(msec);
-        result.put(WeatherEntry.COLUMN_DATE, date);
-        final String description
-            = day.getJSONArray("weather").getJSONObject(0).getString("main");
-        result.put(WeatherEntry.COLUMN_DESCRIPTION, description);
+        result.put(WeatherEntry.COLUMN_DATE,
+                new SimpleDateFormat("yyyyMMdd").format(
+                        day.getLong("dt") * 1000));
+        result.put(WeatherEntry.COLUMN_DESCRIPTION,
+                day.getJSONArray("weather").getJSONObject(0)
+                .getString("main"));
         final JSONObject temperature = day.getJSONObject("temp");
-        final double max = temperature.getDouble("max");
-        result.put(WeatherEntry.COLUMN_MAXIMUM, max);
-        final double min = temperature.getDouble("min");
-        result.put(WeatherEntry.COLUMN_MINIMUM, min);
-        final double humidity = day.getDouble("humidity");
-        result.put(WeatherEntry.COLUMN_HUMIDITY, humidity);
-        final double pressure = day.getDouble("pressure");
-        result.put(WeatherEntry.COLUMN_PRESSURE, pressure);
-        final double speed = day.getDouble("speed");
-        result.put(WeatherEntry.COLUMN_WIND, speed);
-        final double deg = day.getDouble("deg");
-        result.put(WeatherEntry.COLUMN_DIRECTION, deg);
+        result.put(WeatherEntry.COLUMN_MAXIMUM, temperature.getDouble("max"));
+        result.put(WeatherEntry.COLUMN_MINIMUM, temperature.getDouble("min"));
+        result.put(WeatherEntry.COLUMN_HUMIDITY, day.getDouble("humidity"));
+        result.put(WeatherEntry.COLUMN_PRESSURE, day.getDouble("pressure"));
+        result.put(WeatherEntry.COLUMN_WIND, day.getDouble("speed"));
+        result.put(WeatherEntry.COLUMN_DIRECTION, day.getDouble("deg"));
         return result;
     }
 
@@ -154,17 +148,15 @@ public class FetchWeatherTask {
         String[] result = new String[0];
         try {
             final JSONObject forecast = new JSONObject(json);
-            final JSONArray list = forecast.getJSONArray("list");
             final long locationId = parseLocation(forecast);
+            final JSONArray list = forecast.getJSONArray("list");
             result = new String[list.length()];
             for (int i = 0; i < list.length(); ++i) {
                 final JSONObject day = list.getJSONObject(i);
                 final ContentValues cv = makeWeather(locationId, day);
-                final Date date = new Date(day.getLong("dt") * 1000);
-                final String displayDate
-                    = new SimpleDateFormat("E, MMM d").format(date).toString();
                 final double max = cv.getAsDouble(WeatherEntry.COLUMN_MAXIMUM);
                 final double min = cv.getAsDouble(WeatherEntry.COLUMN_MINIMUM);
+                final Date date = new Date(day.getLong("dt") * 1000);
                 result[i]
                     = new SimpleDateFormat("E, MMM d").format(date).toString()
                     + " - " + cv.getAsString(WeatherEntry.COLUMN_DESCRIPTION)
