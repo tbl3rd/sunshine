@@ -1,5 +1,7 @@
 package com.example.android.sunshine;
 
+import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -14,6 +16,8 @@ public class SettingsActivity
     extends PreferenceActivity
     implements Preference.OnPreferenceChangeListener
 {
+    boolean mBindingPreference = true;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,39 +33,44 @@ public class SettingsActivity
         bindPreferenceSummaryToValue(findPreference(unitsKey));
     }
 
-    /**
-     * Attaches a listener so the summary is always updated with the
-     * preference value.  Also fires the listener once, to initialize
-     * the summary (so it shows up before the value is changed.)
-     */
-    private void bindPreferenceSummaryToValue(Preference preference) {
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(this);
-        // Trigger the listener immediately with the preference's
-        // current value.
-        onPreferenceChange(preference,
-                PreferenceManager
-                .getDefaultSharedPreferences(preference.getContext())
-                .getString(preference.getKey(), ""));
-    }
-
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
         final String stringValue = value.toString();
+        if (!mBindingPreference) {
+            final boolean locationPreferenceChanged
+                = preference.getKey().equals(
+                        getString(R.string.preference_location_key));
+            if (locationPreferenceChanged) {
+                FetchWeatherTask.fetch(this);
+            } else {
+                getContentResolver().notifyChange(
+                        WeatherEntry.CONTENT_URI, null);
+            }
+        }
         if (preference instanceof ListPreference) {
-            // For list preferences, look up the correct display value
-            // in the preference's 'entries' list (since they have
-            // separate labels/values).
             final ListPreference listPreference = (ListPreference)preference;
             final int prefIndex = listPreference.findIndexOfValue(stringValue);
             if (prefIndex >= 0) {
                 preference.setSummary(listPreference.getEntries()[prefIndex]);
             }
         } else {
-            // For other preferences, set the summary to the value's
-            // simple string representation.
             preference.setSummary(stringValue);
         }
         return true;
+    }
+
+    /**
+     * Attaches a listener so the summary is always updated with the
+     * preference value.  Also fires the listener once, to initialize
+     * the summary (so it shows up before the value is changed.)
+     */
+    private void bindPreferenceSummaryToValue(Preference preference) {
+        mBindingPreference = true;
+        preference.setOnPreferenceChangeListener(this);
+        onPreferenceChange(preference,
+                PreferenceManager
+                .getDefaultSharedPreferences(preference.getContext())
+                .getString(preference.getKey(), ""));
+        mBindingPreference = false;
     }
 }

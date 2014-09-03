@@ -58,12 +58,20 @@ public class ForecastFragment
 
     SimpleCursorAdapter mForecastAdapter;
 
+    private String getPreferredLocation() {
+        return PreferenceManager
+            .getDefaultSharedPreferences(getActivity()).getString(
+                    getString(R.string.preference_location_key),
+                    getString(R.string.preference_location_default));
+    }
+
     private double fromCelsius(double t) {
         final String metric = getString(R.string.preference_units_default);
         final String units
             = PreferenceManager.getDefaultSharedPreferences(getActivity())
             .getString(getString(R.string.preference_units_key), metric);
-        return (units.equals(metric)) ? t : (32.0 + 1.8 * t);
+        final boolean isMetric = units.equals(metric);
+        return Math.round(isMetric ? t : (32.0 + 1.8 * t));
     }
 
     private SimpleCursorAdapter makeSimpleCursorAdapter() {
@@ -118,9 +126,9 @@ public class ForecastFragment
                     + " - " + c.getString(COLUMN_DESCRIPTION) + " -- "
                     + fromCelsius(c.getDouble(COLUMN_MAXIMUM)) + " / "
                     + fromCelsius(c.getDouble(COLUMN_MINIMUM));
-                    startActivity(new Intent(getActivity(),
-                                    DetailActivity.class)
-                            .putExtra(Intent.EXTRA_TEXT, extra));
+                startActivity(new Intent(getActivity(),
+                                DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, extra));
             }
         };
     }
@@ -134,10 +142,6 @@ public class ForecastFragment
         lv.setOnItemClickListener(makeOnItemClickListener());
         result.setViewBinder(makeViewBinder());
         return result;
-    }
-
-    private void fetchForecast() {
-        FetchWeatherTask.fetch(getActivity(), mForecastAdapter);
     }
 
     @Override
@@ -164,7 +168,17 @@ public class ForecastFragment
     public void onStart()
     {
         super.onStart();
-        fetchForecast();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        final boolean sameLocation
+            = mLocation == null || mLocation.equals(getPreferredLocation());
+        if (!sameLocation) {
+            getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+        }
     }
 
     @Override
@@ -177,7 +191,7 @@ public class ForecastFragment
         Log.i(TAG, "onOptionsItemSelected()");
         switch (item.getItemId()) {
         case R.id.action_refresh:
-            fetchForecast();
+            FetchWeatherTask.fetch(getActivity());
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -187,17 +201,14 @@ public class ForecastFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.i(TAG, "onActivityCreated()");
-        getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        mLocation = PreferenceManager
-            .getDefaultSharedPreferences(getActivity()).getString(
-                    getString(R.string.preference_location_key),
-                    getString(R.string.preference_location_default));
-        final Uri uri
-            = WeatherEntry.buildWeatherLocationQueryDate(mLocation, new Date());
+        mLocation = getPreferredLocation();
+        final Uri uri = WeatherEntry.buildWeatherLocationQueryDate(
+                mLocation, new Date());
         Log.v(TAG, "onCreateLoader(" + i + ", ...): uri == " + uri);
         return new CursorLoader(
                 getActivity(), uri, FORECAST_COLUMNS, null, null,

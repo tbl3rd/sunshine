@@ -25,7 +25,6 @@ import android.database.SQLException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 
 
@@ -34,8 +33,7 @@ public class FetchWeatherTask {
     private final String TAG = FetchWeatherTask.class.getSimpleName();
 
     private final Context mContext;
-    private final SimpleCursorAdapter mForecastAdapter;
-    private final String locationPreference;
+    private final String mLocationPreference;
 
     private String getString(int resourceId) {
         return mContext.getString(resourceId);
@@ -91,10 +89,10 @@ public class FetchWeatherTask {
     private long addLocation(ContentResolver resolver,
             String city, double latitude, double longitude)
     {
-        long result = findLocation(resolver, locationPreference);
+        long result = findLocation(resolver, mLocationPreference);
         if (result < 0) {
             final ContentValues location = new ContentValues();
-            location.put(LocationEntry.COLUMN_SETTING, locationPreference);
+            location.put(LocationEntry.COLUMN_SETTING, mLocationPreference);
             location.put(LocationEntry.COLUMN_CITY, city);
             location.put(LocationEntry.COLUMN_LATITUDE, latitude);
             location.put(LocationEntry.COLUMN_LONGITUDE, longitude);
@@ -182,7 +180,7 @@ public class FetchWeatherTask {
             .appendQueryParameter("mode", "json")
             .appendQueryParameter("units", "metric")
             .appendQueryParameter("cnt", "14")
-            .appendQueryParameter("q", locationPreference)
+            .appendQueryParameter("q", mLocationPreference)
             .build().toString();
     }
 
@@ -226,21 +224,17 @@ public class FetchWeatherTask {
             }
             protected void onPostExecute(String[] forecast) {
                 Log.v(TAG, "onPostExecute()");
-                // mForecastAdapter.clear();
-                // mForecastAdapter.addAll(forecast);
             }
         }.execute();
     }
 
-    private FetchWeatherTask(Context context, SimpleCursorAdapter adapter) {
+    private FetchWeatherTask(Context context) {
         Log.v(TAG, "constructor: context == " + context);
-        Log.v(TAG, "constructor: adapter == " + adapter);
         mContext = context;
-        mForecastAdapter = adapter;
-        locationPreference = getLocationPreference();
+        mLocationPreference = getLocationPreference();
     }
 
-    static public void fetch(Context context, SimpleCursorAdapter adapter) {
-        new FetchWeatherTask(context, adapter).fetch();
+    static public void fetch(Context context) {
+        new FetchWeatherTask(context).fetch();
     }
 }
