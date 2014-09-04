@@ -118,17 +118,10 @@ public class ForecastFragment
             @Override
             public void onItemClick(AdapterView av, View view, int n, long id)
             {
-                final Cursor c
-                    = ((SimpleCursorAdapter)av.getAdapter()).getCursor();
-                final String extra
-                    = DateFormat.getDateInstance().format(
-                            WeatherEntry.dbDate(c.getString(COLUMN_DATE)))
-                    + " - " + c.getString(COLUMN_DESCRIPTION) + " -- "
-                    + fromCelsius(c.getDouble(COLUMN_MAXIMUM)) + " / "
-                    + fromCelsius(c.getDouble(COLUMN_MINIMUM));
-                startActivity(new Intent(getActivity(),
-                                DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, extra));
+                startActivity(new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT,
+                                ((SimpleCursorAdapter)av.getAdapter())
+                                .getCursor().getString(COLUMN_DATE)));
             }
         };
     }
