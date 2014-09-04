@@ -6,6 +6,7 @@ import java.util.Date;
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -58,25 +59,24 @@ public class ForecastFragment
 
     SimpleCursorAdapter mForecastAdapter;
 
-    private String getPreferredLocation() {
+    private static String getPreferredLocation(Activity a) {
         return PreferenceManager
-            .getDefaultSharedPreferences(getActivity()).getString(
-                    getString(R.string.preference_location_key),
-                    getString(R.string.preference_location_default));
+            .getDefaultSharedPreferences(a).getString(
+                    a.getString(R.string.preference_location_key),
+                    a.getString(R.string.preference_location_default));
     }
 
-    private double fromCelsius(double t) {
-        final String metric = getString(R.string.preference_units_default);
+    private static double fromCelsius(Activity a, double t) {
+        final String metric = a.getString(R.string.preference_units_default);
         final String units
-            = PreferenceManager.getDefaultSharedPreferences(getActivity())
-            .getString(getString(R.string.preference_units_key), metric);
+            = PreferenceManager.getDefaultSharedPreferences(a)
+            .getString(a.getString(R.string.preference_units_key), metric);
         final boolean isMetric = units.equals(metric);
         return Math.round(isMetric ? t : (32.0 + 1.8 * t));
     }
 
-    private SimpleCursorAdapter makeSimpleCursorAdapter() {
-        return new SimpleCursorAdapter(
-                getActivity(), R.layout.list_item_forecast, null,
+    private static SimpleCursorAdapter makeSimpleCursorAdapter(Activity a) {
+        return new SimpleCursorAdapter(a, R.layout.list_item_forecast, null,
                 new String[] {
                     WeatherEntry.COLUMN_DATE,
                     WeatherEntry.COLUMN_DESCRIPTION,
@@ -92,7 +92,9 @@ public class ForecastFragment
                 0);
     }
 
-    private SimpleCursorAdapter.ViewBinder makeViewBinder() {
+    private static SimpleCursorAdapter.ViewBinder
+        makeViewBinder(final Activity a)
+    {
         return new SimpleCursorAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View v, Cursor c, int n)
@@ -101,7 +103,7 @@ public class ForecastFragment
                 switch (n) {
                 case COLUMN_MAXIMUM:
                 case COLUMN_MINIMUM:
-                    tv.setText(String.valueOf(fromCelsius(c.getDouble(n))));
+                    tv.setText(String.valueOf(fromCelsius(a, c.getDouble(n))));
                     return true;
                 case COLUMN_DATE:
                     tv.setText(DateFormat.getDateInstance().format(
@@ -113,7 +115,9 @@ public class ForecastFragment
         };
     }
 
-    private AdapterView.OnItemClickListener makeOnItemClickListener() {
+    private static AdapterView.OnItemClickListener
+        makeOnItemClickListener(final Activity a)
+    {
         return new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView av, View view, int n, long id)
@@ -123,24 +127,23 @@ public class ForecastFragment
                 final String extra
                     = DateFormat.getDateInstance().format(
                             WeatherEntry.dbDate(c.getString(COLUMN_DATE)))
-                    + " - " + c.getString(COLUMN_DESCRIPTION) + " -- "
-                    + fromCelsius(c.getDouble(COLUMN_MAXIMUM)) + " / "
-                    + fromCelsius(c.getDouble(COLUMN_MINIMUM));
-                startActivity(new Intent(getActivity(),
-                                DetailActivity.class)
+                    + " - " + a.getString(COLUMN_DESCRIPTION) + " -- "
+                    + fromCelsius(a, c.getDouble(COLUMN_MAXIMUM)) + " / "
+                    + fromCelsius(a, c.getDouble(COLUMN_MINIMUM));
+                a.startActivity(new Intent(a, DetailActivity.class)
                         .putExtra(Intent.EXTRA_TEXT, extra));
             }
         };
     }
 
-    private SimpleCursorAdapter makeForecastAdapter(View v)
+    private static SimpleCursorAdapter makeForecastAdapter(Activity a, View v)
     {
-        final SimpleCursorAdapter result = makeSimpleCursorAdapter();
+        final SimpleCursorAdapter result = makeSimpleCursorAdapter(a);
         final ListView lv = (ListView)v.findViewById(R.id.listview_forecast);
         Log.v(TAG, "makeForecastAdapter(): lv == " + lv);
         lv.setAdapter(result);
-        lv.setOnItemClickListener(makeOnItemClickListener());
-        result.setViewBinder(makeViewBinder());
+        lv.setOnItemClickListener(makeOnItemClickListener(a));
+        result.setViewBinder(makeViewBinder(a));
         return result;
     }
 
@@ -160,7 +163,7 @@ public class ForecastFragment
         final View result
             = inflater.inflate(R.layout.fragment_main, container, false);
         Log.v(TAG, "onCreateView(): result == " + result);
-        mForecastAdapter = makeForecastAdapter(result);
+        mForecastAdapter = makeForecastAdapter(getActivity(), result);
         return result;
     }
 
@@ -175,7 +178,8 @@ public class ForecastFragment
     {
         super.onResume();
         final boolean sameLocation
-            = mLocation == null || mLocation.equals(getPreferredLocation());
+            = mLocation == null
+            || mLocation.equals(getPreferredLocation(getActivity()));
         if (!sameLocation) {
             getLoaderManager().initLoader(FORECAST_LOADER, null, this);
         }
@@ -206,7 +210,7 @@ public class ForecastFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        mLocation = getPreferredLocation();
+        mLocation = getPreferredLocation(getActivity());
         final Uri uri = WeatherEntry.buildWeatherLocationQueryDate(
                 mLocation, new Date());
         Log.v(TAG, "onCreateLoader(" + i + ", ...): uri == " + uri);
