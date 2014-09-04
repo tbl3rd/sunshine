@@ -65,11 +65,11 @@ public class Utility
                 c.getString(R.string.preference_location_default));
     }
 
-    private double fromCelsius(Context c, double t) {
+    public static String fromCelsius(Context c, double t) {
         final String metric = c.getString(R.string.preference_units_default);
         final String units = getDefaultSharedPreferences(c)
             .getString(c.getString(R.string.preference_units_key), metric);
         final boolean isMetric = units.equals(metric);
-        return Math.round(isMetric ? t : (32.0 + 1.8 * t));
+        return String.valueOf(Math.round(isMetric ? t : (32.0 + 1.8 * t)));
     }
 }

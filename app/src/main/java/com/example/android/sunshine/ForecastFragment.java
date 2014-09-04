@@ -40,15 +40,6 @@ public class ForecastFragment
 
     SimpleCursorAdapter mAdapter;
 
-    private double fromCelsius(double t) {
-        final String metric = getString(R.string.preference_units_default);
-        final String units
-            = PreferenceManager.getDefaultSharedPreferences(getActivity())
-            .getString(getString(R.string.preference_units_key), metric);
-        final boolean isMetric = units.equals(metric);
-        return Math.round(isMetric ? t : (32.0 + 1.8 * t));
-    }
-
     private SimpleCursorAdapter makeSimpleCursorAdapter() {
         return new SimpleCursorAdapter(
                 getActivity(), R.layout.list_item_forecast, null,
@@ -76,7 +67,8 @@ public class ForecastFragment
                 switch (n) {
                 case Utility.COLUMN_MAXIMUM:
                 case Utility.COLUMN_MINIMUM:
-                    tv.setText(String.valueOf(fromCelsius(c.getDouble(n))));
+                    tv.setText(Utility.fromCelsius(getActivity(),
+                                    c.getDouble(n)));
                     return true;
                 case Utility.COLUMN_DATE:
                     tv.setText(DateFormat.getDateInstance().format(
