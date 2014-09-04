@@ -33,29 +33,12 @@ public class DetailFragment
 
     private static final int LOADER_INDEX = 0;
 
-    public static final String[] COLUMNS = ForecastFragment.FORECAST_COLUMNS;
-
-    private static final int COLUMN_ID          = 0;
-    private static final int COLUMN_DATE        = 1;
-    private static final int COLUMN_DESCRIPTION = 2;
-    private static final int COLUMN_MAXIMUM     = 3;
-    private static final int COLUMN_MINIMUM     = 4;
-    private static final int COLUMN_SETTING     = 5;
-    private static final int COLUMN_COUNT       = 6;
-
     private View mView;
     private String mDbDate;
     private String mLocation;
     private String mWeather;
 
     CursorLoader mLoader;
-
-    private String getPreferredLocation() {
-        return PreferenceManager
-            .getDefaultSharedPreferences(getActivity()).getString(
-                    getString(R.string.preference_location_key),
-                    getString(R.string.preference_location_default));
-    }
 
     private Intent getShareIntent() {
         final Intent result = new Intent(Intent.ACTION_SEND);
@@ -88,22 +71,22 @@ public class DetailFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        mLocation = getPreferredLocation();
+        mLocation = Utility.getPreferredLocation(getActivity());
         final Uri uri = WeatherEntry.buildWeatherLocationDate(
                 mLocation, mDbDate);
         Log.v(TAG, "onCreateLoader(" + i + ", ...): uri == " + uri);
-        mLoader = new CursorLoader(getActivity(), uri, COLUMNS,
-                null, null, null);
+        mLoader = new CursorLoader(getActivity(), uri,
+                Utility.FORECAST_COLUMNS, null, null, null);
         return mLoader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
         if (c.moveToFirst()) {
-            mWeather     = c.getString(COLUMN_DATE)
-                + " - "  + c.getString(COLUMN_DESCRIPTION)
-                + " -- " + c.getDouble(COLUMN_MAXIMUM)
-                + " / "  + c.getDouble(COLUMN_MINIMUM);
+            mWeather     = c.getString(Utility.COLUMN_DATE)
+                + " - "  + c.getString(Utility.COLUMN_DESCRIPTION)
+                + " -- " + c.getDouble(Utility.COLUMN_MAXIMUM)
+                + " / "  + c.getDouble(Utility.COLUMN_MINIMUM);
             ((TextView)mView.findViewById(R.id.textview_detail))
                 .setText(mWeather);
         }

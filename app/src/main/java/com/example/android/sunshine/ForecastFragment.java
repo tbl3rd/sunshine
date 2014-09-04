@@ -36,33 +36,9 @@ public class ForecastFragment
 
     private static final String TAG = ForecastFragment.class.getSimpleName();
 
-    public static final String[] FORECAST_COLUMNS = {
-        WeatherEntry.TABLE + "." + WeatherEntry._ID,
-        WeatherEntry.COLUMN_DATE,
-        WeatherEntry.COLUMN_DESCRIPTION,
-        WeatherEntry.COLUMN_MAXIMUM,
-        WeatherEntry.COLUMN_MINIMUM,
-        LocationEntry.COLUMN_SETTING
-    };
-
-    private static final int COLUMN_ID          = 0;
-    private static final int COLUMN_DATE        = 1;
-    private static final int COLUMN_DESCRIPTION = 2;
-    private static final int COLUMN_MAXIMUM     = 3;
-    private static final int COLUMN_MINIMUM     = 4;
-    private static final int COLUMN_SETTING     = 5;
-    private static final int COLUMN_COUNT       = 6;
-
     private String mLocation;
 
     SimpleCursorAdapter mAdapter;
-
-    private String getPreferredLocation() {
-        return PreferenceManager
-            .getDefaultSharedPreferences(getActivity()).getString(
-                    getString(R.string.preference_location_key),
-                    getString(R.string.preference_location_default));
-    }
 
     private double fromCelsius(double t) {
         final String metric = getString(R.string.preference_units_default);
@@ -98,11 +74,11 @@ public class ForecastFragment
             {
                 final TextView tv = (TextView)v;
                 switch (n) {
-                case COLUMN_MAXIMUM:
-                case COLUMN_MINIMUM:
+                case Utility.COLUMN_MAXIMUM:
+                case Utility.COLUMN_MINIMUM:
                     tv.setText(String.valueOf(fromCelsius(c.getDouble(n))));
                     return true;
-                case COLUMN_DATE:
+                case Utility.COLUMN_DATE:
                     tv.setText(DateFormat.getDateInstance().format(
                                     WeatherEntry.dbDate(c.getString(n))));
                     return true;
@@ -120,7 +96,7 @@ public class ForecastFragment
                 startActivity(new Intent(getActivity(), DetailActivity.class)
                         .putExtra(Intent.EXTRA_TEXT,
                                 ((SimpleCursorAdapter)av.getAdapter())
-                                .getCursor().getString(COLUMN_DATE)));
+                                .getCursor().getString(Utility.COLUMN_DATE)));
             }
         };
     }
@@ -167,7 +143,8 @@ public class ForecastFragment
     {
         super.onResume();
         final boolean sameLocation
-            = mLocation == null || mLocation.equals(getPreferredLocation());
+            =  mLocation == null
+            || mLocation.equals(Utility.getPreferredLocation(getActivity()));
         if (!sameLocation) {
             getLoaderManager().initLoader(LOADER_INDEX, null, this);
         }
@@ -198,12 +175,12 @@ public class ForecastFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        mLocation = getPreferredLocation();
+        mLocation = Utility.getPreferredLocation(getActivity());
         final Uri uri = WeatherEntry.buildWeatherLocationQueryDate(
                 mLocation, new Date());
         Log.v(TAG, "onCreateLoader(" + i + ", ...): uri == " + uri);
         return new CursorLoader(
-                getActivity(), uri, FORECAST_COLUMNS, null, null,
+                getActivity(), uri, Utility.FORECAST_COLUMNS, null, null,
                 WeatherEntry.COLUMN_DATE + " ASC ");
     }
 
@@ -219,9 +196,5 @@ public class ForecastFragment
 
     public ForecastFragment() {
         super();
-        if (COLUMN_COUNT != FORECAST_COLUMNS.length) {
-            throw new RuntimeException(
-                    "COLUMN_COUNT != FORECAST_COLUMNS.length");
-        }
     }
 }
