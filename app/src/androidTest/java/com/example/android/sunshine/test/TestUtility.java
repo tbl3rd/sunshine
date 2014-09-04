@@ -13,9 +13,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 
-public class Util extends junit.framework.Assert {
+public class TestUtility extends junit.framework.Assert {
 
-    final static String TAG = Util.class.getSimpleName();
+    final static String TAG = TestUtility.class.getSimpleName();
 
     final static String WHERE = "02138";
     final static String WHEN = "20140612";

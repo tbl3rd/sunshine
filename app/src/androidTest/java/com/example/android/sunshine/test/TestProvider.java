@@ -43,11 +43,12 @@ public class TestProvider extends AndroidTestCase {
                 resolver.getType(WeatherEntry.CONTENT_URI));
         assertEquals(WeatherEntry.CONTENT_TYPE_DIR,
                 resolver.getType(
-                        WeatherEntry.buildWeatherLocation(Util.WHERE)));
+                        WeatherEntry.buildWeatherLocation(
+                                TestUtility.WHERE)));
         assertEquals(WeatherEntry.CONTENT_TYPE_ITEM,
                 resolver.getType(
                         WeatherEntry.buildWeatherLocationDate(
-                                Util.WHERE, Util.WHEN)));
+                                TestUtility.WHERE, TestUtility.WHEN)));
         assertEquals(LocationEntry.CONTENT_TYPE_DIR,
                 resolver.getType(LocationEntry.CONTENT_URI));
         assertEquals(LocationEntry.CONTENT_TYPE_ITEM,
@@ -58,37 +59,39 @@ public class TestProvider extends AndroidTestCase {
             ContentResolver resolver)
     {
         assertEquals(location,
-                Util.makeContentValues(resolver.query(
+                TestUtility.makeContentValues(resolver.query(
                                 LocationEntry.CONTENT_URI,
-                                Util.locationColumns, null, null, null)));
+                                TestUtility.locationColumns,
+                                null, null, null)));
         assertEquals(location,
-                Util.makeContentValues(resolver.query(
+                TestUtility.makeContentValues(resolver.query(
                                 ContentUris.withAppendedId(
                                         LocationEntry.CONTENT_URI, id),
-                                Util.locationColumns, null, null, null)));
+                                TestUtility.locationColumns,
+                                null, null, null)));
     }
 
     public void assertJoined(ContentValues joined, ContentResolver resolver)
     {
         joined.remove(LocationEntry._ID);
         joined.remove(WeatherEntry._ID);
-        final ContentValues where = Util.makeContentValues(
+        final ContentValues where = TestUtility.makeContentValues(
                 resolver.query(
-                        WeatherEntry.buildWeatherLocation(Util.WHERE),
+                        WeatherEntry.buildWeatherLocation(TestUtility.WHERE),
                         null, null, null, null));
         where.remove(WeatherEntry._ID);
         assertEquals(joined, where);
         final ContentValues whereWhen =
-            Util.makeContentValues(resolver.query(
+            TestUtility.makeContentValues(resolver.query(
                             WeatherEntry.buildWeatherLocationDate(
-                                    Util.WHERE, Util.WHEN),
+                                    TestUtility.WHERE, TestUtility.WHEN),
                             null, null, null, null));
         whereWhen.remove(WeatherEntry._ID);
         assertEquals(joined, whereWhen);
         final ContentValues whereWhenQuery =
-            Util.makeContentValues(resolver.query(
+            TestUtility.makeContentValues(resolver.query(
                             WeatherEntry.buildWeatherLocationQueryDate(
-                                    Util.WHERE, Util.WHEN),
+                                    TestUtility.WHERE, TestUtility.WHEN),
                             null, null, null, null));
         whereWhenQuery.remove(WeatherEntry._ID);
         assertEquals(joined, whereWhenQuery);
@@ -97,7 +100,7 @@ public class TestProvider extends AndroidTestCase {
     public void testInsertReadProvider() {
         Log.v(TAG, "testInsertReadProvider()");
         final ContentResolver resolver = mContext.getContentResolver();
-        final ContentValues locationIn = Util.makeLocationIn();
+        final ContentValues locationIn = TestUtility.makeLocationIn();
         final long locationId = ContentUris.parseId(
                 resolver.insert(LocationEntry.CONTENT_URI, locationIn));
         locationIn.put(LocationEntry._ID, locationId);
@@ -105,7 +108,7 @@ public class TestProvider extends AndroidTestCase {
         assertTrue(locationId != -1);
         Log.d(TAG, "testInsertReadProvider(): locationId == " + locationId);
         assertLocation(locationIn, locationId, resolver);
-        final ContentValues weatherIn = Util.makeWeatherIn();
+        final ContentValues weatherIn = TestUtility.makeWeatherIn();
         weatherIn.put(WeatherEntry.COLUMN_LOCATION_KEY, locationId);
         final long weatherId = ContentUris.parseId(
                 resolver.insert(WeatherEntry.CONTENT_URI, weatherIn));
@@ -114,9 +117,10 @@ public class TestProvider extends AndroidTestCase {
         weatherIn.put(WeatherEntry._ID, weatherId);
         Log.v(TAG, "testInsertReadProvider(): weatherIn == " + weatherIn);
         assertEquals(weatherIn,
-                Util.makeContentValues(resolver.query(
-                                WeatherEntry.CONTENT_URI,
-                                Util.weatherColumns, null, null, null)));
+                TestUtility.makeContentValues(
+                        resolver.query(WeatherEntry.CONTENT_URI,
+                                TestUtility.weatherColumns,
+                                null, null, null)));
         final ContentValues joined = new ContentValues(locationIn);
         joined.putAll(weatherIn);
         assertJoined(joined, resolver);
@@ -126,7 +130,7 @@ public class TestProvider extends AndroidTestCase {
         Log.v(TAG, "testUpdateProvider()");
         testDeleteAllRecords();
         final ContentResolver resolver = mContext.getContentResolver();
-        final ContentValues location = Util.makeLocationIn();
+        final ContentValues location = TestUtility.makeLocationIn();
         Log.v(TAG, "testUpdateProvider(): location == " + location);
         final long id = ContentUris.parseId(
                 resolver.insert(LocationEntry.CONTENT_URI, location));
@@ -140,15 +144,16 @@ public class TestProvider extends AndroidTestCase {
                 LocationEntry.CONTENT_URI, location, null, null);
         Log.d(TAG, "testUpdateProvider(): count == " + count);
         assertEquals(count, 1);
-        assertEquals(location, Util.makeContentValues(resolver.query(
+        assertEquals(location, TestUtility.makeContentValues(
+                        resolver.query(
                                 ContentUris.withAppendedId(
                                         LocationEntry.CONTENT_URI, id),
-                                Util.locationColumns, null, null, null)));
+                                TestUtility.locationColumns,
+                                null, null, null)));
     }
 
     public TestProvider() {
         super();
         Log.v(TAG, "TestProvider()");
-        // mResolver = mContext.getContentResolver(); // WTF: mContext == null
     }
 }
