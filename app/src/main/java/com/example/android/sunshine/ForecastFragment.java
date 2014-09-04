@@ -35,7 +35,7 @@ public class ForecastFragment
 
     private static final String TAG = ForecastFragment.class.getSimpleName();
 
-    private static final String[] FORECAST_COLUMNS = {
+    public static final String[] FORECAST_COLUMNS = {
         WeatherEntry.TABLE + "." + WeatherEntry._ID,
         WeatherEntry.COLUMN_DATE,
         WeatherEntry.COLUMN_DESCRIPTION,
@@ -56,7 +56,7 @@ public class ForecastFragment
 
     private static final int FORECAST_LOADER = 0;
 
-    SimpleCursorAdapter mForecastAdapter;
+    SimpleCursorAdapter mAdapter;
 
     private String getPreferredLocation() {
         return PreferenceManager
@@ -153,7 +153,7 @@ public class ForecastFragment
         final View result
             = inflater.inflate(R.layout.fragment_main, container, false);
         Log.v(TAG, "onCreateView(): result == " + result);
-        mForecastAdapter = makeForecastAdapter(result);
+        mAdapter = makeForecastAdapter(result);
         return result;
     }
 
@@ -210,12 +210,12 @@ public class ForecastFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mForecastAdapter.swapCursor(data);
+        mAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mForecastAdapter.swapCursor(null);
+        mAdapter.swapCursor(null);
     }
 
     public ForecastFragment() {
