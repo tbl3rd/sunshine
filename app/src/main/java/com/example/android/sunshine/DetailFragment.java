@@ -31,11 +31,22 @@ public class DetailFragment
 {
     private static final String TAG = DetailFragment.class.getSimpleName();
 
-    public static final String[] FORECAST_COLUMNS
-        = ForecastFragment.FORECAST_COLUMNS;
+    private static final int LOADER_INDEX = 0;
 
+    public static final String[] COLUMNS = ForecastFragment.FORECAST_COLUMNS;
+
+    private static final int COLUMN_ID          = 0;
+    private static final int COLUMN_DATE        = 1;
+    private static final int COLUMN_DESCRIPTION = 2;
+    private static final int COLUMN_MAXIMUM     = 3;
+    private static final int COLUMN_MINIMUM     = 4;
+    private static final int COLUMN_SETTING     = 5;
+    private static final int COLUMN_COUNT       = 6;
+
+    private View mView;
     private String mDbDate;
     private String mLocation;
+    private String mWeather;
 
     CursorLoader mLoader;
 
@@ -51,7 +62,7 @@ public class DetailFragment
         final String name = getString(R.string.app_name);
         result.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         result.setType("text/plain");
-        result.putExtra(Intent.EXTRA_TEXT, mDbDate + " #" + name);
+        result.putExtra(Intent.EXTRA_TEXT, mWeather + " #" + name);
         return result;
     }
 
@@ -69,18 +80,33 @@ public class DetailFragment
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.i(TAG, "onActivityCreated()");
+        getLoaderManager().restartLoader(LOADER_INDEX, null, this);
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         mLocation = getPreferredLocation();
         final Uri uri = WeatherEntry.buildWeatherLocationDate(
                 mLocation, mDbDate);
         Log.v(TAG, "onCreateLoader(" + i + ", ...): uri == " + uri);
-        mLoader = new CursorLoader(getActivity(), uri, FORECAST_COLUMNS,
+        mLoader = new CursorLoader(getActivity(), uri, COLUMNS,
                 null, null, null);
         return mLoader;
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
+        if (c.moveToFirst()) {
+            mWeather     = c.getString(COLUMN_DATE)
+                + " - "  + c.getString(COLUMN_DESCRIPTION)
+                + " -- " + c.getDouble(COLUMN_MAXIMUM)
+                + " / "  + c.getDouble(COLUMN_MINIMUM);
+            ((TextView)mView.findViewById(R.id.textview_detail))
+                .setText(mWeather);
+        }
     }
 
     @Override
@@ -92,10 +118,7 @@ public class DetailFragment
             ViewGroup container,
             Bundle savedInstanceState)
     {
-        final View rootView
-            = inflater.inflate(R.layout.fragment_detail, container, false);
-        final TextView tv
-            = (TextView)rootView.findViewById(R.id.textview_detail);
+        mView = inflater.inflate(R.layout.fragment_detail, container, false);
         final Intent intent = getActivity().getIntent();
         if (intent != null) {
             final Bundle extras = intent.getExtras();
@@ -103,11 +126,10 @@ public class DetailFragment
                 final String dbDate = extras.getString(Intent.EXTRA_TEXT);
                 if (dbDate != null) {
                     mDbDate = dbDate;
-                    tv.setText(mDbDate);
                 }
             }
         }
-        return rootView;
+        return mView;
     }
 
     public DetailFragment() {

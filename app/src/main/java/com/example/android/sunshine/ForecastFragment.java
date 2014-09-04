@@ -32,6 +32,7 @@ public class ForecastFragment
     extends Fragment
     implements LoaderCallbacks<Cursor>
 {
+    private static final int LOADER_INDEX = 0;
 
     private static final String TAG = ForecastFragment.class.getSimpleName();
 
@@ -53,8 +54,6 @@ public class ForecastFragment
     private static final int COLUMN_COUNT       = 6;
 
     private String mLocation;
-
-    private static final int FORECAST_LOADER = 0;
 
     SimpleCursorAdapter mAdapter;
 
@@ -170,7 +169,7 @@ public class ForecastFragment
         final boolean sameLocation
             = mLocation == null || mLocation.equals(getPreferredLocation());
         if (!sameLocation) {
-            getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+            getLoaderManager().initLoader(LOADER_INDEX, null, this);
         }
     }
 
@@ -194,7 +193,7 @@ public class ForecastFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.i(TAG, "onActivityCreated()");
-        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+        getLoaderManager().restartLoader(LOADER_INDEX, null, this);
     }
 
     @Override
@@ -209,8 +208,8 @@ public class ForecastFragment
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter.swapCursor(data);
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        mAdapter.swapCursor(cursor);
     }
 
     @Override
