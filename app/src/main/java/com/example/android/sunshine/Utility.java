@@ -1,5 +1,6 @@
 package com.example.android.sunshine;
 
+import java.text.DateFormat;
 import java.util.HashMap;
 
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
@@ -72,4 +73,9 @@ public class Utility
         final boolean isMetric = units.equals(metric);
         return String.valueOf(Math.round(isMetric ? t : (32.0 + 1.8 * t)));
     }
+
+    public static String displayDbDate(String dbDate) {
+        return DateFormat.getDateInstance()
+            .format(WeatherEntry.dbDate(dbDate));
+}
 }

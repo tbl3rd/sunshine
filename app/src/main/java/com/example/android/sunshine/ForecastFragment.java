@@ -71,8 +71,7 @@ public class ForecastFragment
                                     c.getDouble(n)));
                     return true;
                 case Utility.COLUMN_DATE:
-                    tv.setText(DateFormat.getDateInstance().format(
-                                    WeatherEntry.dbDate(c.getString(n))));
+                    tv.setText(Utility.displayDbDate(c.getString(n)));
                     return true;
                 }
                 return false;
