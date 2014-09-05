@@ -5,12 +5,10 @@ import com.example.android.sunshine.ForecastFragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -29,8 +27,7 @@ public class MainActivity extends ActionBarActivity {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(geo);
         if (intent.resolveActivity(getPackageManager()) == null) {
-            final String noMap = getString(R.string.action_map_none);
-            Toast.makeText(this, noMap, Toast.LENGTH_SHORT).show();
+            Utility.makeShortToast(this, R.string.action_map_none);
         } else {
             startActivity(intent);
         }

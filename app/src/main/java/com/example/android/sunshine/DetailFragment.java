@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -22,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class DetailFragment
@@ -54,9 +52,7 @@ public class DetailFragment
         final MenuItem mi = menu.findItem(R.id.action_share);
         final ActionProvider ap = MenuItemCompat.getActionProvider(mi);
         if (ap == null) {
-            Toast.makeText(getActivity(),
-                    getString(R.string.action_share_none), Toast.LENGTH_SHORT)
-                .show();
+            Utility.makeShortToast(getActivity(), R.string.action_share_none);
         } else {
             ((ShareActionProvider)ap).setShareIntent(getShareIntent());
         }

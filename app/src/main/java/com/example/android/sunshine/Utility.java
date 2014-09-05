@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 
 public class Utility
@@ -77,5 +78,15 @@ public class Utility
     public static String displayDbDate(String dbDate) {
         return DateFormat.getDateInstance()
             .format(WeatherEntry.dbDate(dbDate));
+    }
+
+    public static void makeShortToast(Context c, int stringResId) {
+        Toast.makeText(c, c.getString(stringResId), Toast.LENGTH_SHORT).show();
+    }
 }
-}
+
+// [6:27pm] dnolen: tangrammer: w/ iOS you'll have better luck with the JavaScriptCore bridge and ClojureScript
+// [6:27pm] dnolen: tangrammer: I've tried it works great and I know other people are experimenting with it as well
+// [6:28pm] dnolen: tangrammer: it does limit you to iOS 7, but you could take the Ejecta approach for earlier OSs
+// [6:38pm] dnolen: tangrammer: core.async on iOS works great
+// [6:38pm] dnolen: tangrammer: you can also do multithreaded CLJS on iOS

@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.json.JSONArray;
@@ -19,9 +18,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -36,22 +33,6 @@ public class FetchWeatherTask {
 
     private String getString(int resourceId) {
         return mContext.getString(resourceId);
-    }
-
-    private SharedPreferences sharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(mContext);
-    }
-
-    private String getLocationPreference() {
-        final String key = getString(R.string.preference_location_key);
-        final String or = getString(R.string.preference_location_default);
-        return sharedPreferences().getString(key, or);
-    }
-
-    private String getUnitsPreference() {
-        final String key = getString(R.string.preference_units_key);
-        final String or = getString(R.string.preference_units_default);
-        return sharedPreferences().getString(key, or);
     }
 
     private static long findLocation(ContentResolver resolver, String setting) {
@@ -190,7 +171,7 @@ public class FetchWeatherTask {
     }
 
     private void fetch() {
-        final String location = getLocationPreference();
+        final String location = Utility.getPreferredLocation(mContext);
         final String url = getFetchForecastUrl(location);
         Log.i(TAG, "fetch() url == " + url);
         new AsyncTask<Void, Void, Void>() {
