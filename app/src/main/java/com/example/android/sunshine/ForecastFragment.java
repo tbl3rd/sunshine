@@ -38,45 +38,6 @@ public class ForecastFragment
 
     SimpleCursorAdapter mAdapter;
 
-    private SimpleCursorAdapter makeSimpleCursorAdapter() {
-        return new SimpleCursorAdapter(
-                getActivity(), R.layout.list_item_forecast, null,
-                new String[] {
-                    WeatherEntry.COLUMN_DATE,
-                    WeatherEntry.COLUMN_DESCRIPTION,
-                    WeatherEntry.COLUMN_MAXIMUM,
-                    WeatherEntry.COLUMN_MINIMUM
-                },
-                new int[] {
-                    R.id.list_item_date_textview,
-                    R.id.list_item_forecast_textview,
-                    R.id.list_item_high_textview,
-                    R.id.list_item_low_textview
-                },
-                0);
-    }
-
-    private SimpleCursorAdapter.ViewBinder makeViewBinder() {
-        return new SimpleCursorAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View v, Cursor c, int n)
-            {
-                final TextView tv = (TextView)v;
-                switch (n) {
-                case Utility.COLUMN_MAXIMUM:
-                case Utility.COLUMN_MINIMUM:
-                    tv.setText(Utility.fromCelsius(getActivity(),
-                                    c.getDouble(n)));
-                    return true;
-                case Utility.COLUMN_DATE:
-                    tv.setText(Utility.displayDbDate(c.getString(n)));
-                    return true;
-                }
-                return false;
-            }
-        };
-    }
-
     private AdapterView.OnItemClickListener makeOnItemClickListener() {
         return new AdapterView.OnItemClickListener() {
             @Override
@@ -92,12 +53,13 @@ public class ForecastFragment
 
     private SimpleCursorAdapter makeForecastAdapter(View v)
     {
-        final SimpleCursorAdapter result = makeSimpleCursorAdapter();
+        final SimpleCursorAdapter result
+            = Utility.makeSimpleCursorAdapter(getActivity());
         final ListView lv = (ListView)v.findViewById(R.id.listview_forecast);
         Log.v(TAG, "makeForecastAdapter(): lv == " + lv);
         lv.setAdapter(result);
         lv.setOnItemClickListener(makeOnItemClickListener());
-        result.setViewBinder(makeViewBinder());
+        result.setViewBinder(Utility.makeWeatherBinder(getActivity()));
         return result;
     }
 
