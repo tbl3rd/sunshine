@@ -2,7 +2,6 @@ package com.example.android.sunshine;
 
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -18,9 +17,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 
@@ -32,6 +31,7 @@ public class DetailFragment
 
     private static final int LOADER_INDEX = 0;
 
+    private View mView;
     private String mDbDate;
     private String mLocation;
     private String mWeather;
@@ -49,8 +49,8 @@ public class DetailFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        final ActionProvider ap = MenuItemCompat.getActionProvider(
-                menu.findItem(R.id.action_share));
+        final MenuItem mi = menu.findItem(R.id.action_share);
+        final ActionProvider ap = MenuItemCompat.getActionProvider(mi);
         if (ap == null) {
             Utility.makeShortToast(getActivity(), R.string.action_share_none);
         } else {
@@ -78,6 +78,14 @@ public class DetailFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
+        if (c.moveToFirst()) {
+            mWeather     = c.getString(Utility.COLUMN_DATE)
+                + " - "  + c.getString(Utility.COLUMN_DESCRIPTION)
+                + " -- " + c.getDouble(Utility.COLUMN_MAXIMUM)
+                + " / "  + c.getDouble(Utility.COLUMN_MINIMUM);
+            ((TextView)mView.findViewById(R.id.textview_detail))
+                .setText(mWeather);
+        }
     }
 
     @Override
@@ -89,13 +97,8 @@ public class DetailFragment
             ViewGroup container,
             Bundle savedInstanceState)
     {
-        final Activity a = getActivity();
-        final SimpleAdapter adapter = makeAdapter(a);
-        final View result
-            = inflater.inflate(R.layout.list_item_forecast, container, false);
-        adapter.setViewBinder(Utility.makeWeatherBinder(a));
-        result.setAdapter(adapter);
-        final Intent intent = a.getIntent();
+        mView = inflater.inflate(R.layout.fragment_detail, container, false);
+        final Intent intent = getActivity().getIntent();
         if (intent != null) {
             final Bundle extras = intent.getExtras();
             if (extras != null) {
@@ -105,7 +108,7 @@ public class DetailFragment
                 }
             }
         }
-        return result;
+        return mView;
     }
 
     public DetailFragment() {

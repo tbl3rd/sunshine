@@ -6,15 +6,10 @@ import java.util.HashMap;
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.preference.PreferenceManager;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -88,47 +83,6 @@ public class Utility
     public static void makeShortToast(Context c, int stringResId) {
         Toast.makeText(c, c.getString(stringResId), Toast.LENGTH_SHORT).show();
     }
-
-    public static SimpleCursorAdapter makeSimpleCursorAdapter(Activity a) {
-        return new SimpleCursorAdapter(
-                a, R.layout.list_item_forecast, null,
-                new String[] {
-                    WeatherEntry.COLUMN_DATE,
-                    WeatherEntry.COLUMN_DESCRIPTION,
-                    WeatherEntry.COLUMN_MAXIMUM,
-                    WeatherEntry.COLUMN_MINIMUM
-                },
-                new int[] {
-                    R.id.list_item_date_textview,
-                    R.id.list_item_forecast_textview,
-                    R.id.list_item_high_textview,
-                    R.id.list_item_low_textview
-                },
-                0);
-    }
-
-    public static SimpleCursorAdapter.ViewBinder makeWeatherBinder(
-            final Activity a)
-    {
-        return new SimpleCursorAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View v, Cursor c, int n)
-            {
-                final TextView tv = (TextView)v;
-                switch (n) {
-                case Utility.COLUMN_MAXIMUM:
-                case Utility.COLUMN_MINIMUM:
-                    tv.setText(Utility.fromCelsius(a, c.getDouble(n)));
-                    return true;
-                case Utility.COLUMN_DATE:
-                    tv.setText(Utility.displayDbDate(c.getString(n)));
-                    return true;
-                }
-                return false;
-            }
-        };
-    }
-
 }
 
 // [6:27pm] dnolen: tangrammer: w/ iOS you'll have better luck with the JavaScriptCore bridge and ClojureScript
