@@ -76,15 +76,29 @@ public class DetailFragment
         return mLoader;
     }
 
+    private void setText(int viewId, String text) {
+        ((TextView)mView.findViewById(viewId)).setText(text);
+    }
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
         if (c.moveToFirst()) {
-            mWeather     = c.getString(Utility.COLUMN_DATE)
-                + " - "  + c.getString(Utility.COLUMN_DESCRIPTION)
-                + " -- " + c.getDouble(Utility.COLUMN_MAXIMUM)
-                + " / "  + c.getDouble(Utility.COLUMN_MINIMUM);
-            ((TextView)mView.findViewById(R.id.textview_detail))
-                .setText(mWeather);
+            final String date
+                = Utility.displayDbDate(c.getString(Utility.COLUMN_DATE));
+            final String description = c.getString(Utility.COLUMN_DESCRIPTION);
+            final String maximum = String.valueOf(
+                    Utility.fromCelsius(getActivity(),
+                            c.getDouble(Utility.COLUMN_MAXIMUM)));
+            final String minimum = String.valueOf(
+                    Utility.fromCelsius(getActivity(),
+                            c.getDouble(Utility.COLUMN_MINIMUM)));
+            setText(R.id.detail_date, date);
+            setText(R.id.detail_description, description);
+            setText(R.id.detail_maximum, maximum);
+            setText(R.id.detail_minimum, minimum);
+            mWeather
+                = date + " - " + description
+                + " -- "  + maximum + " / " + minimum;
         }
     }
 
