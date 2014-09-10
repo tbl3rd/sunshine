@@ -72,7 +72,8 @@ public class Utility
         final String units = getDefaultSharedPreferences(c)
             .getString(c.getString(R.string.preference_units_key), metric);
         final boolean isMetric = units.equals(metric);
-        return String.valueOf(Math.round(isMetric ? t : (32.0 + 1.8 * t)));
+        return String.valueOf(Math.round(isMetric ? t : (32.0 + 1.8 * t)))
+            + "\u00b0" + (isMetric ? "C" : "F");
     }
 
     public static String displayDbDate(String dbDate) {

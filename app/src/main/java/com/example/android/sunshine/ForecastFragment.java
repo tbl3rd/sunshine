@@ -48,10 +48,10 @@ public class ForecastFragment
                     WeatherEntry.COLUMN_MINIMUM
                 },
                 new int[] {
-                    R.id.list_item_date_textview,
-                    R.id.list_item_forecast_textview,
-                    R.id.list_item_high_textview,
-                    R.id.list_item_low_textview
+                    R.id.list_item_date,
+                    R.id.list_item_description,
+                    R.id.list_item_maximum,
+                    R.id.list_item_minimum
                 },
                 0);
     }

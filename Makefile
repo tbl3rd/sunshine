@@ -55,9 +55,10 @@ debug: installDebug
 	$(MAYBE_RESET_USB)
 	$(ADB) logcat -c
 	$(ADB) shell pm path $(PACKAGE)
-	$(ADB) shell pm dump $(PACKAGE)
 	$(ADB) shell am start -n $(PACKAGE)/$(PACKAGE).MainActivity
+	hey you
 	$(ADB) logcat
+	# $(ADB) shell pm dump $(PACKAGE)
 .PHONY: debug
 
 
