@@ -9,10 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ImageView;
 
-/**
- * {@link ForecastAdapter} exposes a list of weather forecasts
- * from a {@link Cursor} to a {@link ListView}.
- */
+// Expose a list of weather forecasts from a Cursor to a ListView.
+//
 public class ForecastAdapter extends CursorAdapter
 {
     @Override
@@ -26,7 +24,7 @@ public class ForecastAdapter extends CursorAdapter
         ((ImageView)view.findViewById(R.id.list_item_weather_icon))
             .setImageResource(R.drawable.ic_launcher);
         ((TextView)view.findViewById(R.id.list_item_date))
-            .setText(Utility.getFriendlyDayString(context,
+            .setText(Utility.friendlyDate(context,
                             cursor.getString(Utility.COLUMN_DATE)));
         ((TextView)view.findViewById(R.id.list_item_description))
             .setText(cursor.getString(Utility.COLUMN_DESCRIPTION));

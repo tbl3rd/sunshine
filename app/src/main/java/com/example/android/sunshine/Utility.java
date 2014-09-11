@@ -90,61 +90,16 @@ public class Utility
         Toast.makeText(c, c.getString(stringResId), Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * Helper method to convert the database representation of the
-     * date into something to display to users.  As classy and
-     * polished a user experience as "20140102" is, we can do better.
-     *
-     * @param context Context to use for resource localization
-     * @param dbDate The db formatted date string
-     * @return a user-friendly representation of the date.
-     */
+    // If today, return localized "Today" instead of the day name.
+    // If tomorrow, return localized "Tomorrow".
+    // Otherwise return the day name.
     //
-    // The day string for forecast uses the following logic:
-    // For today: "Today, June 8"
-    // For tomorrow:  "Tomorrow"
-    // For the next 5 days: "Wednesday" (just the day name)
-    // For all days after that: "Mon Jun 8"
-    //
-    public static String getFriendlyDayString(Context context, String dbDate) {
-        final Date today = new Date();
-        if (WeatherEntry.dbDate(today).equals(dbDate)) {
-            return context.getString(
-                    R.string.format_full_friendly_date,
-                    context.getString(R.string.today),
-                    getFormattedMonthDay(context, dbDate));
-        }
-        final Calendar cal = Calendar.getInstance();
-        cal.setTime(today);
-        cal.add(Calendar.DATE, 7);
-        if (dbDate.compareTo(WeatherEntry.dbDate(cal.getTime())) < 0) {
-            // If the input date is less than a week in the
-            // future, just return the day name.
-            return getDayName(context, dbDate);
-        } else {
-            // Otherwise, use the form "Mon Jun 3"
-            return new SimpleDateFormat("EEE MMM dd")
-                .format(WeatherEntry.dbDate(dbDate));
-        }
-    }
-
-    /**
-     * Given a day, returns just the name to use for that day.
-     * E.g "today", "tomorrow", "wednesday".
-     *
-     * @param context Context to use for resource localization
-     * @param dbDate The db formatted date string
-     * @return
-     */
     public static String getDayName(Context context, String dbDate) {
         final Date inputDate = WeatherEntry.dbDate(dbDate);
         final Date today = new Date();
-        // If the date is today, return the localized version of
-        // "Today" instead of the actual day name.
         if (WeatherEntry.dbDate(today).equals(dbDate)) {
             return context.getString(R.string.today);
         }
-        // If the date is set for tomorrow, the format is "Tomorrow".
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(today);
         calendar.add(Calendar.DATE, 1);
@@ -153,16 +108,40 @@ public class Utility
             : new SimpleDateFormat("EEEE").format(inputDate);
     }
 
-    /**
-     * Converts db date format to the format "Month day", e.g "June 24".
-     *
-     * @param context Context to use for resource localization
-     * @param dbDate The db formatted date string
-     * @return The day in the form of a string formatted "December 6"
-     */
-    public static String getFormattedMonthDay(Context context, String dbDate)
+    // Return dbDate as "September 11".
+    //
+    public static String formatMonthDay(Context context, String dbDate)
     {
         return new SimpleDateFormat("MMMM dd")
             .format(WeatherEntry.dbDate(dbDate));
+    }
+
+    // Return a user-friendly representation of dbDate from database.
+    //
+    // If today, return "Today, September 11".
+    // If tomorrow, return "Tomorrow, September 12".
+    // If within the week, return "Saturday, September 13".
+    // Otherwise, return "Thu Sep 18", and so on.
+    //
+    public static String friendlyDate(Context context, String dbDate) {
+        final Date today = new Date();
+        if (WeatherEntry.dbDate(today).equals(dbDate)) {
+            return context.getString(
+                    R.string.format_full_friendly_date,
+                    context.getString(R.string.today),
+                    formatMonthDay(context, dbDate));
+        }
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(today);
+        calendar.add(Calendar.DATE, 7);
+        if (dbDate.compareTo(WeatherEntry.dbDate(calendar.getTime())) < 0) {
+            return context.getString(
+                    R.string.format_full_friendly_date,
+                    getDayName(context, dbDate),
+                    formatMonthDay(context, dbDate));
+        } else {
+            return new SimpleDateFormat("EEE MMM dd")
+                .format(WeatherEntry.dbDate(dbDate));
+        }
     }
 }
