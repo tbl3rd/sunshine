@@ -1,6 +1,7 @@
 package com.example.android.sunshine;
 
 import java.text.DateFormat;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -76,21 +77,28 @@ public class Utility
             .getString(c.getString(R.string.preference_units_key), metric);
         final boolean isMetric = units.equals(metric);
         return c.getString(R.string.format_temperature,
-                (isMetric
-                        ? t 
-                        : (32.0 + 1.8 * t)),
-                (isMetric
-                        ? c.getString(R.string.celsius)
-                        : c.getString(R.string.fahrenheit)));
+                (isMetric ? t
+                        :   (32.0 + 1.8 * t)),
+                (isMetric ? c.getString(R.string.celsius)
+                        :   c.getString(R.string.fahrenheit)));
+    }
+
+    // Convert a COLUMN_DATE string from and to a java.util.Date.
+    //
+    public static String dbDate(Date date) {
+        return new SimpleDateFormat("yyyyMMdd").format(date);
+    }
+    public static Date dbDate(String date) {
+        return new SimpleDateFormat("yyyyMMdd")
+            .parse(date, new ParsePosition(0));
     }
 
     public static String displayDbDate(String dbDate) {
-        return DateFormat.getDateInstance()
-            .format(WeatherEntry.dbDate(dbDate));
+        return DateFormat.getDateInstance().format(Utility.dbDate(dbDate));
     }
 
-    public static void makeShortToast(Context c, int stringResId) {
-        Toast.makeText(c, c.getString(stringResId), Toast.LENGTH_SHORT).show();
+    public static void shortToast(Context c, int stringId) {
+        Toast.makeText(c, c.getString(stringId), Toast.LENGTH_SHORT).show();
     }
 
     // If today, return localized "Today" instead of the day name.
@@ -98,25 +106,23 @@ public class Utility
     // Otherwise return the day name.
     //
     public static String getDayName(Context context, String dbDate) {
-        final Date inputDate = WeatherEntry.dbDate(dbDate);
         final Date today = new Date();
-        if (WeatherEntry.dbDate(today).equals(dbDate)) {
+        if (Utility.dbDate(today).equals(dbDate)) {
             return context.getString(R.string.today);
         }
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(today);
         calendar.add(Calendar.DATE, 1);
-        return (WeatherEntry.dbDate(calendar.getTime()).equals(dbDate))
+        return (Utility.dbDate(calendar.getTime()).equals(dbDate))
             ? context.getString(R.string.tomorrow)
-            : new SimpleDateFormat("EEEE").format(inputDate);
+            : new SimpleDateFormat("EEEE").format(Utility.dbDate(dbDate));
     }
 
     // Return dbDate as "September 11".
     //
     public static String formatMonthDay(String dbDate)
     {
-        return new SimpleDateFormat("MMMM dd")
-            .format(WeatherEntry.dbDate(dbDate));
+        return new SimpleDateFormat("MMMM dd").format(Utility.dbDate(dbDate));
     }
 
     // Return a user-friendly representation of dbDate from database.
@@ -128,7 +134,7 @@ public class Utility
     //
     public static String friendlyDate(Context context, String dbDate) {
         final Date today = new Date();
-        if (WeatherEntry.dbDate(today).equals(dbDate)) {
+        if (Utility.dbDate(today).equals(dbDate)) {
             return context.getString(
                     R.string.format_friendly_date,
                     context.getString(R.string.today),
@@ -137,14 +143,14 @@ public class Utility
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(today);
         calendar.add(Calendar.DATE, 7);
-        if (dbDate.compareTo(WeatherEntry.dbDate(calendar.getTime())) < 0) {
+        if (dbDate.compareTo(Utility.dbDate(calendar.getTime())) < 0) {
             return context.getString(
                     R.string.format_friendly_date,
                     getDayName(context, dbDate),
                     formatMonthDay(dbDate));
         } else {
             return new SimpleDateFormat("EEE MMM dd")
-                .format(WeatherEntry.dbDate(dbDate));
+                .format(Utility.dbDate(dbDate));
         }
     }
 }

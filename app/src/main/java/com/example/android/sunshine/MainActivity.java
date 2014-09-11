@@ -25,7 +25,7 @@ public class MainActivity extends ActionBarActivity {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(geo);
         if (intent.resolveActivity(getPackageManager()) == null) {
-            Utility.makeShortToast(this, R.string.action_map_none);
+            Utility.shortToast(this, R.string.action_map_none);
         } else {
             startActivity(intent);
         }

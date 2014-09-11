@@ -1,9 +1,9 @@
 package com.example.android.sunshine.data;
 
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import com.example.android.sunshine.Utility;
 
 import android.content.ContentUris;
 import android.net.Uri;
@@ -82,45 +82,45 @@ public class WeatherContract {
         }
 
         public static Uri buildWeatherLocation(String locationSetting) {
-            return CONTENT_URI.buildUpon().appendPath(locationSetting).build();
-        }
-
-        // Convert a COLUMN_DATE string from and to a java.util.Date.
-        //
-        public static String dbDate(Date date) {
-            return new SimpleDateFormat("yyyyMMdd").format(date);
-        }
-        public static Date dbDate(String date) {
-            return new SimpleDateFormat("yyyyMMdd")
-                .parse(date, new ParsePosition(0));
+            return CONTENT_URI.buildUpon()
+                .appendPath(locationSetting)
+                .build();
         }
 
         public static Uri buildWeatherLocationQueryDate(
                 String locationSetting, Date date)
         {
-            return CONTENT_URI.buildUpon().appendPath(locationSetting)
-                .appendQueryParameter(COLUMN_DATE, dbDate(date)).build();
+            return CONTENT_URI.buildUpon()
+                .appendPath(locationSetting)
+                .appendQueryParameter(COLUMN_DATE, Utility.dbDate(date))
+                .build();
         }
 
         public static Uri buildWeatherLocationQueryDate(
                 String locationSetting, String date)
         {
-            return CONTENT_URI.buildUpon().appendPath(locationSetting)
-                .appendQueryParameter(COLUMN_DATE, date).build();
+            return CONTENT_URI.buildUpon()
+                .appendPath(locationSetting)
+                .appendQueryParameter(COLUMN_DATE, date)
+                .build();
         }
 
         public static Uri buildWeatherLocationDate(
                 String locationSetting, Date date)
         {
             return CONTENT_URI.buildUpon()
-                .appendPath(locationSetting).appendPath(dbDate(date)).build();
+                .appendPath(locationSetting)
+                .appendPath(Utility.dbDate(date))
+                .build();
         }
 
         public static Uri buildWeatherLocationDate(
                 String locationSetting, String date)
         {
             return CONTENT_URI.buildUpon()
-                .appendPath(locationSetting).appendPath(date).build();
+                .appendPath(locationSetting)
+                .appendPath(date)
+                .build();
         }
 
         public static String getLocationSettingFromUri(Uri uri) {

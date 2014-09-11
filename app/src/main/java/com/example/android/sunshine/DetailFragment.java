@@ -52,7 +52,7 @@ public class DetailFragment
         final MenuItem mi = menu.findItem(R.id.action_share);
         final ActionProvider ap = MenuItemCompat.getActionProvider(mi);
         if (ap == null) {
-            Utility.makeShortToast(getActivity(), R.string.action_share_none);
+            Utility.shortToast(getActivity(), R.string.action_share_none);
         } else {
             ((ShareActionProvider)ap).setShareIntent(getShareIntent());
         }
