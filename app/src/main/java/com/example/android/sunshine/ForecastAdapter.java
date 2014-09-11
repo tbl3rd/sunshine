@@ -6,17 +6,36 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 // Expose a list of weather forecasts from a Cursor to a ListView.
 //
 public class ForecastAdapter extends CursorAdapter
 {
+
+    @Override
+    public int getViewTypeCount() {
+        final int VIEW_TYPE_COUNT = 2;
+        return VIEW_TYPE_COUNT;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        final int VIEW_TYPE_TODAY = 0;
+        final int VIEW_TYPE_FUTURE = 1;
+        return (position == 0) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE;
+    }
+
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return LayoutInflater.from(context)
-            .inflate(R.layout.list_item_forecast, parent, false);
+        final int[] LAYOUT = {
+            R.layout.list_item_today,
+            R.layout.list_item_future
+        };
+        return LayoutInflater.from(context).inflate(
+                LAYOUT[getItemViewType(cursor.getPosition())],
+                parent, false);
     }
 
     @Override
