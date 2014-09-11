@@ -1,7 +1,6 @@
 package com.example.android.sunshine;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,7 +8,6 @@ import java.util.HashMap;
 
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
-import com.example.android.sunshine.data.WeatherContract;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -47,7 +45,7 @@ public class Utility
         }
         int i = 0;
         HashMap<String, Integer> result = new HashMap<String, Integer>();
-        for (String n: FORECAST_COLUMNS) result.put(n, Integer.valueOf(i++));
+        for (String n: FORECAST_COLUMNS) result.put(n, i++);
         if (result.size() != COLUMN_COUNT) {
             throw new RuntimeException("result.size() != COLUMN_COUNT");
         }
@@ -59,7 +57,7 @@ public class Utility
 
     public static int indexOfColumn(String column) {
         final Integer index = columnToIndex.get(column);
-        return (index == null) ? -1 : index.intValue();
+        return (index == null) ? -1 : index;
     }
 
     public static SharedPreferences getDefaultSharedPreferences(Context c) {

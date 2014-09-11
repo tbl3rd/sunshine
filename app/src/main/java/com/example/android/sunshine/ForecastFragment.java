@@ -2,7 +2,6 @@ package com.example.android.sunshine;
 
 import java.util.Date;
 
-import com.example.android.sunshine.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
 import android.app.Activity;
@@ -24,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 
 public class ForecastFragment

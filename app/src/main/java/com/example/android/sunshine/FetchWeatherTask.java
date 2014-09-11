@@ -1,7 +1,6 @@
 package com.example.android.sunshine;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -21,7 +20,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 
@@ -30,10 +28,6 @@ public class FetchWeatherTask {
     private final String TAG = FetchWeatherTask.class.getSimpleName();
 
     private final Context mContext;
-
-    private String getString(int resourceId) {
-        return mContext.getString(resourceId);
-    }
 
     private static long findLocation(ContentResolver resolver, String setting) {
         final Cursor cursor = resolver.query(
@@ -115,7 +109,6 @@ public class FetchWeatherTask {
             final ContentValues[] w = new ContentValues[length];
             for (int i = 0; i < length; ++i) {
                 final JSONObject day = list.getJSONObject(i);
-                final Date date = new Date(day.getLong("dt") * 1000);
                 w[i] = makeWeather(locationId, day);
             }
             final int count = resolver.bulkInsert(WeatherEntry.CONTENT_URI, w);
@@ -150,13 +143,13 @@ public class FetchWeatherTask {
             final InputStream is = connection.getInputStream();
             final InputStreamReader isr = new InputStreamReader(is);
             reader = new BufferedReader(isr);
-            final StringBuffer buffer = new StringBuffer();
+            final StringBuilder builder = new StringBuilder();
             while (true) {
                 final String line = reader.readLine();
                 if (line == null) break;
-                buffer.append(line).append("\n");
+                builder.append(line).append("\n");
             }
-            return buffer.toString();
+            return builder.toString();
         } catch (final Exception e) {
             Log.e(TAG, "catch in fetchForecast()", e);
         } finally {

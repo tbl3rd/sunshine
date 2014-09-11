@@ -1,7 +1,5 @@
 package com.example.android.sunshine;
 
-import com.example.android.sunshine.ForecastFragment;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;

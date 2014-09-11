@@ -2,14 +2,11 @@ package com.example.android.sunshine;
 
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.view.View;
-import android.widget.RadioButton;
 
 
 public class SettingsActivity
