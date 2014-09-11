@@ -4,20 +4,21 @@
     android:id="@+id/list_item_forecast"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    android:minHeight="?android:attr/listPreferredItemHeight"
     android:orientation="horizontal"
     android:padding="16dp"
     >
 
     <LinearLayout
-        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:orientation="vertical"
         >
 
         <TextView
             android:id="@+id/list_item_date"
-            android:layout_gravity="center_horizontal"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_width="wrap_content"
@@ -26,7 +27,6 @@
 
         <TextView
             android:id="@+id/list_item_maximum"
-            android:layout_gravity="center_horizontal"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_width="wrap_content"
@@ -35,7 +35,6 @@
 
         <TextView
             android:id="@+id/list_item_minimum"
-            android:layout_gravity="center_horizontal"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_width="wrap_content"
@@ -45,26 +44,23 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:orientation="vertical"
         >
 
         <ImageView
             android:id="@+id/list_item_forecast_image"
-            android:layout_gravity="center_horizontal"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:src="@drawable/ic_launcher"
             />
 
         <TextView
             android:id="@+id/list_item_description"
-            android:layout_gravity="center_horizontal"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:text="Hotter than Hell!"
             />
