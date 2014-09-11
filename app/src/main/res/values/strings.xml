@@ -32,9 +32,17 @@
     <!-- Format for displaying day of week and date (i.e. Mon Jun 1)
          [CHAR LIMIT=20]
     -->
-    <string name="format_full_friendly_date">
+    <string name="format_friendly_date">
         <xliff:g id="day_of_week">%1$s</xliff:g>,
         <xliff:g id="date">%2$s</xliff:g>
     </string>
+
+    <string name="format_temperature">
+        <xliff:g id="temperature">%1$1.0f</xliff:g>
+        <xliff:g id="unit">%2$s</xliff:g>
+    </string>
+
+    <string name="celsius">\u00b0C</string>
+    <string name="fahrenheit">\u00b0F</string>
 
 </resources>

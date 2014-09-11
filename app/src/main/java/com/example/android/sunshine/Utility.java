@@ -75,8 +75,13 @@ public class Utility
         final String units = getDefaultSharedPreferences(c)
             .getString(c.getString(R.string.preference_units_key), metric);
         final boolean isMetric = units.equals(metric);
-        return String.valueOf(Math.round(isMetric ? t : (32.0 + 1.8 * t)))
-            + "\u00b0" + (isMetric ? "C" : "F");
+        return c.getString(R.string.format_temperature,
+                (isMetric
+                        ? t 
+                        : (32.0 + 1.8 * t)),
+                (isMetric
+                        ? c.getString(R.string.celsius)
+                        : c.getString(R.string.fahrenheit)));
     }
 
     public static String displayDbDate(String dbDate) {
@@ -108,7 +113,7 @@ public class Utility
 
     // Return dbDate as "September 11".
     //
-    public static String formatMonthDay(Context context, String dbDate)
+    public static String formatMonthDay(String dbDate)
     {
         return new SimpleDateFormat("MMMM dd")
             .format(WeatherEntry.dbDate(dbDate));
@@ -125,18 +130,18 @@ public class Utility
         final Date today = new Date();
         if (WeatherEntry.dbDate(today).equals(dbDate)) {
             return context.getString(
-                    R.string.format_full_friendly_date,
+                    R.string.format_friendly_date,
                     context.getString(R.string.today),
-                    formatMonthDay(context, dbDate));
+                    formatMonthDay(dbDate));
         }
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(today);
         calendar.add(Calendar.DATE, 7);
         if (dbDate.compareTo(WeatherEntry.dbDate(calendar.getTime())) < 0) {
             return context.getString(
-                    R.string.format_full_friendly_date,
+                    R.string.format_friendly_date,
                     getDayName(context, dbDate),
-                    formatMonthDay(context, dbDate));
+                    formatMonthDay(dbDate));
         } else {
             return new SimpleDateFormat("EEE MMM dd")
                 .format(WeatherEntry.dbDate(dbDate));
