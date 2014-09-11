@@ -38,7 +38,8 @@ public class ForecastAdapter extends CursorAdapter
                             cursor.getDouble(Utility.COLUMN_MINIMUM)));
     }
 
-    public ForecastAdapter(Context context, Cursor cursor, int flags) {
-        super(context, cursor, flags);
+    public ForecastAdapter(Context context, Cursor cursor, boolean autoQuery)
+    {
+        super(context, cursor, autoQuery);
     }
 }

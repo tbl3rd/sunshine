@@ -5,6 +5,7 @@ import java.util.Date;
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,7 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,46 +37,7 @@ public class ForecastFragment
 
     private String mLocation;
 
-    SimpleCursorAdapter mAdapter;
-
-    private SimpleCursorAdapter makeSimpleCursorAdapter() {
-        return new SimpleCursorAdapter(
-                getActivity(), R.layout.list_item_forecast, null,
-                new String[] {
-                    WeatherEntry.COLUMN_DATE,
-                    WeatherEntry.COLUMN_DESCRIPTION,
-                    WeatherEntry.COLUMN_MAXIMUM,
-                    WeatherEntry.COLUMN_MINIMUM
-                },
-                new int[] {
-                    R.id.list_item_date,
-                    R.id.list_item_description,
-                    R.id.list_item_maximum,
-                    R.id.list_item_minimum
-                },
-                0);
-    }
-
-    private SimpleCursorAdapter.ViewBinder makeViewBinder() {
-        return new SimpleCursorAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View v, Cursor c, int n)
-            {
-                final TextView tv = (TextView)v;
-                switch (n) {
-                case Utility.COLUMN_MAXIMUM:
-                case Utility.COLUMN_MINIMUM:
-                    tv.setText(Utility.fromCelsius(getActivity(),
-                                    c.getDouble(n)));
-                    return true;
-                case Utility.COLUMN_DATE:
-                    tv.setText(Utility.displayDbDate(c.getString(n)));
-                    return true;
-                }
-                return false;
-            }
-        };
-    }
+    ForecastAdapter mAdapter;
 
     private AdapterView.OnItemClickListener makeOnItemClickListener() {
         return new AdapterView.OnItemClickListener() {
@@ -84,20 +46,20 @@ public class ForecastFragment
             {
                 startActivity(new Intent(getActivity(), DetailActivity.class)
                         .putExtra(Intent.EXTRA_TEXT,
-                                ((SimpleCursorAdapter)av.getAdapter())
+                                ((CursorAdapter)av.getAdapter())
                                 .getCursor().getString(Utility.COLUMN_DATE)));
             }
         };
     }
 
-    private SimpleCursorAdapter makeForecastAdapter(View v)
+    private ForecastAdapter makeForecastAdapter(Cursor cursor)
     {
-        final SimpleCursorAdapter result = makeSimpleCursorAdapter();
-        final ListView lv = (ListView)v.findViewById(R.id.listview_forecast);
+        final Activity a = getActivity();
+        final ForecastAdapter result = new ForecastAdapter(a, cursor, true);
+        final ListView lv = (ListView)a.findViewById(R.id.listview_forecast);
         Log.v(TAG, "makeForecastAdapter(): lv == " + lv);
         lv.setAdapter(result);
         lv.setOnItemClickListener(makeOnItemClickListener());
-        result.setViewBinder(makeViewBinder());
         return result;
     }
 
@@ -117,7 +79,6 @@ public class ForecastFragment
         final View result
             = inflater.inflate(R.layout.fragment_main, container, false);
         Log.v(TAG, "onCreateView(): result == " + result);
-        mAdapter = makeForecastAdapter(result);
         return result;
     }
 
@@ -168,9 +129,11 @@ public class ForecastFragment
         final Uri uri = WeatherEntry.buildWeatherLocationQueryDate(
                 mLocation, new Date());
         Log.v(TAG, "onCreateLoader(" + i + ", ...): uri == " + uri);
-        return new CursorLoader(
-                getActivity(), uri, Utility.FORECAST_COLUMNS, null, null,
-                WeatherEntry.COLUMN_DATE + " ASC ");
+        final CursorLoader result
+            = new CursorLoader(getActivity(), uri, Utility.FORECAST_COLUMNS,
+                    null, null, WeatherEntry.COLUMN_DATE + " ASC ");
+        mAdapter = makeForecastAdapter(result.loadInBackground());
+        return result;
     }
 
     @Override
