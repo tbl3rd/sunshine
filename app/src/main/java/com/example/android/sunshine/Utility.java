@@ -27,7 +27,10 @@ public class Utility
         WeatherEntry.COLUMN_DESCRIPTION,
         WeatherEntry.COLUMN_MAXIMUM,
         WeatherEntry.COLUMN_MINIMUM,
-        LocationEntry.COLUMN_SETTING
+        LocationEntry.COLUMN_SETTING,
+        WeatherEntry.COLUMN_HUMIDITY,
+        WeatherEntry.COLUMN_WIND,
+        WeatherEntry.COLUMN_PRESSURE
     };
 
     public static final int COLUMN_ID          = 0;
@@ -36,7 +39,10 @@ public class Utility
     public static final int COLUMN_MAXIMUM     = 3;
     public static final int COLUMN_MINIMUM     = 4;
     public static final int COLUMN_SETTING     = 5;
-    public static final int COLUMN_COUNT       = 6;
+    public static final int COLUMN_HUMIDITY    = 6;
+    public static final int COLUMN_WIND        = 7;
+    public static final int COLUMN_PRESSURE    = 8;
+    public static final int COLUMN_COUNT       = 9;
 
     static HashMap<String, Integer> makeColumnToIndex() {
         Log.v(TAG, "makeColumnToIndex()");

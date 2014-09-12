@@ -1,7 +1,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:gravity="center_vertical"
-    android:id="@+id/list_item_future"
+    android:id="@+id/list_future"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:minHeight="?android:attr/listPreferredItemHeight"
@@ -10,7 +10,7 @@
     >
 
     <ImageView
-        android:id="@+id/list_item_weather_icon"
+        android:id="@+id/list_icon"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:src="@drawable/ic_launcher"
@@ -25,14 +25,14 @@
         >
 
         <TextView
-            android:id="@+id/list_item_date"
+            android:id="@+id/list_date"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="Whenever"
             />
 
         <TextView
-            android:id="@+id/list_item_description"
+            android:id="@+id/list_description"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="Hotter than Hell!"
@@ -47,14 +47,14 @@
         >
 
         <TextView
-            android:id="@+id/list_item_maximum"
+            android:id="@+id/list_maximum"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="212"
             />
 
         <TextView
-            android:id="@+id/list_item_minimum"
+            android:id="@+id/list_minimum"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="32"

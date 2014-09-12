@@ -20,11 +20,11 @@ public class ForecastAdapter extends CursorAdapter
         final TextView maximum;
         final TextView minimum;
         ViewHolder(View v) {
-            icon = (ImageView)v.findViewById(R.id.list_item_weather_icon);
-            date = (TextView)v.findViewById(R.id.list_item_date);
-            description = (TextView)v.findViewById(R.id.list_item_description);
-            maximum = (TextView)v.findViewById(R.id.list_item_maximum);
-            minimum = (TextView)v.findViewById(R.id.list_item_minimum);
+            icon        = (ImageView)v.findViewById(R.id.list_icon);
+            date        =  (TextView)v.findViewById(R.id.list_date);
+            description =  (TextView)v.findViewById(R.id.list_description);
+            maximum     =  (TextView)v.findViewById(R.id.list_maximum);
+            minimum     =  (TextView)v.findViewById(R.id.list_minimum);
         }
     }
 
