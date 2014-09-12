@@ -111,15 +111,21 @@ public class DetailFragment
             final String description
                 = c.getString(Utility.COLUMN_DESCRIPTION);
             final String maximum
-                = Utility.fromCelsius(a, c.getDouble(Utility.COLUMN_MAXIMUM));
+                = Utility.temperatureFromCelsius(a,
+                        c.getDouble(Utility.COLUMN_MAXIMUM));
             final String minimum
-                = Utility.fromCelsius(a, c.getDouble(Utility.COLUMN_MINIMUM));
+                = Utility.temperatureFromCelsius(a,
+                        c.getDouble(Utility.COLUMN_MINIMUM));
             final String humidity
-                = String.valueOf(c.getDouble(Utility.COLUMN_HUMIDITY));
+                = Utility.formatHumidity(a,
+                        c.getDouble(Utility.COLUMN_HUMIDITY));
             final String wind
-                = String.valueOf(c.getDouble(Utility.COLUMN_WIND));
+                = Utility.windFromKmH(a,
+                        c.getDouble(Utility.COLUMN_WIND),
+                        c.getDouble(Utility.COLUMN_DIRECTION));
             final String pressure
-                = String.valueOf(c.getDouble(Utility.COLUMN_PRESSURE));
+                = Utility.pressureFromHpa(a,
+                        c.getDouble(Utility.COLUMN_PRESSURE));
             vh.day.setText(date);
             vh.date.setText(date);
             vh.maximum.setText(maximum);

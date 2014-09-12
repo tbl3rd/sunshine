@@ -61,9 +61,9 @@ public class ForecastAdapter extends CursorAdapter
         vh.date.setText(Utility.friendlyDate(context,
                         cursor.getString(Utility.COLUMN_DATE)));
         vh.description.setText(cursor.getString(Utility.COLUMN_DESCRIPTION));
-        vh.maximum.setText(Utility.fromCelsius(context,
+        vh.maximum.setText(Utility.temperatureFromCelsius(context,
                         cursor.getDouble(Utility.COLUMN_MAXIMUM)));
-        vh.minimum.setText(Utility.fromCelsius(context,
+        vh.minimum.setText(Utility.temperatureFromCelsius(context,
                         cursor.getDouble(Utility.COLUMN_MINIMUM)));
     }
 

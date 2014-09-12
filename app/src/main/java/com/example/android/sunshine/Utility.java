@@ -30,19 +30,21 @@ public class Utility
         LocationEntry.COLUMN_SETTING,
         WeatherEntry.COLUMN_HUMIDITY,
         WeatherEntry.COLUMN_WIND,
+        WeatherEntry.COLUMN_DIRECTION,
         WeatherEntry.COLUMN_PRESSURE
     };
 
-    public static final int COLUMN_ID          = 0;
-    public static final int COLUMN_DATE        = 1;
-    public static final int COLUMN_DESCRIPTION = 2;
-    public static final int COLUMN_MAXIMUM     = 3;
-    public static final int COLUMN_MINIMUM     = 4;
-    public static final int COLUMN_SETTING     = 5;
-    public static final int COLUMN_HUMIDITY    = 6;
-    public static final int COLUMN_WIND        = 7;
-    public static final int COLUMN_PRESSURE    = 8;
-    public static final int COLUMN_COUNT       = 9;
+    public static final int COLUMN_ID          =  0;
+    public static final int COLUMN_DATE        =  1;
+    public static final int COLUMN_DESCRIPTION =  2;
+    public static final int COLUMN_MAXIMUM     =  3;
+    public static final int COLUMN_MINIMUM     =  4;
+    public static final int COLUMN_SETTING     =  5;
+    public static final int COLUMN_HUMIDITY    =  6;
+    public static final int COLUMN_WIND        =  7;
+    public static final int COLUMN_DIRECTION   =  8;
+    public static final int COLUMN_PRESSURE    =  9;
+    public static final int COLUMN_COUNT       = 10;
 
     static HashMap<String, Integer> makeColumnToIndex() {
         Log.v(TAG, "makeColumnToIndex()");
@@ -77,16 +79,63 @@ public class Utility
                 c.getString(R.string.preference_location_default));
     }
 
-    public static String fromCelsius(Context c, double t) {
+    public static boolean isMetric(Context c) {
         final String metric = c.getString(R.string.preference_units_default);
         final String units = getDefaultSharedPreferences(c)
             .getString(c.getString(R.string.preference_units_key), metric);
-        final boolean isMetric = units.equals(metric);
+        return units.equals(metric);
+    }
+
+    public static String temperatureFromCelsius(Context c, double temperature)
+    {
+        final boolean isMetric = Utility.isMetric(c);
         return c.getString(R.string.format_temperature,
-                (isMetric ? t
-                        :   (32.0 + 1.8 * t)),
+                (isMetric ? temperature
+                        :   (32.0 + 1.8 * temperature)),
                 (isMetric ? c.getString(R.string.celsius)
                         :   c.getString(R.string.fahrenheit)));
+    }
+
+    public static String formatHumidity(Context c, double humidity) {
+        Log.v(TAG, "formatHumidity(): humidity == " + humidity);
+        return c.getString(R.string.format_humidity,
+                c.getString(R.string.humidity), humidity);
+    }
+
+    public static String windDirectionFromDegrees(double degrees) {
+        final String[] direction = {
+            "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+            "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"
+        };
+        final double compass = 360.0;
+        final double sector = compass / direction.length;
+        final double positive = degrees + 3 * compass;
+        final double normalized = positive % compass;
+        final double d = normalized + sector / 2;
+        final int index = (int)Math.floor(d / sector);
+        return direction[index];
+    }
+
+    public static String windFromKmH(Context c, double wind, double degrees)
+    {
+        final boolean isMetric = Utility.isMetric(c);
+        return c.getString(R.string.format_wind,
+                c.getString(R.string.wind),
+                (isMetric ? wind
+                        :   (0.621371 * wind)),
+                (isMetric ? c.getString(R.string.wind_kmh)
+                        :   c.getString(R.string.wind_mph)),
+                windDirectionFromDegrees(degrees));
+    }
+
+    public static String pressureFromHpa(Context c, double pressure) {
+        final boolean isMetric = Utility.isMetric(c);
+        return c.getString(R.string.format_pressure,
+                c.getString(R.string.pressure),
+                (isMetric ? pressure
+                        :   (0.0293 * pressure)),
+                (isMetric ? c.getString(R.string.pressure_hpa)
+                        :   c.getString(R.string.pressure_inhg)));
     }
 
     // Convert a COLUMN_DATE string from and to a java.util.Date.

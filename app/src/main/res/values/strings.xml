@@ -37,12 +37,34 @@
         <xliff:g id="date">%2$s</xliff:g>
     </string>
 
-    <string name="format_temperature">
-        <xliff:g id="temperature">%1$1.0f</xliff:g>
-        <xliff:g id="unit">%2$s</xliff:g>
-    </string>
-
     <string name="celsius">\u00b0C</string>
     <string name="fahrenheit">\u00b0F</string>
+    <string name="format_temperature">
+        <xliff:g id="temperature">%1$1.0f</xliff:g>\u00a0<xliff:g id="temperature-unit">%2$s</xliff:g>
+    </string>
+
+    <!--
+    <string name="humidity">HUMIDITY</string>
+    <string name="format_humidity">
+        <xliff:g id="humidity_label">%1$s</xliff:g>:\u00a0<xliff:g id="humidity_value">%2$1.0f</xliff:g>\u00a0%%
+    </string>
+    -->
+
+    <string name="humidity">HUMIDITY</string>
+    <string name="format_humidity">%1$s:\u00a0%2$1.0f\u00a0%%</string>
+
+    <string name="wind">WIND</string>
+    <string name="wind_kmh">km/H</string>
+    <string name="wind_mph">mph</string>
+    <string name="format_wind">
+        <xliff:g id="wind_label">%1$s</xliff:g>:\u00a0<xliff:g id="wind_value">%2$1.0f</xliff:g>\u00a0<xliff:g id="wind_unit">%3$s</xliff:g>\u00a0<xliff:g id="wind_direction">%4$s</xliff:g>
+    </string>
+
+    <string name="pressure">PRESSURE</string>
+    <string name="pressure_hpa">hPa</string>
+    <string name="pressure_inhg">inHg</string>
+    <string name="format_pressure">
+        <xliff:g id="pressure_label">%1$s</xliff:g>:\u00a0<xliff:g id="pressure_value">%2$1.1f</xliff:g>\u00a0<xliff:g id="pressure-unit">%3$s</xliff:g>
+    </string>
 
 </resources>
