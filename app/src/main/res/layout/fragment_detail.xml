@@ -2,101 +2,104 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fragment_detail"
     android:layout_height="wrap_content"
-    android:layout_width="fill_parent"
-    android:padding="16dp"
+    android:layout_width="match_parent"
     >
 
     <LinearLayout
         android:baselineAligned="false"
-        android:gravity="center_vertical"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
         >
 
-        <LinearLayout
-            android:id="@+id/detail_weather"
+        <TextView
+            android:id="@+id/detail_day"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:orientation="vertical"
-            >
+            android:layout_width="wrap_content"
+            android:text="Today"
+            />
 
-            <TextView
-                android:id="@+id/detail_day"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="Today"
-                />
-
-            <TextView
-                android:id="@+id/detail_date"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="September 11"
-                />
-
-            <TextView
-                android:id="@+id/detail_maximum"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="212\u00b0F"
-                />
-
-            <TextView
-                android:id="@+id/detail_minimum"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="32\u00b0F"
-                />
-
-            <TextView
-                android:id="@+id/detail_humidity"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="42%"
-                />
-
-            <TextView
-                android:id="@+id/detail_wind"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="23 km/H NNE"
-                />
-
-            <TextView
-                android:id="@+id/detail_pressure"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="1234 mmhg"
-                />
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/detail_date"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="September 11"
+            />
 
         <LinearLayout
             android:gravity="center_vertical"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
             >
 
-            <ImageView
-                android:id="@+id/detail_icon"
+            <LinearLayout
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:src="@drawable/ic_launcher"
-                />
-
-            <TextView
-                android:id="@+id/detail_description"
-                android:layout_gravity="center_horizontal"
-                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:text="Global Warming"
-                />
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:id="@+id/detail_maximum"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="212\u00b0F"
+                    />
+                <TextView
+                    android:id="@+id/detail_minimum"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="32\u00b0F"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:gravity="center_vertical"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                >
+                <ImageView
+                    android:id="@+id/detail_icon"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:src="@drawable/ic_launcher"
+                    />
+                <TextView
+                    android:id="@+id/detail_description"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="Global Warming"
+                    />
+            </LinearLayout>
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/detail_humidity"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="42%"
+            />
+
+        <TextView
+            android:id="@+id/detail_wind"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="23 km/H NNE"
+            />
+
+        <TextView
+            android:id="@+id/detail_pressure"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="1234 mmhg"
+            />
 
     </LinearLayout>
 
