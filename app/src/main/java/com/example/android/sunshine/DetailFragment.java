@@ -122,7 +122,7 @@ public class DetailFragment
             final String wind
                 = Utility.windFromKmH(a,
                         c.getDouble(Utility.COLUMN_WIND),
-                        c.getDouble(Utility.COLUMN_DIRECTION));
+                        c.getInt(Utility.COLUMN_DIRECTION));
             final String pressure
                 = Utility.pressureFromHpa(a,
                         c.getDouble(Utility.COLUMN_PRESSURE));

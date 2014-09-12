@@ -93,7 +93,7 @@ public class FetchWeatherTask {
         result.put(WeatherEntry.COLUMN_HUMIDITY, day.getDouble("humidity"));
         result.put(WeatherEntry.COLUMN_PRESSURE, day.getDouble("pressure"));
         result.put(WeatherEntry.COLUMN_WIND, day.getDouble("speed"));
-        result.put(WeatherEntry.COLUMN_DIRECTION, day.getDouble("deg"));
+        result.put(WeatherEntry.COLUMN_DIRECTION, day.getInt("deg"));
         result.put(WeatherEntry.COLUMN_WEATHER_ID, weather.getString("id"));
         return result;
     }

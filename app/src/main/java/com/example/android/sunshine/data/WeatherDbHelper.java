@@ -41,7 +41,7 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
             + WeatherEntry.COLUMN_HUMIDITY     + REAL
             + WeatherEntry.COLUMN_PRESSURE     + REAL
             + WeatherEntry.COLUMN_WIND         + REAL
-            + WeatherEntry.COLUMN_DIRECTION    + REAL
+            + WeatherEntry.COLUMN_DIRECTION    + INTEGER
             + "FOREIGN KEY ("
             + WeatherEntry.COLUMN_LOCATION_KEY
             + ") REFERENCES "

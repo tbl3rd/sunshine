@@ -102,7 +102,7 @@ public class Utility
                 c.getString(R.string.humidity), humidity);
     }
 
-    public static String windDirectionFromDegrees(Context c, double degrees)
+    public static String windDirectionFromDegrees(Context c, int degrees)
     {
         final int[] directionId = {
             R.string.direction_north,
@@ -127,11 +127,10 @@ public class Utility
         final double positive = degrees + 3 * compass;
         final double normalized = positive % compass;
         final double d = normalized + sector / 2;
-        final int index = (int)Math.floor(d / sector);
-        return c.getString(directionId[index]);
+        return c.getString(directionId[(int)Math.floor(d / sector)]);
     }
 
-    public static String windFromKmH(Context c, double wind, double degrees)
+    public static String windFromKmH(Context c, double wind, int degrees)
     {
         final boolean isMetric = Utility.isMetric(c);
         return c.getString(R.string.format_wind,
