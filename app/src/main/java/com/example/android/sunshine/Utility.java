@@ -160,7 +160,7 @@ public class Utility
     // If tomorrow, return localized "Tomorrow".
     // Otherwise return the day name.
     //
-    public static String getDayName(Context context, String dbDate) {
+    public static String dayName(Context context, String dbDate) {
         final Date today = new Date();
         if (Utility.dbDate(today).equals(dbDate)) {
             return context.getString(R.string.today);
@@ -187,7 +187,7 @@ public class Utility
     // If within the week, return "Saturday, September 13".
     // Otherwise, return "Thu Sep 18", and so on.
     //
-    public static String friendlyDate(Context context, String dbDate) {
+    public static String friendlyDayDate(Context context, String dbDate) {
         final Date today = new Date();
         if (Utility.dbDate(today).equals(dbDate)) {
             return context.getString(
@@ -201,7 +201,7 @@ public class Utility
         if (dbDate.compareTo(Utility.dbDate(calendar.getTime())) < 0) {
             return context.getString(
                     R.string.format_friendly_date,
-                    getDayName(context, dbDate),
+                    dayName(context, dbDate),
                     formatMonthDay(dbDate));
         } else {
             return new SimpleDateFormat("EEE MMM dd")

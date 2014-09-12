@@ -106,10 +106,10 @@ public class DetailFragment
         if (c.moveToFirst()) {
             final Activity a = getActivity();
             final ViewHolder vh = (ViewHolder)mView.getTag();
-            final String date
-                = Utility.displayDbDate(c.getString(Utility.COLUMN_DATE));
-            final String description
-                = c.getString(Utility.COLUMN_DESCRIPTION);
+            final String dbDate = c.getString(Utility.COLUMN_DATE);
+            final String day = Utility.dayName(a, dbDate);
+            final String date = Utility.displayDbDate(dbDate);
+            final String description = c.getString(Utility.COLUMN_DESCRIPTION);
             final String maximum
                 = Utility.temperatureFromCelsius(a,
                         c.getDouble(Utility.COLUMN_MAXIMUM));
@@ -126,7 +126,7 @@ public class DetailFragment
             final String pressure
                 = Utility.pressureFromHpa(a,
                         c.getDouble(Utility.COLUMN_PRESSURE));
-            vh.day.setText(date);
+            vh.day.setText(day);
             vh.date.setText(date);
             vh.maximum.setText(maximum);
             vh.minimum.setText(minimum);
