@@ -91,6 +91,11 @@ dump: installDebug
 .PHONY: dump
 
 
+monitor:
+	$(ANDROID_HOME)/tools/monitor
+.PHONY: monitor
+
+
 bugreport:
 	$(MAYBE_RESET_USB)
 	$(ADB) bugreport > bugreport.txt

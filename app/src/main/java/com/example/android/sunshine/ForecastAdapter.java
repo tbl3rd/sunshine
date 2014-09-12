@@ -57,13 +57,14 @@ public class ForecastAdapter extends CursorAdapter
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         final ViewHolder vh = (ViewHolder)view.getTag();
+        final boolean isMetric = Utility.isMetric(context);
         vh.icon.setImageResource(R.drawable.ic_launcher);
         vh.date.setText(Utility.friendlyDayDate(context,
                         cursor.getString(Utility.COLUMN_DATE)));
         vh.description.setText(cursor.getString(Utility.COLUMN_DESCRIPTION));
-        vh.maximum.setText(Utility.temperatureFromCelsius(context,
+        vh.maximum.setText(Utility.formatCelsius(context, isMetric,
                         cursor.getDouble(Utility.COLUMN_MAXIMUM)));
-        vh.minimum.setText(Utility.temperatureFromCelsius(context,
+        vh.minimum.setText(Utility.formatCelsius(context, isMetric,
                         cursor.getDouble(Utility.COLUMN_MINIMUM)));
     }
 

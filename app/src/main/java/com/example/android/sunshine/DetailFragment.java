@@ -105,27 +105,28 @@ public class DetailFragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
         if (c.moveToFirst()) {
             final Activity a = getActivity();
-            final ViewHolder vh = (ViewHolder)mView.getTag();
+            final boolean isMetric = Utility.isMetric(a);
             final String dbDate = c.getString(Utility.COLUMN_DATE);
             final String day = Utility.dayName(a, dbDate);
             final String date = Utility.displayDbDate(dbDate);
             final String description = c.getString(Utility.COLUMN_DESCRIPTION);
             final String maximum
-                = Utility.temperatureFromCelsius(a,
+                = Utility.formatCelsius(a, isMetric,
                         c.getDouble(Utility.COLUMN_MAXIMUM));
             final String minimum
-                = Utility.temperatureFromCelsius(a,
+                = Utility.formatCelsius(a, isMetric,
                         c.getDouble(Utility.COLUMN_MINIMUM));
             final String humidity
                 = Utility.formatHumidity(a,
                         c.getDouble(Utility.COLUMN_HUMIDITY));
             final String wind
-                = Utility.windFromKmH(a,
+                = Utility.formatWind(a, isMetric,
                         c.getDouble(Utility.COLUMN_WIND),
                         c.getInt(Utility.COLUMN_DIRECTION));
             final String pressure
-                = Utility.pressureFromHpa(a,
+                = Utility.formatPressure(a, isMetric,
                         c.getDouble(Utility.COLUMN_PRESSURE));
+            final ViewHolder vh = (ViewHolder)mView.getTag();
             vh.day.setText(day);
             vh.date.setText(date);
             vh.maximum.setText(maximum);

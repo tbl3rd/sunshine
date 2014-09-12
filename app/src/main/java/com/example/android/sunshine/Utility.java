@@ -89,9 +89,9 @@ public class Utility
         return units.equals(metric);
     }
 
-    public static String temperatureFromCelsius(Context c, double temperature)
+    public static String formatCelsius(Context c,
+            boolean isMetric, double temperature)
     {
-        final boolean isMetric = Utility.isMetric(c);
         return c.getString(R.string.format_temperature,
                 (isMetric ? temperature
                         :   (32.0 + 1.8 * temperature)),
@@ -134,9 +134,9 @@ public class Utility
         return c.getString(directionId[(int)Math.floor(d)]);
     }
 
-    public static String windFromKmH(Context c, double wind, int degrees)
+    public static String formatWind(Context c, boolean isMetric,
+            double wind, int degrees)
     {
-        final boolean isMetric = Utility.isMetric(c);
         return c.getString(R.string.format_wind,
                 c.getString(R.string.wind),
                 (isMetric ? wind
@@ -146,8 +146,9 @@ public class Utility
                 windDirectionFromDegrees(c, degrees));
     }
 
-    public static String pressureFromHpa(Context c, double pressure) {
-        final boolean isMetric = Utility.isMetric(c);
+    public static String formatPressure(Context c,
+            boolean isMetric, double pressure)
+    {
         return c.getString(R.string.format_pressure,
                 c.getString(R.string.pressure),
                 (isMetric ? pressure
