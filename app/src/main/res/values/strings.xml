@@ -43,13 +43,6 @@
         <xliff:g id="temperature">%1$1.0f</xliff:g>\u00a0<xliff:g id="temperature-unit">%2$s</xliff:g>
     </string>
 
-    <!--
-    <string name="humidity">HUMIDITY</string>
-    <string name="format_humidity">
-        <xliff:g id="humidity_label">%1$s</xliff:g>:\u00a0<xliff:g id="humidity_value">%2$1.0f</xliff:g>\u00a0%%
-    </string>
-    -->
-
     <string name="humidity">HUMIDITY</string>
     <string name="format_humidity">%1$s:\u00a0%2$1.0f\u00a0%%</string>
 
@@ -66,5 +59,22 @@
     <string name="format_pressure">
         <xliff:g id="pressure_label">%1$s</xliff:g>:\u00a0<xliff:g id="pressure_value">%2$1.1f</xliff:g>\u00a0<xliff:g id="pressure-unit">%3$s</xliff:g>
     </string>
+
+    <string name="direction_north">N</string>
+    <string name="direction_north_northeast">NNE</string>
+    <string name="direction_northeast">NE</string>
+    <string name="direction_east_northeast">ENE</string>
+    <string name="direction_east">E</string>
+    <string name="direction_east_southeast">ESE</string>
+    <string name="direction_southeast">SE</string>
+    <string name="direction_south_southeast">SSE</string>
+    <string name="direction_south">S</string>
+    <string name="direction_south_southwest">SSW</string>
+    <string name="direction_southwest">SW</string>
+    <string name="direction_west_southwest">WSW</string>
+    <string name="direction_west">W</string>
+    <string name="direction_west_northwest">WNW</string>
+    <string name="direction_northwest">NW</string>
+    <string name="direction_north_northwest">NNW</string>
 
 </resources>

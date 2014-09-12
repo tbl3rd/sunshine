@@ -102,18 +102,33 @@ public class Utility
                 c.getString(R.string.humidity), humidity);
     }
 
-    public static String windDirectionFromDegrees(double degrees) {
-        final String[] direction = {
-            "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
-            "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"
+    public static String windDirectionFromDegrees(Context c, double degrees)
+    {
+        final int[] directionId = {
+            R.string.direction_north,
+            R.string.direction_north_northeast,
+            R.string.direction_northeast,
+            R.string.direction_east_northeast,
+            R.string.direction_east,
+            R.string.direction_east_southeast,
+            R.string.direction_southeast,
+            R.string.direction_south_southeast,
+            R.string.direction_south,
+            R.string.direction_south_southwest,
+            R.string.direction_southwest,
+            R.string.direction_west_southwest,
+            R.string.direction_west,
+            R.string.direction_west_northwest,
+            R.string.direction_northwest,
+            R.string.direction_north_northwest
         };
         final double compass = 360.0;
-        final double sector = compass / direction.length;
+        final double sector = compass / directionId.length;
         final double positive = degrees + 3 * compass;
         final double normalized = positive % compass;
         final double d = normalized + sector / 2;
         final int index = (int)Math.floor(d / sector);
-        return direction[index];
+        return c.getString(directionId[index]);
     }
 
     public static String windFromKmH(Context c, double wind, double degrees)
@@ -125,7 +140,7 @@ public class Utility
                         :   (0.621371 * wind)),
                 (isMetric ? c.getString(R.string.wind_kmh)
                         :   c.getString(R.string.wind_mph)),
-                windDirectionFromDegrees(degrees));
+                windDirectionFromDegrees(c, degrees));
     }
 
     public static String pressureFromHpa(Context c, double pressure) {
