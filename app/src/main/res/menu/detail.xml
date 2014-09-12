@@ -12,10 +12,21 @@
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
         />
 
+    <item
+        android:id="@+id/action_map"
+        android:title="@string/action_map"
+        />
+
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"
           android:orderInCategory="100"
           app:showAsAction="never"
           />
+
+    <item
+        android:id="@+id/action_refresh"
+        android:title="@string/action_refresh"
+        app:showAsAction="never"
+        />
 
 </menu>

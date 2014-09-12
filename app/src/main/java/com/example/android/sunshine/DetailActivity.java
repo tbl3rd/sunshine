@@ -29,8 +29,14 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        case R.id.action_map:
+            Utility.showMap(this);
+            return true;
         case R.id.action_settings:
             startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        case R.id.action_refresh:
+            FetchWeatherTask.fetch(this);
             return true;
         }
         return super.onOptionsItemSelected(item);

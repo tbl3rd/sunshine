@@ -1,7 +1,6 @@
 package com.example.android.sunshine;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -12,24 +11,6 @@ import android.view.MenuItem;
 public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-
-    public void showMap() {
-        final String location = getPreferences(MODE_PRIVATE).getString(
-                getString(R.string.preference_location_key),
-                getString(R.string.preference_location_default));
-        final Uri geo = new Uri.Builder()
-            .scheme("geo")
-            .appendPath("0,0")
-            .appendQueryParameter("q", location)
-            .build();
-        final Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(geo);
-        if (intent.resolveActivity(getPackageManager()) == null) {
-            Utility.shortToast(this, R.string.action_map_none);
-        } else {
-            startActivity(intent);
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +61,6 @@ public class MainActivity extends ActionBarActivity {
         super.onDestroy();
     }
 
-    // Inflate the menu; this adds items to the action bar if it is present.
-    //
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -96,7 +75,7 @@ public class MainActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.action_map:
-            showMap();
+            Utility.showMap(this);
             return true;
         case R.id.action_settings:
             startActivity(new Intent(this, SettingsActivity.class));

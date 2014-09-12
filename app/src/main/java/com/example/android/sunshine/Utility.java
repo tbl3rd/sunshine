@@ -10,8 +10,11 @@ import java.util.HashMap;
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -122,12 +125,13 @@ public class Utility
             R.string.direction_northwest,
             R.string.direction_north_northwest
         };
+        final int whatever = 3;
         final double compass = 360.0;
         final double sector = compass / directionId.length;
-        final double positive = degrees + 3 * compass;
+        final double positive = degrees + sector / 2 + compass * whatever;
         final double normalized = positive % compass;
-        final double d = normalized + sector / 2;
-        return c.getString(directionId[(int)Math.floor(d / sector)]);
+        final double d = normalized / sector;
+        return c.getString(directionId[(int)Math.floor(d)]);
     }
 
     public static String windFromKmH(Context c, double wind, int degrees)
@@ -220,6 +224,22 @@ public class Utility
         } else {
             return new SimpleDateFormat("EEE MMM dd")
                 .format(Utility.dbDate(dbDate));
+        }
+    }
+
+    public static void showMap(Activity a) {
+        final String location = Utility.getPreferredLocation(a);
+        final Uri geo = new Uri.Builder()
+            .scheme("geo")
+            .appendPath("0,0")
+            .appendQueryParameter("q", location)
+            .build();
+        final Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(geo);
+        if (intent.resolveActivity(a.getPackageManager()) == null) {
+            Utility.shortToast(a, R.string.action_map_none);
+        } else {
+            a.startActivity(intent);
         }
     }
 }
