@@ -127,8 +127,9 @@ public class DetailFragment
                 = Utility.formatPressure(a, isMetric,
                         c.getDouble(Utility.COLUMN_PRESSURE));
             final ViewHolder vh = (ViewHolder)mView.getTag();
-            vh.icon.setImageResource(Utility.weatherArt(
-                            c.getInt(Utility.COLUMN_WEATHER_CODE)));
+            final int code = c.getInt(Utility.COLUMN_WEATHER_CODE);
+            Log.v(TAG, "onLoadFinished(): code == " + code);
+            vh.icon.setImageResource(Utility.weatherArt(code));
             vh.day.setText(day);
             vh.date.setText(date);
             vh.maximum.setText(maximum);

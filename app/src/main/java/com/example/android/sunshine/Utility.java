@@ -250,7 +250,7 @@ public class Utility
     // See: http://openweathermap.org/weather-conditions
     //
     static int weatherCodeToIndex(int code) {
-        final int hundred = code / 100;
+        final int hundred = code - (code % 100);
         if (hundred == 200) return 1;  // storm
         if (hundred == 300) return 2;  // light_rain
         if (code    == 500) return 2;  // light_rain
