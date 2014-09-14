@@ -58,17 +58,20 @@ public class ForecastAdapter extends CursorAdapter
     public void bindView(View view, Context context, Cursor cursor) {
         final ViewHolder vh = (ViewHolder)view.getTag();
         final boolean isMetric = Utility.isMetric(context);
-        if (cursor.moveToFirst()) {
-            vh.icon.setImageResource(R.drawable.ic_launcher);
-            vh.date.setText(Utility.friendlyDayDate(context,
-                            cursor.getString(Utility.COLUMN_DATE)));
-            vh.description.setText(
-                    cursor.getString(Utility.COLUMN_DESCRIPTION));
-            vh.maximum.setText(Utility.formatCelsius(context, isMetric,
-                            cursor.getDouble(Utility.COLUMN_MAXIMUM)));
-            vh.minimum.setText(Utility.formatCelsius(context, isMetric,
-                            cursor.getDouble(Utility.COLUMN_MINIMUM)));
-        }
+        final int code = cursor.getInt(Utility.COLUMN_WEATHER_CODE);
+        final int drawable
+            = (0 == cursor.getPosition())
+            ? Utility.weatherArt(code)
+            : Utility.weatherIcon(code);
+        vh.icon.setImageResource(drawable);
+        vh.date.setText(Utility.friendlyDayDate(context,
+                        cursor.getString(Utility.COLUMN_DATE)));
+        vh.description.setText(
+                cursor.getString(Utility.COLUMN_DESCRIPTION));
+        vh.maximum.setText(Utility.formatCelsius(context, isMetric,
+                        cursor.getDouble(Utility.COLUMN_MAXIMUM)));
+        vh.minimum.setText(Utility.formatCelsius(context, isMetric,
+                        cursor.getDouble(Utility.COLUMN_MINIMUM)));
     }
 
     public ForecastAdapter(Context context, Cursor cursor, boolean autoQuery)

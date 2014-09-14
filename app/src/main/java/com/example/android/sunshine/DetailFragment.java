@@ -127,6 +127,8 @@ public class DetailFragment
                 = Utility.formatPressure(a, isMetric,
                         c.getDouble(Utility.COLUMN_PRESSURE));
             final ViewHolder vh = (ViewHolder)mView.getTag();
+            vh.icon.setImageResource(Utility.weatherArt(
+                            c.getInt(Utility.COLUMN_WEATHER_CODE)));
             vh.day.setText(day);
             vh.date.setText(date);
             vh.maximum.setText(maximum);
@@ -134,7 +136,6 @@ public class DetailFragment
             vh.humidity.setText(humidity);
             vh.wind.setText(wind);
             vh.pressure.setText(pressure);
-            vh.icon.setImageResource(R.drawable.ic_launcher);
             vh.description.setText(description);
             mWeather = date + " - " + description
                 + " -- "  + maximum + " / " + minimum;
