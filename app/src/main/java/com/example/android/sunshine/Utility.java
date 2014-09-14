@@ -26,28 +26,30 @@ public class Utility
 
     public static final String[] FORECAST_COLUMNS = {
         WeatherEntry.TABLE + "." + WeatherEntry._ID,
+        LocationEntry.COLUMN_SETTING,
         WeatherEntry.COLUMN_DATE,
         WeatherEntry.COLUMN_DESCRIPTION,
+        WeatherEntry.COLUMN_DIRECTION,
+        WeatherEntry.COLUMN_HUMIDITY,
         WeatherEntry.COLUMN_MAXIMUM,
         WeatherEntry.COLUMN_MINIMUM,
-        LocationEntry.COLUMN_SETTING,
-        WeatherEntry.COLUMN_HUMIDITY,
-        WeatherEntry.COLUMN_WIND,
-        WeatherEntry.COLUMN_DIRECTION,
-        WeatherEntry.COLUMN_PRESSURE
+        WeatherEntry.COLUMN_PRESSURE,
+        WeatherEntry.COLUMN_WEATHER_CODE,
+        WeatherEntry.COLUMN_WIND
     };
 
-    public static final int COLUMN_ID          =  0;
-    public static final int COLUMN_DATE        =  1;
-    public static final int COLUMN_DESCRIPTION =  2;
-    public static final int COLUMN_MAXIMUM     =  3;
-    public static final int COLUMN_MINIMUM     =  4;
-    public static final int COLUMN_SETTING     =  5;
-    public static final int COLUMN_HUMIDITY    =  6;
-    public static final int COLUMN_WIND        =  7;
-    public static final int COLUMN_DIRECTION   =  8;
-    public static final int COLUMN_PRESSURE    =  9;
-    public static final int COLUMN_COUNT       = 10;
+    public static final int COLUMN_ID           =  0;
+    public static final int COLUMN_SETTING      =  1;
+    public static final int COLUMN_DATE         =  2;
+    public static final int COLUMN_DESCRIPTION  =  3;
+    public static final int COLUMN_DIRECTION    =  4;
+    public static final int COLUMN_HUMIDITY     =  5;
+    public static final int COLUMN_MAXIMUM      =  6;
+    public static final int COLUMN_MINIMUM      =  7;
+    public static final int COLUMN_PRESSURE     =  8;
+    public static final int COLUMN_WEATHER_CODE =  9;
+    public static final int COLUMN_WIND         = 10;
+    public static final int COLUMN_COUNT        = 11;
 
     static HashMap<String, Integer> makeColumnToIndex() {
         Log.v(TAG, "makeColumnToIndex()");
@@ -180,6 +182,7 @@ public class Utility
     // Otherwise return the day name.
     //
     public static String dayName(Context context, String dbDate) {
+        Log.v(TAG, "dayName(): dbDate == " + dbDate);
         final Date today = new Date();
         if (Utility.dbDate(today).equals(dbDate)) {
             return context.getString(R.string.today);
@@ -242,5 +245,52 @@ public class Utility
         } else {
             a.startActivity(intent);
         }
+    }
+
+    // See: http://openweathermap.org/weather-conditions
+    //
+    static int weatherCodeToIndex(int code) {
+        final int hundred = code / 100;
+        if (hundred == 200) return 1;  // storm
+        if (hundred == 300) return 2;  // light_rain
+        if (code    == 500) return 2;  // light_rain
+        if (hundred == 500) return 3;  // rain
+        if (hundred == 600) return 4;  // snow
+        if (hundred == 700) return 5;  // fog
+        if (code    == 800) return 6;  // clear
+        if (code    == 801) return 7;  // light_clouds
+        if (code    == 802) return 7;  // light_clouds
+        if (hundred == 800) return 8;  // cloudy
+        /* otherwise */     return 0;  // light_clouds
+    }
+
+    public static int weatherIcon(int code) {
+        final int drawables[] = {
+            R.drawable.ic_light_clouds,
+            R.drawable.ic_storm,
+            R.drawable.ic_light_rain,
+            R.drawable.ic_rain,
+            R.drawable.ic_snow,
+            R.drawable.ic_fog,
+            R.drawable.ic_clear,
+            R.drawable.ic_light_clouds,
+            R.drawable.ic_cloudy
+        };
+        return drawables[weatherCodeToIndex(code)];
+    }
+
+    public static int weatherArt(int code) {
+        final int drawables[] = {
+            R.drawable.art_light_clouds,
+            R.drawable.art_storm,
+            R.drawable.art_light_rain,
+            R.drawable.art_rain,
+            R.drawable.art_snow,
+            R.drawable.art_fog,
+            R.drawable.art_clear,
+            R.drawable.art_light_clouds,
+            R.drawable.art_cloudy
+        };
+        return drawables[weatherCodeToIndex(code)];
     }
 }

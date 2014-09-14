@@ -47,7 +47,7 @@ public class TestUtility extends junit.framework.Assert {
         WeatherEntry.COLUMN_PRESSURE,
         WeatherEntry.COLUMN_WIND,
         WeatherEntry.COLUMN_DIRECTION,
-        WeatherEntry.COLUMN_WEATHER_ID
+        WeatherEntry.COLUMN_WEATHER_CODE
     };
 
     final static Object[] weatherRow = {

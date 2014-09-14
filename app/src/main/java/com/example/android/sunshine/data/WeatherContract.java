@@ -55,17 +55,17 @@ public class WeatherContract {
 
         public static final String TAG = WeatherEntry.class.getSimpleName();
 
-        public static final String TABLE = "weather";
+        public static final String TABLE               = "weather";
         public static final String COLUMN_LOCATION_KEY = "location_id";
-        public static final String COLUMN_DATE = "date";
-        public static final String COLUMN_DESCRIPTION = "description";
-        public static final String COLUMN_MINIMUM = "minimum";
-        public static final String COLUMN_MAXIMUM = "maximum";
-        public static final String COLUMN_HUMIDITY = "humidity";
-        public static final String COLUMN_PRESSURE = "pressure";
-        public static final String COLUMN_WIND = "wind";
-        public static final String COLUMN_DIRECTION = "direction";
-        public static final String COLUMN_WEATHER_ID = "weather_id";
+        public static final String COLUMN_DATE         = "date";
+        public static final String COLUMN_DESCRIPTION  = "description";
+        public static final String COLUMN_MINIMUM      = "minimum";
+        public static final String COLUMN_MAXIMUM      = "maximum";
+        public static final String COLUMN_HUMIDITY     = "humidity";
+        public static final String COLUMN_PRESSURE     = "pressure";
+        public static final String COLUMN_WIND         = "wind";
+        public static final String COLUMN_DIRECTION    = "direction";
+        public static final String COLUMN_WEATHER_CODE = "weather_code";
 
         public static final Uri CONTENT_URI =
             BASE_CONTENT_URI.buildUpon().appendPath(TABLE).build();
