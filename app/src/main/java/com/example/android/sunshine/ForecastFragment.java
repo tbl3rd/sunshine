@@ -37,28 +37,20 @@ public class ForecastFragment
 
     ForecastAdapter mAdapter;
 
+    public interface Callback {
+        public void onItemSelected(String date);
+    }
+
     private AdapterView.OnItemClickListener makeOnItemClickListener() {
         return new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView av, View view, int n, long id)
             {
-                startActivity(new Intent(getActivity(), DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT,
-                                ((CursorAdapter)av.getAdapter())
-                                .getCursor().getString(Utility.COLUMN_DATE)));
+                ((MainActivity)getActivity()).onItemSelected(
+                        ((CursorAdapter)av.getAdapter())
+                        .getCursor().getString(Utility.COLUMN_DATE));
             }
         };
-    }
-
-    private ForecastAdapter makeForecastAdapter(Cursor cursor)
-    {
-        final Activity a = getActivity();
-        final ForecastAdapter result = new ForecastAdapter(a, cursor, true);
-        final ListView lv = (ListView)a.findViewById(R.id.listview_forecast);
-        Log.v(TAG, "makeForecastAdapter(): lv == " + lv);
-        lv.setAdapter(result);
-        lv.setOnItemClickListener(makeOnItemClickListener());
-        return result;
     }
 
     @Override
@@ -74,8 +66,22 @@ public class ForecastFragment
             ViewGroup container,
             Bundle savedInstanceState)
     {
+        final Activity a = getActivity();
         final View result
             = inflater.inflate(R.layout.fragment_main, container, false);
+        final ListView lv = (ListView)result.findViewById(R.id.listview_forecast);
+        mAdapter = new ForecastAdapter(a, null, 0);
+        lv.setAdapter(mAdapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView av, View view, int n, long id)
+                {
+                    final Cursor cursor = mAdapter.getCursor();
+                    if (cursor != null && cursor.moveToPosition(n)) {
+                        ((Callback)getActivity()).onItemSelected(
+                                cursor.getString(Utility.COLUMN_DATE));
+                    }
+                }});
         Log.v(TAG, "onCreateView(): result == " + result);
         return result;
     }
@@ -127,11 +133,8 @@ public class ForecastFragment
         final Uri uri = WeatherEntry.buildWeatherLocationQueryDate(
                 mLocation, new Date());
         Log.v(TAG, "onCreateLoader(" + i + ", ...): uri == " + uri);
-        final CursorLoader result
-            = new CursorLoader(getActivity(), uri, Utility.FORECAST_COLUMNS,
-                    null, null, WeatherEntry.COLUMN_DATE + " ASC ");
-        mAdapter = makeForecastAdapter(result.loadInBackground());
-        return result;
+        return new CursorLoader(getActivity(), uri, Utility.FORECAST_COLUMNS,
+                null, null, WeatherEntry.COLUMN_DATE + " ASC ");
     }
 
     @Override

@@ -33,12 +33,11 @@ public class DetailFragment
 
     private static final int LOADER_INDEX = 0;
 
+    private ShareActionProvider mShareActionProvider;
     private View mView;
     private String mDbDate;
     private String mLocation;
     private String mWeather;
-
-    CursorLoader mLoader;
 
     static class ViewHolder {
         final TextView day;
@@ -63,6 +62,20 @@ public class DetailFragment
         }
     }
 
+    public static DetailFragment newInstance(String date) {
+        final DetailFragment result = new DetailFragment();
+        final Bundle args = new Bundle();
+        args.putString("date", date);
+        result.setArguments(args);
+        return result;
+    }
+
+    public String getDate() {
+        final Bundle args = getArguments();
+        Log.v(TAG, "getDate(): args == " + args);
+        return getArguments().getString("date");
+    }
+
     private Intent getShareIntent() {
         final Intent result = new Intent(Intent.ACTION_SEND);
         final String name = getString(R.string.app_name);
@@ -73,37 +86,57 @@ public class DetailFragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        final Bundle args = getArguments();
+        final boolean restart = (args != null)
+            && args.containsKey("date")
+            && (mLocation != null)
+            && !mLocation.equals(Utility.getPreferredLocation(getActivity()));
+        if (restart) {
+            getLoaderManager().restartLoader(LOADER_INDEX, null, this);
+        }
+
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         final MenuItem mi = menu.findItem(R.id.action_share);
         final ActionProvider ap = MenuItemCompat.getActionProvider(mi);
-        if (ap == null) {
-            Utility.shortToast(getActivity(), R.string.action_share_none);
-        } else {
-            ((ShareActionProvider)ap).setShareIntent(getShareIntent());
+        mShareActionProvider = (ShareActionProvider)ap;
+        if (mShareActionProvider != null && mWeather != null) {
+            mShareActionProvider.setShareIntent(getShareIntent());
         }
+        inflater.inflate(R.menu.detailfragment, menu);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.i(TAG, "onActivityCreated()");
-        getLoaderManager().restartLoader(LOADER_INDEX, null, this);
+        if (savedInstanceState != null) {
+            mLocation = savedInstanceState.getString("location");
+        }
+        final Bundle args = getArguments();
+        if (args != null && args.containsKey("date")) {
+            getLoaderManager().initLoader(LOADER_INDEX, null, this);
+        }
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        final String date = getArguments().getString("date");
         mLocation = Utility.getPreferredLocation(getActivity());
         final Uri uri = WeatherEntry.buildWeatherLocationDate(
                 mLocation, mDbDate);
         Log.v(TAG, "onCreateLoader(" + i + ", ...): uri == " + uri);
-        mLoader = new CursorLoader(getActivity(), uri,
+        return new CursorLoader(getActivity(), uri,
                 Utility.FORECAST_COLUMNS, null, null, null);
-        return mLoader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
-        if (c.moveToFirst()) {
+        if (c != null && c.moveToFirst()) {
             final Activity a = getActivity();
             final boolean isMetric = Utility.isMetric(a);
             final String dbDate = c.getString(Utility.COLUMN_DATE);
@@ -140,6 +173,9 @@ public class DetailFragment
             vh.description.setText(description);
             mWeather = date + " - " + description
                 + " -- "  + maximum + " / " + minimum;
+            if (mShareActionProvider != null) {
+                mShareActionProvider.setShareIntent(getShareIntent());
+            }
         }
     }
 
@@ -150,21 +186,10 @@ public class DetailFragment
     @Override
     public View onCreateView(LayoutInflater i, ViewGroup c, Bundle saved)
     {
-        Log.v(TAG, "onCreateView()");
         final View result = i.inflate(R.layout.fragment_detail, c, false);
         Log.v(TAG, "onCreateView(): result == " + result);
         result.setTag(new ViewHolder(result));
         mView = result;
-        final Intent intent = getActivity().getIntent();
-        if (intent != null) {
-            final Bundle extras = intent.getExtras();
-            if (extras != null) {
-                final String dbDate = extras.getString(Intent.EXTRA_TEXT);
-                if (dbDate != null) {
-                    mDbDate = dbDate;
-                }
-            }
-        }
         return result;
     }
 
