@@ -13,6 +13,9 @@ import android.widget.TextView;
 //
 public class ForecastAdapter extends CursorAdapter
 {
+    final int VIEW_TYPE_TODAY = 0;
+    final int VIEW_TYPE_FUTURE = 1;
+
     static class ViewHolder {
         final ImageView icon;
         final TextView date;
@@ -36,8 +39,6 @@ public class ForecastAdapter extends CursorAdapter
 
     @Override
     public int getItemViewType(int position) {
-        final int VIEW_TYPE_TODAY = 0;
-        final int VIEW_TYPE_FUTURE = 1;
         return (position == 0) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE;
     }
 
@@ -60,7 +61,7 @@ public class ForecastAdapter extends CursorAdapter
         final boolean isMetric = Utility.isMetric(context);
         final int code = cursor.getInt(Utility.COLUMN_WEATHER_CODE);
         final int drawable
-            = (0 == cursor.getPosition())
+            = (VIEW_TYPE_TODAY == getItemViewType(cursor.getPosition()))
             ? Utility.weatherArt(code)
             : Utility.weatherIcon(code);
         vh.icon.setImageResource(drawable);
