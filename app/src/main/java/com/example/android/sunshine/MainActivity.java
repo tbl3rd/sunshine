@@ -11,16 +11,17 @@ import android.view.MenuItem;
 public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.container, new ForecastFragment())
+        mTwoPane = findViewById(R.id.weather_detail_container) != null;
+        if (mTwoPane && savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                .replace(R.id.weather_detail_container, new DetailFragment())
                 .commit();
         }
     }

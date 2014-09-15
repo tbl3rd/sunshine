@@ -182,7 +182,6 @@ public class Utility
     // Otherwise return the day name.
     //
     public static String dayName(Context context, String dbDate) {
-        Log.v(TAG, "dayName(): dbDate == " + dbDate);
         final Date today = new Date();
         if (Utility.dbDate(today).equals(dbDate)) {
             return context.getString(R.string.today);

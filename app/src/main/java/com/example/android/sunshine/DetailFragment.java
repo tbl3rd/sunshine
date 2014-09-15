@@ -150,7 +150,11 @@ public class DetailFragment
     @Override
     public View onCreateView(LayoutInflater i, ViewGroup c, Bundle saved)
     {
+        Log.v(TAG, "onCreateView()");
         final View result = i.inflate(R.layout.fragment_detail, c, false);
+        Log.v(TAG, "onCreateView(): result == " + result);
+        result.setTag(new ViewHolder(result));
+        mView = result;
         final Intent intent = getActivity().getIntent();
         if (intent != null) {
             final Bundle extras = intent.getExtras();
@@ -161,13 +165,12 @@ public class DetailFragment
                 }
             }
         }
-        result.setTag(new ViewHolder(result));
-        mView = result;
         return result;
     }
 
     public DetailFragment() {
         super();
+        Log.v(TAG, "DetailFragment()");
         setHasOptionsMenu(true);
     }
 }
