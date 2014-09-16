@@ -41,18 +41,6 @@ public class ForecastFragment
         public void onItemSelected(String date);
     }
 
-    private AdapterView.OnItemClickListener makeOnItemClickListener() {
-        return new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView av, View view, int n, long id)
-            {
-                ((MainActivity)getActivity()).onItemSelected(
-                        ((CursorAdapter)av.getAdapter())
-                        .getCursor().getString(Utility.COLUMN_DATE));
-            }
-        };
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {

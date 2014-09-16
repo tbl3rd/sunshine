@@ -184,12 +184,21 @@ public class DetailFragment
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("location", mLocation);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater i, ViewGroup c, Bundle saved)
     {
         final View result = i.inflate(R.layout.fragment_detail, c, false);
-        Log.v(TAG, "onCreateView(): result == " + result);
+        final Bundle args = getArguments();
+        if (args != null) mDbDate = args.getString("date");
+        if (saved != null) mLocation = saved.getString("location");
         result.setTag(new ViewHolder(result));
         mView = result;
+        Log.v(TAG, "onCreateView(): result == " + result);
         return result;
     }
 
