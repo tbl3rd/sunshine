@@ -20,13 +20,13 @@ public class MainActivity
         if (mTwoPane) {
             final Bundle args = new Bundle();
             final DetailFragment df = new DetailFragment();
-            args.putString("date", date);
+            args.putString(DetailActivity.KEY_DATE, date);
             df.setArguments(args);
             getSupportFragmentManager().beginTransaction()
                 .replace(R.id.weather_detail_container, df).commit();
         } else {
             startActivity(new Intent(this, DetailActivity.class)
-                    .putExtra("date", date));
+                    .putExtra(DetailActivity.KEY_DATE, date));
         }
     }
 
@@ -41,42 +41,6 @@ public class MainActivity
                 .replace(R.id.weather_detail_container, new DetailFragment())
                 .commit();
         }
-    }
-
-    @Override
-    protected void onStart() {
-        Log.v(TAG, "onStart()");
-        super.onStart();
-    }
-
-    @Override
-    protected void onRestart() {
-        Log.v(TAG, "onRestart()");
-        super.onRestart();
-    }
-
-    @Override
-    protected void onPause() {
-        Log.v(TAG, "onPause()");
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.v(TAG, "onResume()");
-        super.onResume();
-    }
-
-    @Override
-    protected void onStop() {
-        Log.v(TAG, "onStop()");
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.v(TAG, "onDestroy()");
-        super.onDestroy();
     }
 
     @Override

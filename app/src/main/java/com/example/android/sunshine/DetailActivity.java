@@ -9,15 +9,18 @@ import android.view.MenuItem;
 
 public class DetailActivity extends ActionBarActivity {
 
+    static final String KEY_DATE     = "date";
+    static final String KEY_LOCATION = "location";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         if (savedInstanceState == null) {
-            final String date = getIntent().getStringExtra("date");
+            final String date = getIntent().getStringExtra(KEY_DATE);
             final Bundle args = new Bundle();
             final DetailFragment df = new DetailFragment();
-            args.putString("date", date);
+            args.putString(KEY_DATE, date);
             df.setArguments(args);
             getSupportFragmentManager().beginTransaction()
                 .add(R.id.weather_detail_container, df)
@@ -34,14 +37,8 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.action_map:
-            Utility.showMap(this);
-            return true;
         case R.id.action_settings:
             startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        case R.id.action_refresh:
-            FetchWeatherTask.fetch(this);
             return true;
         }
         return super.onOptionsItemSelected(item);

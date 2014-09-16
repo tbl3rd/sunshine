@@ -40,16 +40,17 @@ public class DetailFragment
     private String mWeather;
 
     static class ViewHolder {
-        final TextView day;
-        final TextView date;
-        final TextView maximum;
-        final TextView minimum;
-        final TextView humidity;
-        final TextView wind;
-        final TextView pressure;
         final ImageView icon;
-        final TextView description;
+        final TextView  day;        
+        final TextView  date;       
+        final TextView  maximum;    
+        final TextView  minimum;    
+        final TextView  humidity;   
+        final TextView  wind;       
+        final TextView  pressure;   
+        final TextView  description;
         ViewHolder(View v) {
+            icon        = (ImageView)v.findViewById(R.id.detail_icon);
             day         =  (TextView)v.findViewById(R.id.detail_day);
             date        =  (TextView)v.findViewById(R.id.detail_date);
             maximum     =  (TextView)v.findViewById(R.id.detail_maximum);
@@ -57,23 +58,14 @@ public class DetailFragment
             humidity    =  (TextView)v.findViewById(R.id.detail_humidity);
             wind        =  (TextView)v.findViewById(R.id.detail_wind);
             pressure    =  (TextView)v.findViewById(R.id.detail_pressure);
-            icon        = (ImageView)v.findViewById(R.id.detail_icon);
             description =  (TextView)v.findViewById(R.id.detail_description);
         }
-    }
-
-    public static DetailFragment newInstance(String date) {
-        final DetailFragment result = new DetailFragment();
-        final Bundle args = new Bundle();
-        args.putString("date", date);
-        result.setArguments(args);
-        return result;
     }
 
     public String getDate() {
         final Bundle args = getArguments();
         Log.v(TAG, "getDate(): args == " + args);
-        return getArguments().getString("date");
+        return getArguments().getString(DetailActivity.KEY_DATE);
     }
 
     private Intent getShareIntent() {
@@ -90,7 +82,7 @@ public class DetailFragment
         super.onResume();
         final Bundle args = getArguments();
         final boolean restart = (args != null)
-            && args.containsKey("date")
+            && args.containsKey(DetailActivity.KEY_DATE)
             && (mLocation != null)
             && !mLocation.equals(Utility.getPreferredLocation(getActivity()));
         if (restart) {
@@ -104,7 +96,7 @@ public class DetailFragment
         final MenuItem mi = menu.findItem(R.id.action_share);
         final ActionProvider ap = MenuItemCompat.getActionProvider(mi);
         mShareActionProvider = (ShareActionProvider)ap;
-        if (mShareActionProvider != null && mWeather != null) {
+        if (mWeather != null) {
             mShareActionProvider.setShareIntent(getShareIntent());
         }
         inflater.inflate(R.menu.detailfragment, menu);
@@ -115,23 +107,25 @@ public class DetailFragment
         super.onActivityCreated(savedInstanceState);
         Log.i(TAG, "onActivityCreated()");
         if (savedInstanceState != null) {
-            mLocation = savedInstanceState.getString("location");
+            mLocation
+                = savedInstanceState.getString(DetailActivity.KEY_LOCATION);
         }
         final Bundle args = getArguments();
-        if (args != null && args.containsKey("date")) {
+        if (args != null && args.containsKey(DetailActivity.KEY_DATE)) {
             getLoaderManager().initLoader(LOADER_INDEX, null, this);
         }
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        final String date = getArguments().getString("date");
-        mLocation = Utility.getPreferredLocation(getActivity());
+        final Activity a = getActivity();
+        final String date = getArguments().getString(DetailActivity.KEY_DATE);
+        mLocation = Utility.getPreferredLocation(a);
         final Uri uri = WeatherEntry.buildWeatherLocationDate(
                 mLocation, mDbDate);
         Log.v(TAG, "onCreateLoader(" + i + ", ...): uri == " + uri);
-        return new CursorLoader(getActivity(), uri,
-                Utility.FORECAST_COLUMNS, null, null, null);
+        return new CursorLoader(a, uri, Utility.FORECAST_COLUMNS,
+                null, null, WeatherEntry.COLUMN_DATE + " ASC ");
     }
 
     @Override
@@ -185,7 +179,7 @@ public class DetailFragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString("location", mLocation);
+        outState.putString(DetailActivity.KEY_LOCATION, mLocation);
         super.onSaveInstanceState(outState);
     }
 
@@ -194,8 +188,12 @@ public class DetailFragment
     {
         final View result = i.inflate(R.layout.fragment_detail, c, false);
         final Bundle args = getArguments();
-        if (args != null) mDbDate = args.getString("date");
-        if (saved != null) mLocation = saved.getString("location");
+        if (args  != null) {
+            mDbDate   =  args.getString(DetailActivity.KEY_DATE);
+        }
+        if (saved != null) {
+            mLocation = saved.getString(DetailActivity.KEY_LOCATION);
+        }
         result.setTag(new ViewHolder(result));
         mView = result;
         Log.v(TAG, "onCreateView(): result == " + result);
