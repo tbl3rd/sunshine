@@ -41,6 +41,9 @@ public class MainActivity
                 .replace(R.id.weather_detail_container, new DetailFragment())
                 .commit();
         }
+        ((ForecastFragment)getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_forecast))
+            .setTwoPane(mTwoPane);
     }
 
     @Override

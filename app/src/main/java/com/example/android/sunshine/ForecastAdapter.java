@@ -3,6 +3,7 @@ package com.example.android.sunshine;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +14,28 @@ import android.widget.TextView;
 //
 public class ForecastAdapter extends CursorAdapter
 {
+    private static final String TAG = ForecastAdapter.class.getSimpleName();
+
     final int VIEW_TYPE_TODAY = 0;
     final int VIEW_TYPE_FUTURE = 1;
+
+    private boolean mTwoPane;
+    void setTwoPane(boolean twoPane) {
+        mTwoPane = twoPane;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        final int VIEW_TYPE_COUNT = 2;
+        return VIEW_TYPE_COUNT;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (mTwoPane)      return VIEW_TYPE_FUTURE;
+        if (position == 0) return VIEW_TYPE_TODAY;
+        /**/               return VIEW_TYPE_FUTURE;
+    }
 
     static class ViewHolder {
         final ImageView icon;
@@ -32,24 +53,20 @@ public class ForecastAdapter extends CursorAdapter
     }
 
     @Override
-    public int getViewTypeCount() {
-        final int VIEW_TYPE_COUNT = 2;
-        return VIEW_TYPE_COUNT;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return (position == 0) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE;
-    }
-
-    @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         final int[] LAYOUT = {
             R.layout.list_item_today,
             R.layout.list_item_future
         };
-        final View result = LayoutInflater.from(context).inflate(
-                LAYOUT[getItemViewType(cursor.getPosition())],
+        Log.v(TAG, "newView(): context == " + context);
+        Log.v(TAG, "newView(): cursor == " + cursor);
+        Log.v(TAG, "newView(): parent == " + parent);
+        final int cursorPosition = cursor.getPosition();
+        Log.v(TAG, "newView(): cursorPosition == " + cursorPosition);
+        final LayoutInflater inflater = LayoutInflater.from(context);
+        Log.v(TAG, "newView(): inflater == " + inflater);
+        final View result = inflater.inflate(
+                LAYOUT[getItemViewType(cursorPosition)],
                 parent, false);
         result.setTag(new ViewHolder(result));
         return result;

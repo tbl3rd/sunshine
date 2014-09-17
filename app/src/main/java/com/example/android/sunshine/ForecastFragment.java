@@ -42,6 +42,10 @@ public class ForecastFragment
         public void onItemSelected(String date);
     }
 
+    void setTwoPane(boolean twoPane) {
+        mAdapter.setTwoPane(twoPane);
+    }
+
     @Override
     public void onCreate(Bundle saved)
     {
