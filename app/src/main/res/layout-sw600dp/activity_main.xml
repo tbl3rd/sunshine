@@ -1,7 +1,11 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/TwoPane"
+    android:baselineAligned="false"
+    android:divider="?android:attr/dividerHorizontal"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
     tools:context="com.example.android.sunshine.MainActivity"
     >
 

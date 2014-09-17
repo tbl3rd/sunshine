@@ -1,0 +1,8 @@
+<resources>
+
+    <style name="Forecast">
+        <item name="android:background">@drawable/touch_selector</item>
+        <item name="android:choiceMode">singleChoice</item>
+    </style>
+
+</resources>
