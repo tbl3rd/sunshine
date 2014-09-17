@@ -36,6 +36,7 @@ public class ForecastFragment
     private ForecastAdapter mAdapter;
     private ListView mListView;
     private String mLocation;
+    private boolean mTwoPane;
     private int mPosition = ListView.INVALID_POSITION;
 
     public interface Callback {
@@ -43,7 +44,8 @@ public class ForecastFragment
     }
 
     void setTwoPane(boolean twoPane) {
-        mAdapter.setTwoPane(twoPane);
+        mTwoPane = twoPane;
+        if (mAdapter != null) mAdapter.setTwoPane(mTwoPane);
     }
 
     @Override
@@ -64,6 +66,7 @@ public class ForecastFragment
             = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView)result.findViewById(R.id.listview_forecast);
         mAdapter = new ForecastAdapter(a, null, 0);
+        mAdapter.setTwoPane(mTwoPane);
         if (saved != null) {
             mPosition = saved.getInt(DetailActivity.KEY_POSITION);
             Log.v(TAG, "onCreateView(): mPosition == " + mPosition);

@@ -58,15 +58,8 @@ public class ForecastAdapter extends CursorAdapter
             R.layout.list_item_today,
             R.layout.list_item_future
         };
-        Log.v(TAG, "newView(): context == " + context);
-        Log.v(TAG, "newView(): cursor == " + cursor);
-        Log.v(TAG, "newView(): parent == " + parent);
-        final int cursorPosition = cursor.getPosition();
-        Log.v(TAG, "newView(): cursorPosition == " + cursorPosition);
-        final LayoutInflater inflater = LayoutInflater.from(context);
-        Log.v(TAG, "newView(): inflater == " + inflater);
-        final View result = inflater.inflate(
-                LAYOUT[getItemViewType(cursorPosition)],
+        final View result = LayoutInflater.from(context).inflate(
+                LAYOUT[getItemViewType(cursor.getPosition())],
                 parent, false);
         result.setTag(new ViewHolder(result));
         return result;
