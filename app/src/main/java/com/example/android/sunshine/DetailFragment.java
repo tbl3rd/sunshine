@@ -96,7 +96,7 @@ public class DetailFragment
         final MenuItem mi = menu.findItem(R.id.action_share);
         final ActionProvider ap = MenuItemCompat.getActionProvider(mi);
         mShareActionProvider = (ShareActionProvider)ap;
-        if (mWeather != null) {
+        if (mShareActionProvider != null && mWeather != null) {
             mShareActionProvider.setShareIntent(getShareIntent());
         }
         inflater.inflate(R.menu.detailfragment, menu);
