@@ -36,7 +36,7 @@ public class ForecastFragment
     private ForecastAdapter mAdapter;
     private ListView mListView;
     private String mLocation;
-    private int mPosition;
+    private int mPosition = ListView.INVALID_POSITION;
 
     public interface Callback {
         public void onItemSelected(String date);
@@ -81,15 +81,13 @@ public class ForecastFragment
                     }
                 }
             });
-        Log.v(TAG, "onCreateView(): mPosition == " + mPosition);
-        Log.v(TAG, "onCreateView(): result == " + result);
         return result;
     }
 
     @Override
     public void onSaveInstanceState(Bundle saved) {
         Log.v(TAG, "onSaveInstanceState(): saved == " + saved);
-        if (saved != null) {
+        if (saved != null && mPosition != ListView.INVALID_POSITION) {
             saved.putInt(DetailActivity.KEY_POSITION, mPosition);
             Log.v(TAG, "onSaveInstanceState(): mPosition == " + mPosition);
         }
@@ -149,11 +147,8 @@ public class ForecastFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mAdapter.swapCursor(cursor);
-        Log.v(TAG, "onLoadFinished(): mListView == " + mListView);
-        Log.v(TAG, "onLoadFinished(): mPosition == " + mPosition);
-        if (mListView != null && mPosition > 0) {
+        if (mListView != null && mPosition != ListView.INVALID_POSITION) {
             mListView.setSelection(mPosition);
-            // mListView.setItemChecked(mPosition);
         }
     }
 
