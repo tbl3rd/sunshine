@@ -33,18 +33,19 @@ public class ForecastFragment
 
     private static final String TAG = ForecastFragment.class.getSimpleName();
 
+    private ForecastAdapter mAdapter;
+    private ListView mListView;
     private String mLocation;
-
-    ForecastAdapter mAdapter;
+    private int mPosition;
 
     public interface Callback {
         public void onItemSelected(String date);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
+    public void onCreate(Bundle saved)
     {
-        super.onCreate(savedInstanceState);
+        super.onCreate(saved);
         setHasOptionsMenu(true);
     }
 
@@ -52,28 +53,46 @@ public class ForecastFragment
     public View onCreateView(
             LayoutInflater inflater,
             ViewGroup container,
-            Bundle savedInstanceState)
+            Bundle saved)
     {
         final Activity a = getActivity();
         final View result
             = inflater.inflate(R.layout.fragment_main, container, false);
-        final ListView lv
-            = (ListView)result.findViewById(R.id.listview_forecast);
+        mListView = (ListView)result.findViewById(R.id.listview_forecast);
         mAdapter = new ForecastAdapter(a, null, 0);
-        lv.setAdapter(mAdapter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        if (saved != null) {
+            mPosition = saved.getInt(DetailActivity.KEY_POSITION);
+            Log.v(TAG, "onCreateView(): mPosition == " + mPosition);
+        }
+        mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+            {
                 @Override
                 public void onItemClick(
                         AdapterView av, View view, int n, long id)
                 {
                     final Cursor cursor = mAdapter.getCursor();
+                    Log.v(TAG, "onItemClick(): cursor == " + cursor);
+                    Log.v(TAG, "onItemClick(): n == " + n);
                     if (cursor != null && cursor.moveToPosition(n)) {
                         ((Callback)a).onItemSelected(
                                 cursor.getString(Utility.COLUMN_DATE));
+                        mPosition = n;
                     }
-                }});
+                }
+            });
+        Log.v(TAG, "onCreateView(): mPosition == " + mPosition);
         Log.v(TAG, "onCreateView(): result == " + result);
         return result;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle saved) {
+        Log.v(TAG, "onSaveInstanceState(): saved == " + saved);
+        if (saved != null) {
+            saved.putInt(DetailActivity.KEY_POSITION, mPosition);
+            Log.v(TAG, "onSaveInstanceState(): mPosition == " + mPosition);
+        }
     }
 
     @Override
@@ -111,10 +130,10 @@ public class ForecastFragment
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle saved) {
         Log.i(TAG, "onActivityCreated()");
         getLoaderManager().initLoader(LOADER_INDEX, null, this);
-        super.onActivityCreated(savedInstanceState);
+        super.onActivityCreated(saved);
     }
 
     @Override
@@ -130,6 +149,12 @@ public class ForecastFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mAdapter.swapCursor(cursor);
+        Log.v(TAG, "onLoadFinished(): mListView == " + mListView);
+        Log.v(TAG, "onLoadFinished(): mPosition == " + mPosition);
+        if (mListView != null && mPosition > 0) {
+            mListView.setSelection(mPosition);
+            // mListView.setItemChecked(mPosition);
+        }
     }
 
     @Override

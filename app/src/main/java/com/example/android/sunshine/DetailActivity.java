@@ -11,6 +11,7 @@ public class DetailActivity extends ActionBarActivity {
 
     static final String KEY_DATE     = "date";
     static final String KEY_LOCATION = "location";
+    static final String KEY_POSITION = "position";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
