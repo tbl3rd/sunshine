@@ -93,13 +93,13 @@ public class DetailFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.detailfragment, menu);
         final MenuItem mi = menu.findItem(R.id.action_share);
         final ActionProvider ap = MenuItemCompat.getActionProvider(mi);
         mShareActionProvider = (ShareActionProvider)ap;
         if (mShareActionProvider != null && mWeather != null) {
             mShareActionProvider.setShareIntent(getShareIntent());
         }
-        inflater.inflate(R.menu.detailfragment, menu);
     }
 
     @Override
