@@ -10,16 +10,21 @@
     android:padding="16dp"
     >
 
+    <FrameLayout
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        >
     <ImageView
         android:id="@+id/list_icon"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:src="@drawable/ic_launcher"
         />
+    </FrameLayout>
 
     <LinearLayout
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="7"
         android:layout_width="0dp"
         android:orientation="vertical"
         android:paddingLeft="16dp"
@@ -28,37 +33,42 @@
         <TextView
             android:id="@+id/list_date"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:text="Whenever"
+            android:textAppearance="?android:textAppearanceLarge"
             />
 
         <TextView
             android:id="@+id/list_description"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:text="Hotter than Hell!"
+            android:textAppearance="?android:textAppearanceSmall"
             />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_weight="5"
+        android:layout_width="0dp"
         android:orientation="vertical"
         >
 
         <TextView
             android:id="@+id/list_maximum"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:text="212"
+            android:textAppearance="?android:textAppearanceLarge"
             />
 
         <TextView
             android:id="@+id/list_minimum"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:text="32"
+            android:textAppearance="?android:textAppearanceSmall"
             />
 
     </LinearLayout>

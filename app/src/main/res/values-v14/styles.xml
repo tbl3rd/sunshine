@@ -7,6 +7,9 @@
         <item name="android:actionBarStyle">
             @style/ActionBar.Solid.Sunshine
         </item>
+        <item name="android:textViewStyle">
+            @style/RobotoCondensedTextViewStyle
+        </item>
     </style>
 
     <!-- ActionBar style -->
@@ -40,6 +43,10 @@
         <item name="android:logo">
             @drawable/ic_logo
         </item>
+    </style>
+
+    <style name="RobotoCondensedTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
 </resources>

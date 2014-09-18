@@ -7,6 +7,9 @@
         <item name="android:actionBarStyle">
             @style/ActionBar.Solid.Sunshine
         </item>
+        <item name="android:textViewStyle">
+            @style/RobotoCondensedTextViewStyle
+        </item>
     </style>
 
     <!-- ActionBar style -->
@@ -24,7 +27,7 @@
         name="ForecastTheme"
         parent="AppTheme"
         >
-        <item name="actionBarStyle">
+        <item name="android:actionBarStyle">
             @style/ActionBar.Solid.Sunshine.NoTitle
         </item>
     </style>
@@ -34,12 +37,16 @@
         name="ActionBar.Solid.Sunshine.NoTitle"
         parent="@style/ActionBar.Solid.Sunshine"
         >
-        <item name="displayOptions">
+        <item name="android:displayOptions">
             useLogo|showHome
         </item>
-        <item name="logo">
+        <item name="android:logo">
             @drawable/ic_logo
         </item>
+    </style>
+
+    <style name="RobotoCondensedTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
     <style name="Forecast"/>
