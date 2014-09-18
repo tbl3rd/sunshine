@@ -20,8 +20,7 @@
 
         <TextView
             android:id="@+id/list_date"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:textAppearance="?android:textAppearanceLargeInverse"
             android:text="Whenever"
@@ -29,22 +28,20 @@
 
         <TextView
             android:id="@+id/list_maximum"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:textAppearance="?android:textAppearanceInverse"
             android:text="212"
-            android:textSize="72sp"
+            android:textSize="54sp"
             />
 
         <TextView
             android:id="@+id/list_minimum"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:textAppearance="?android:textAppearanceInverse"
             android:text="32"
-            android:textSize="36dp"
+            android:textSize="36sp"
             />
 
     </LinearLayout>
