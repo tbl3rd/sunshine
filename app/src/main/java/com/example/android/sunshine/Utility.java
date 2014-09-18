@@ -203,31 +203,19 @@ public class Utility
 
     // Return a user-friendly representation of dbDate from database.
     //
-    // If today, return "Today, September 11".
-    // If tomorrow, return "Tomorrow, September 12".
-    // If within the week, return "Saturday, September 13".
+    // If today, return "Today".
+    // If tomorrow, return "Tomorrow".
+    // If within the week, return "Saturday".
     // Otherwise, return "Thu Sep 18", and so on.
     //
     public static String friendlyDayDate(Context context, String dbDate) {
-        final Date today = new Date();
-        if (Utility.dbDate(today).equals(dbDate)) {
-            return context.getString(
-                    R.string.format_friendly_date,
-                    context.getString(R.string.today),
-                    formatMonthDay(dbDate));
-        }
         final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(today);
+        calendar.setTime(new Date());
         calendar.add(Calendar.DATE, 7);
-        if (dbDate.compareTo(Utility.dbDate(calendar.getTime())) < 0) {
-            return context.getString(
-                    R.string.format_friendly_date,
-                    dayName(context, dbDate),
-                    formatMonthDay(dbDate));
-        } else {
-            return new SimpleDateFormat("EEE MMM dd")
-                .format(Utility.dbDate(dbDate));
-        }
+        return (dbDate.compareTo(Utility.dbDate(calendar.getTime())) < 0)
+            ? dayName(context, dbDate)
+            : (new SimpleDateFormat("EEE MMM dd")
+                    .format(Utility.dbDate(dbDate)));
     }
 
     public static void showMap(Activity a) {
