@@ -20,6 +20,10 @@
     <string name="title_activity_detail">Details</string>
     <string name="title_activity_settings">Settings</string>
 
+    <string name="preference_location_description">
+        Define your location here: zip code or city and state.
+    </string>
+
     <!-- Date when displaying today's weather forecast [CHAR LIMIT=20]
     -->
     <string name="today">Today</string>

@@ -3,10 +3,12 @@
     >
 
     <EditTextPreference
+        android:contentDescription="@string/preference_location_description"
         android:key="@string/preference_location_key"
         android:title="@string/preference_location_title"
         android:defaultValue="@string/preference_location_default"
         android:inputType="text"
+        android:selectAllOnFocus="true"
         android:singleLine="true"
         />
 
