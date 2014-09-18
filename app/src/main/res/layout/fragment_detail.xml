@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="Today"
+            android:textSize="24sp"
             />
 
         <TextView
@@ -24,6 +25,8 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="September 11"
+            android:textColor="@color/sunshine_light"
+            android:textSize="16sp"
             />
 
         <LinearLayout
@@ -42,16 +45,22 @@
                 android:orientation="vertical"
                 >
                 <TextView
+                    android:fontFamily="sans-serif-light"
                     android:id="@+id/detail_maximum"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:text="212\u00b0F"
+                    android:textSize="96sp"
                     />
                 <TextView
+                    android:fontFamily="sans-serif-light"
                     android:id="@+id/detail_minimum"
+                    android:layout_gravity="center"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:text="32\u00b0F"
+                    android:textColor="@color/sunshine_light"
+                    android:textSize="48sp"
                     />
             </LinearLayout>
 
@@ -74,30 +83,38 @@
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:text="Global Warming"
+                    android:textColor="@color/sunshine_light"
+                    android:textSize="22sp"
                     />
             </LinearLayout>
 
         </LinearLayout>
 
         <TextView
+            android:fontFamily="sans-serif-light"
             android:id="@+id/detail_humidity"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="42%"
+            android:textSize="22sp"
             />
 
         <TextView
+            android:fontFamily="sans-serif-light"
             android:id="@+id/detail_wind"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="23 km/H NNE"
+            android:textSize="22sp"
             />
 
         <TextView
+            android:fontFamily="sans-serif-light"
             android:id="@+id/detail_pressure"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="1234 mmhg"
+            android:textSize="22sp"
             />
 
     </LinearLayout>
