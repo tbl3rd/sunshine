@@ -40,7 +40,7 @@
     <string name="celsius">\u00b0C</string>
     <string name="fahrenheit">\u00b0F</string>
     <string name="format_temperature">
-        <xliff:g id="temperature">%1$1.0f</xliff:g>\u00a0<xliff:g id="temperature-unit">%2$s</xliff:g>
+        <xliff:g id="temperature">%1$1.0f</xliff:g><xliff:g id="temperature-unit">%2$s</xliff:g>
     </string>
 
     <string name="humidity">HUMIDITY</string>

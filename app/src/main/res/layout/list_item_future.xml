@@ -3,23 +3,23 @@
     android:background="@drawable/touch_selector"
     android:baselineAligned="false"
     android:gravity="center_vertical"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:orientation="horizontal"
-    android:padding="16dp"
     >
 
     <FrameLayout
         android:layout_width="60dp"
         android:layout_height="wrap_content"
         >
-    <ImageView
-        android:id="@+id/list_icon"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:src="@drawable/ic_launcher"
-        />
+        <ImageView
+            android:layout_gravity="center"
+            android:id="@+id/list_icon"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_launcher"
+            />
     </FrameLayout>
 
     <LinearLayout
