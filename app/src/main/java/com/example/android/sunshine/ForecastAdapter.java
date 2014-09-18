@@ -74,11 +74,13 @@ public class ForecastAdapter extends CursorAdapter
             = (VIEW_TYPE_TODAY == getItemViewType(cursor.getPosition()))
             ? Utility.weatherArt(code)
             : Utility.weatherIcon(code);
+        final String description
+            = cursor.getString(Utility.COLUMN_DESCRIPTION);
         vh.icon.setImageResource(drawable);
+        vh.icon.setContentDescription(description);
         vh.date.setText(Utility.friendlyDayDate(context,
                         cursor.getString(Utility.COLUMN_DATE)));
-        vh.description.setText(
-                cursor.getString(Utility.COLUMN_DESCRIPTION));
+        vh.description.setText(description);
         vh.maximum.setText(Utility.formatCelsius(context, isMetric,
                         cursor.getDouble(Utility.COLUMN_MAXIMUM)));
         vh.minimum.setText(Utility.formatCelsius(context, isMetric,

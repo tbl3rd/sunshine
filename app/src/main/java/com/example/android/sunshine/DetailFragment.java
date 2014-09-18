@@ -157,6 +157,7 @@ public class DetailFragment
             final int code = c.getInt(Utility.COLUMN_WEATHER_CODE);
             Log.v(TAG, "onLoadFinished(): code == " + code);
             vh.icon.setImageResource(Utility.weatherArt(code));
+            vh.icon.setContentDescription(description);
             vh.day.setText(day);
             vh.date.setText(date);
             vh.maximum.setText(maximum);
