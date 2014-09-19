@@ -37,7 +37,7 @@ public class ForecastFragment
     private ListView mListView;
     private String mLocation;
     private boolean mTwoPane;
-    private int mPosition = ListView.INVALID_POSITION;
+    private int mPosition = 0;
 
     public interface Callback {
         public void onItemSelected(String date);
@@ -94,7 +94,7 @@ public class ForecastFragment
     @Override
     public void onSaveInstanceState(Bundle saved) {
         Log.v(TAG, "onSaveInstanceState(): saved == " + saved);
-        if (saved != null && mPosition != ListView.INVALID_POSITION) {
+        if (saved != null) {
             saved.putInt(DetailActivity.KEY_POSITION, mPosition);
             Log.v(TAG, "onSaveInstanceState(): mPosition == " + mPosition);
         }
@@ -154,7 +154,6 @@ public class ForecastFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mAdapter.swapCursor(cursor);
-        if (mPosition == ListView.INVALID_POSITION) mPosition = 0;
         if (mTwoPane && mListView != null) {
             mListView.post(new Runnable() {
                     @Override
