@@ -36,6 +36,13 @@
                 android:textSize="20sp"
                 />
 
+            <com.example.android.sunshine.CompassView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:height="100dp"
+                android:width="100dp"
+                />
+
         </LinearLayout>
 
         <LinearLayout

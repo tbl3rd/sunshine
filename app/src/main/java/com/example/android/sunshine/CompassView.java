@@ -1,10 +1,21 @@
 package com.example.android.sunshine;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
-public class CompassView extends View {
+public class CompassView extends View
+{
+    private static final String TAG = CompassView.class.getSimpleName();
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        Log.v(TAG, "onDraw(): canvas == " + canvas);
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int measuredWidth
