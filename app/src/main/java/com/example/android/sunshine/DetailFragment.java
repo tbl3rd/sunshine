@@ -175,8 +175,7 @@ public class DetailFragment
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-    }
+    public void onLoaderReset(Loader<Cursor> loader) {}
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

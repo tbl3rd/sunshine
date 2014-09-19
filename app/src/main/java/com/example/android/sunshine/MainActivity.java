@@ -44,6 +44,7 @@ public class MainActivity
         ((ForecastFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_forecast))
             .setTwoPane(mTwoPane);
+        FetchWeatherTask.fetch(this);
     }
 
     @Override
