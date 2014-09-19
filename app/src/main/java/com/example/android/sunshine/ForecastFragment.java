@@ -153,25 +153,19 @@ public class ForecastFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        Log.v(TAG, "onLoadFinished(): mAdapter == " + mAdapter);
-        Log.v(TAG, "onLoadFinished(): mListView == " + mListView);
-        Log.v(TAG, "onLoadFinished(): mPosition == " + mPosition);
-        Log.v(TAG, "onLoadFinished(): mTwoPane == " + mTwoPane);
         mAdapter.swapCursor(cursor);
-        if (mListView != null) {
-            if (mTwoPane && mPosition == ListView.INVALID_POSITION) {
-                mPosition = 0;
-                mListView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mListView.performItemClick(
-                                    mListView.getChildAt(mPosition),
-                                    mPosition, mAdapter.getItemId(mPosition));
-                        }
-                    });
-            }
-            mListView.setSelection(mPosition);
+        if (mPosition == ListView.INVALID_POSITION) mPosition = 0;
+        if (mTwoPane && mListView != null) {
+            mListView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mListView.performItemClick(
+                                mListView.getChildAt(mPosition),
+                                mPosition, mAdapter.getItemId(mPosition));
+                    }
+                });
         }
+        mListView.setSelection(mPosition);
     }
 
     @Override
