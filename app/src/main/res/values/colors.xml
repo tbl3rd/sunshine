@@ -4,4 +4,6 @@
     <color name="sunshine_blue">#ff1ca8f4</color>
     <color name="sunshine_light">#646464</color>
     <color name="sunshine_light_blue">#ff64c2f4</color>
+    <color name="sunshine_yellow">#ffffff64</color>
+    <color name="sunshine_red">#ffff4040</color>
 </resources>
