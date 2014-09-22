@@ -36,18 +36,6 @@
                 android:textSize="20sp"
                 />
 
-            <FrameLayout
-                android:gravity="center"
-                android:layout_height="100dp"
-                android:layout_width="100dp"
-                android:padding="16dp"
-                >
-                <com.example.android.sunshine.CompassView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    />
-            </FrameLayout>
-
         </LinearLayout>
 
         <LinearLayout
@@ -104,6 +92,18 @@
                 android:text="PRESSURE: 1234 mmhg"
                 android:textSize="22sp"
                 />
+
+            <FrameLayout
+                android:gravity="center_vertical"
+                android:layout_height="200dp"
+                android:layout_width="200dp"
+                >
+                <com.example.android.sunshine.CompassView
+                    android:id="@+id/detail_compass"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    />
+            </FrameLayout>
 
         </LinearLayout>
 

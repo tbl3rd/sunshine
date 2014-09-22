@@ -40,25 +40,28 @@ public class DetailFragment
     private String mWeather;
 
     static class ViewHolder {
-        final ImageView icon;
-        final TextView  day;        
-        final TextView  date;       
-        final TextView  maximum;    
-        final TextView  minimum;    
-        final TextView  humidity;   
-        final TextView  wind;       
-        final TextView  pressure;   
-        final TextView  description;
+        final ImageView   icon;
+        final TextView    day;
+        final TextView    date;
+        final TextView    maximum;
+        final TextView    minimum;
+        final TextView    humidity;
+        final TextView    wind;
+        final TextView    pressure;
+        final TextView    description;
+        final CompassView compass;
         ViewHolder(View v) {
-            icon        = (ImageView)v.findViewById(R.id.detail_icon);
-            day         =  (TextView)v.findViewById(R.id.detail_day);
-            date        =  (TextView)v.findViewById(R.id.detail_date);
-            maximum     =  (TextView)v.findViewById(R.id.detail_maximum);
-            minimum     =  (TextView)v.findViewById(R.id.detail_minimum);
-            humidity    =  (TextView)v.findViewById(R.id.detail_humidity);
-            wind        =  (TextView)v.findViewById(R.id.detail_wind);
-            pressure    =  (TextView)v.findViewById(R.id.detail_pressure);
-            description =  (TextView)v.findViewById(R.id.detail_description);
+            icon        =   (ImageView)v.findViewById(R.id.detail_icon);
+            day         =    (TextView)v.findViewById(R.id.detail_day);
+            date        =    (TextView)v.findViewById(R.id.detail_date);
+            maximum     =    (TextView)v.findViewById(R.id.detail_maximum);
+            minimum     =    (TextView)v.findViewById(R.id.detail_minimum);
+            humidity    =    (TextView)v.findViewById(R.id.detail_humidity);
+            wind        =    (TextView)v.findViewById(R.id.detail_wind);
+            pressure    =    (TextView)v.findViewById(R.id.detail_pressure);
+            description =    (TextView)v.findViewById(R.id.detail_description);
+            compass     = (CompassView)v.findViewById(R.id.detail_compass);
+            Log.v(TAG, "ViewHolder(): compass == " + compass);
         }
     }
 
@@ -137,6 +140,7 @@ public class DetailFragment
             final String day = Utility.dayName(a, dbDate);
             final String date = Utility.displayDbDate(dbDate);
             final String description = c.getString(Utility.COLUMN_DESCRIPTION);
+            final int direction = c.getInt(Utility.COLUMN_DIRECTION);
             final String maximum
                 = Utility.formatCelsius(a, isMetric,
                         c.getDouble(Utility.COLUMN_MAXIMUM));
@@ -148,8 +152,7 @@ public class DetailFragment
                         c.getDouble(Utility.COLUMN_HUMIDITY));
             final String wind
                 = Utility.formatWind(a, isMetric,
-                        c.getDouble(Utility.COLUMN_WIND),
-                        c.getInt(Utility.COLUMN_DIRECTION));
+                        c.getDouble(Utility.COLUMN_WIND), direction);
             final String pressure
                 = Utility.formatPressure(a, isMetric,
                         c.getDouble(Utility.COLUMN_PRESSURE));
@@ -166,6 +169,7 @@ public class DetailFragment
             vh.wind.setText(wind);
             vh.pressure.setText(pressure);
             vh.description.setText(description);
+            vh.compass.setDirectionDegrees(direction);
             mWeather = date + " - " + description
                 + " -- "  + maximum + " / " + minimum;
             if (mShareActionProvider != null) {
