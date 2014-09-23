@@ -81,4 +81,26 @@
     <string name="direction_northwest">NW</string>
     <string name="direction_north_northwest">NNW</string>
 
+    <string name="say_wind_format">
+        The wind is out of the
+        <xliff:g id="direction">%1$s</xliff:g>
+        direction.
+    </string>
+    <string name="say_north">north</string>
+    <string name="say_north_northeast">north northeast</string>
+    <string name="say_northeast">northeast</string>
+    <string name="say_east_northeast">east northeast</string>
+    <string name="say_east">east</string>
+    <string name="say_east_southeast">east southeast</string>
+    <string name="say_southeast">southeast</string>
+    <string name="say_south_southeast">south southeast</string>
+    <string name="say_south">south</string>
+    <string name="say_south_southwest">south southwest</string>
+    <string name="say_southwest">southwest</string>
+    <string name="say_west_southwest">west southwest</string>
+    <string name="say_west">west</string>
+    <string name="say_west_northwest">west northwest</string>
+    <string name="say_northwest">northwest</string>
+    <string name="say_north_northwest">north northwest</string>
+
 </resources>

@@ -107,9 +107,44 @@ public class Utility
                 c.getString(R.string.humidity), humidity);
     }
 
+    public static int computeWindDirectionId(int[] directionIds, int degrees)
+    {
+        final int whatever = 3;
+        final double compass = 360.0;
+        final double sector = compass / directionIds.length;
+        final double positive = degrees + sector / 2 + compass * whatever;
+        final double normalized = positive % compass;
+        final double d = normalized / sector;
+        return (directionIds[(int)Math.floor(d)]);
+    }
+
+    public static String sayWindDirectionFromDegrees(Context c, int degrees)
+    {
+        final int[] directionIds = {
+            R.string.say_north,
+            R.string.say_north_northeast,
+            R.string.say_northeast,
+            R.string.say_east_northeast,
+            R.string.say_east,
+            R.string.say_east_southeast,
+            R.string.say_southeast,
+            R.string.say_south_southeast,
+            R.string.say_south,
+            R.string.say_south_southwest,
+            R.string.say_southwest,
+            R.string.say_west_southwest,
+            R.string.say_west,
+            R.string.say_west_northwest,
+            R.string.say_northwest,
+            R.string.say_north_northwest
+        };
+        final int id = computeWindDirectionId(directionIds, degrees);
+        return c.getString(R.string.say_wind_format, id);
+    }
+
     public static String windDirectionFromDegrees(Context c, int degrees)
     {
-        final int[] directionId = {
+        final int[] directionIds = {
             R.string.direction_north,
             R.string.direction_north_northeast,
             R.string.direction_northeast,
@@ -127,13 +162,7 @@ public class Utility
             R.string.direction_northwest,
             R.string.direction_north_northwest
         };
-        final int whatever = 3;
-        final double compass = 360.0;
-        final double sector = compass / directionId.length;
-        final double positive = degrees + sector / 2 + compass * whatever;
-        final double normalized = positive % compass;
-        final double d = normalized / sector;
-        return c.getString(directionId[(int)Math.floor(d)]);
+        return c.getString(computeWindDirectionId(directionIds, degrees));
     }
 
     public static String formatWind(Context c, boolean isMetric,

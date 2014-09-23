@@ -9,9 +9,13 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Typeface;
+import android.support.v4.view.accessibility.AccessibilityManagerCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityManager;
+
 
 // A graphic compass showing wind direction according to
 // setDirectionDegrees().
@@ -148,11 +152,31 @@ public class CompassView extends View
     }
 
     @Override
+    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
+        Log.v(TAG, "dispatchPopulateAccessibilityEvent(): event == " + event);
+        event.getText().add(
+                Utility.sayWindDirectionFromDegrees(getContext(), mDegrees));
+        return true;
+    }
+
+    void maybeSendAccessibilityEvent() {
+        final AccessibilityManager am =
+            (AccessibilityManager)(getContext()
+                    .getSystemService(Context.ACCESSIBILITY_SERVICE));
+        if (am.isEnabled()) {
+            sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED);
+        }
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Log.v(TAG, "onDraw(): canvas == " + canvas);
         drawOuterStaticRing(canvas);
-        if (mDegreesSet) drawInner(canvas, mDegrees);
+        if (mDegreesSet) {
+            drawInner(canvas, mDegrees);
+            maybeSendAccessibilityEvent();
+        }
     }
 
     @Override
