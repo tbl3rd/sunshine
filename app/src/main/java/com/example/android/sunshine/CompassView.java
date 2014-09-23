@@ -17,8 +17,12 @@ public class CompassView extends View
 {
     private static final String TAG = CompassView.class.getSimpleName();
 
+    // The draw size of this view.
+    //
     private static final int   SIZE        = 200;
 
+    // Values derived from size.
+    //
     private static final float CENTER      = SIZE /  2;
     private static final float TEXTSIZE    = SIZE / 10;
     private static final float NEEDLEBASE  = SIZE / 20;
@@ -30,6 +34,8 @@ public class CompassView extends View
 
     final Resources mResources = getContext().getResources();
 
+    // Draw the 4 primary compass directions on c using r.
+    //
     static void drawDirections(Canvas c, Resources r) {
         final String N = r.getString(R.string.direction_north);
         final String S = r.getString(R.string.direction_south);
@@ -46,6 +52,8 @@ public class CompassView extends View
         c.drawText(W, CENTER - OFFSET, CENTER + YTEXTFUDGE,          paint);
     }
 
+    // Return a bitmap of the outer ring of the compass using r.
+    //
     static Bitmap newOuterBitmap(Resources r) {
         final Bitmap result
             = Bitmap.createBitmap(SIZE, SIZE, Bitmap.Config.ARGB_8888);
@@ -63,7 +71,10 @@ public class CompassView extends View
         return result;
     }
     final Bitmap mOuterBitmap = newOuterBitmap(mResources);
+    final Paint  mOuterBitmapPaint = new Paint();
 
+    // Return the draw path for a compass needle pointing north.
+    //
     static Path newDrawNeedlePath() {
         final Path result = new Path();
         result.moveTo(CENTER,              CENTER - INNERRADIUS);
@@ -86,6 +97,8 @@ public class CompassView extends View
 
     final Matrix mDrawNeedleRotate = new Matrix();
 
+    // Draw the compass needle on canvas pointing at degrees.
+    //
     void drawNeedle(Canvas canvas, int degrees) {
         mDrawNeedleRotate.setRotate(degrees, CENTER, CENTER);
         mDrawNeedlePath.transform(mDrawNeedleRotate);
@@ -100,11 +113,15 @@ public class CompassView extends View
     }
     final Paint mDrawInnerPaint = newDrawInnerPaint(mResources);
 
+    // Draw the inner circle of the compass with needle at degrees.
+    //
     void drawInner(Canvas canvas, int degrees) {
         canvas.drawCircle(CENTER, CENTER, INNERRADIUS, mDrawInnerPaint);
         drawNeedle(canvas, degrees);
     }
 
+    // Set the direction of the compass pointer to degrees.
+    //
     private int mDegrees = 0;
     private boolean mDegreesSet = false;
     public int setDirectionDegrees(int degrees) {
@@ -119,8 +136,6 @@ public class CompassView extends View
         }
         return result;
     }
-
-    final Paint mOuterBitmapPaint = new Paint();
 
     @Override
     protected void onDraw(Canvas canvas) {
