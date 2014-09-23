@@ -13,6 +13,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+// A graphic compass showing wind direction according to
+// setDirectionDegrees().
+//
 public class CompassView extends View
 {
     private static final String TAG = CompassView.class.getSimpleName();
