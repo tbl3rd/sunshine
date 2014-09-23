@@ -1,6 +1,8 @@
 package com.example.android.sunshine;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -15,94 +17,95 @@ public class CompassView extends View
 {
     private static final String TAG = CompassView.class.getSimpleName();
 
-    private static final float SIZE = 200.0f;
+    private static final int   SIZE        = 200;
 
-    private static float stroke(float size) {
-        return 1.0f + size / 100.0f;
+    private static final float CENTER      = SIZE /  2;
+    private static final float TEXTSIZE    = SIZE / 10;
+    private static final float NEEDLEBASE  = SIZE / 20;
+    private static final float OUTERRADIUS = CENTER      * 90 / 100;
+    private static final float INNERRADIUS = OUTERRADIUS * 75 / 100;
+    private static final float STROKEWIDTH = 1 + SIZE     / 100;
+    private static final float YTEXTFUDGE  = 1 + TEXTSIZE /   4;
+    private static final float OFFSET      = INNERRADIUS + TEXTSIZE / 2;
+
+    final Resources mResources = getContext().getResources();
+
+    static void drawDirections(Canvas c, Resources r) {
+        final String N = r.getString(R.string.direction_north);
+        final String S = r.getString(R.string.direction_south);
+        final String E = r.getString(R.string.direction_east);
+        final String W = r.getString(R.string.direction_west);
+        final Paint paint = new Paint();
+        paint.setColor(r.getColor(R.color.sunshine_red));
+        paint.setTextSize(TEXTSIZE);
+        paint.setTypeface(Typeface.DEFAULT_BOLD);
+        paint.setTextAlign(Paint.Align.CENTER);
+        c.drawText(N, CENTER,          CENTER - OFFSET + YTEXTFUDGE, paint);
+        c.drawText(S, CENTER,          CENTER + OFFSET + YTEXTFUDGE, paint);
+        c.drawText(E, CENTER + OFFSET, CENTER + YTEXTFUDGE,          paint);
+        c.drawText(W, CENTER - OFFSET, CENTER + YTEXTFUDGE,          paint);
     }
 
-    private static float center(float size) {
-        return size / 2.0f;
-    }
-
-    private static float outerRadius(float size) {
-        return CompassView.center(size) - 10.0f;
-    }
-
-    private static float innerRadius(float size) {
-        return 0.75f * CompassView.outerRadius(size);
-    }
-
-    private static float textSize(float size) {
-        return size / 10.0f;
-    }
-
-    void drawOuter(Canvas canvas) {
-        final float radius = CompassView.outerRadius(SIZE);
-        final float center = CompassView.center(SIZE);
-        final float strokeWidth = CompassView.stroke(SIZE);
+    static Bitmap newOuterBitmap(Resources r) {
+        final Bitmap result
+            = Bitmap.createBitmap(SIZE, SIZE, Bitmap.Config.ARGB_8888);
+        final Canvas c = new Canvas(result);
         final Paint fill = new Paint();
-        final Paint outline = new Paint();
-        fill.setColor(getResources().getColor(R.color.sunshine_light_blue));
+        final Paint line = new Paint();
+        fill.setColor(r.getColor(R.color.sunshine_light_blue));
         fill.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(center, center, radius, fill);
-        outline.setColor(Color.GRAY);
-        outline.setStyle(Paint.Style.STROKE);
-        outline.setStrokeWidth(strokeWidth);
-        canvas.drawCircle(center, center, radius, outline);
+        line.setColor(Color.GRAY);
+        line.setStyle(Paint.Style.STROKE);
+        line.setStrokeWidth(STROKEWIDTH);
+        c.drawCircle(CENTER, CENTER, OUTERRADIUS, fill);
+        c.drawCircle(CENTER, CENTER, OUTERRADIUS, line);
+        drawDirections(c, r);
+        return result;
     }
+    final Bitmap mOuterBitmap = newOuterBitmap(mResources);
+
+    static Path newDrawNeedlePath() {
+        final Path result = new Path();
+        result.moveTo(CENTER,              CENTER - INNERRADIUS);
+        result.lineTo(CENTER + NEEDLEBASE, CENTER              );
+        result.lineTo(CENTER,              CENTER + NEEDLEBASE );
+        result.lineTo(CENTER - NEEDLEBASE, CENTER              );
+        result.lineTo(CENTER,              CENTER - INNERRADIUS);
+        result.close();
+        return result;
+    }
+    final Path mDrawNeedlePath = newDrawNeedlePath();
+
+    static Paint newDrawNeedlePaint(Resources r) {
+        final Paint result = new Paint();
+        result.setColor(r.getColor(R.color.sunshine_yellow));
+        result.setStyle(Paint.Style.FILL);
+        return result;
+    }
+    final Paint mDrawNeedlePaint = newDrawNeedlePaint(mResources);
+
+    final Matrix mDrawNeedleRotate = new Matrix();
 
     void drawNeedle(Canvas canvas, int degrees) {
-        final float center = CompassView.center(SIZE);
-        final float radius = CompassView.innerRadius(SIZE);
-        final Paint paint = new Paint();
-        final Path path = new Path();
-        final Matrix rotate = new Matrix();
-        paint.setColor(getResources().getColor(R.color.sunshine_yellow));
-        paint.setStyle(Paint.Style.FILL);
-        path.moveTo(center, center - radius);
-        path.lineTo(center + 10.0f, center);
-        path.lineTo(center, center + 10.0f);
-        path.lineTo(center - 10.0f, center);
-        path.lineTo(center, center - radius);
-        path.close();
-        rotate.setRotate(degrees, center, center);
-        path.transform(rotate);
-        canvas.drawPath(path, paint);
+        mDrawNeedleRotate.setRotate(degrees, CENTER, CENTER);
+        mDrawNeedlePath.transform(mDrawNeedleRotate);
+        canvas.drawPath(mDrawNeedlePath, mDrawNeedlePaint);
     }
 
+    static Paint newDrawInnerPaint(Resources r) {
+        final Paint result = new Paint();
+        result.setColor(r.getColor(R.color.sunshine_blue));
+        result.setStyle(Paint.Style.FILL);
+        return result;
+    }
+    final Paint mDrawInnerPaint = newDrawInnerPaint(mResources);
+
     void drawInner(Canvas canvas, int degrees) {
-        final float radius = CompassView.innerRadius(SIZE);
-        final float center = CompassView.center(SIZE);
-        final Paint fill = new Paint();
-        fill.setColor(getResources().getColor(R.color.sunshine_blue));
-        fill.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(center, center, radius, fill);
+        canvas.drawCircle(CENTER, CENTER, INNERRADIUS, mDrawInnerPaint);
         drawNeedle(canvas, degrees);
     }
 
-    void drawDirections(Canvas canvas) {
-        final float center = CompassView.center(SIZE);
-        final float radius = CompassView.innerRadius(SIZE);
-        final float textSize = CompassView.textSize(SIZE);
-        final float textFudge = 1.0f + textSize / 4.0f;
-        final float offset = radius + textSize / 2.0f;
-        final String N = getResources().getString(R.string.direction_north);
-        final String S = getResources().getString(R.string.direction_south);
-        final String E = getResources().getString(R.string.direction_east);
-        final String W = getResources().getString(R.string.direction_west);
-        final Paint paint = new Paint();
-        paint.setColor(getResources().getColor(R.color.sunshine_red));
-        paint.setTextSize(CompassView.textSize(SIZE));
-        paint.setTypeface(Typeface.DEFAULT_BOLD);
-        paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(N, center, center - offset + textFudge, paint);
-        canvas.drawText(S, center, center + offset + textFudge, paint);
-        canvas.drawText(E, center + offset, center + textFudge, paint);
-        canvas.drawText(W, center - offset, center + textFudge, paint);
-    }
-
-    private int mDegrees;
+    private int mDegrees = 0;
     private boolean mDegreesSet = false;
     public int setDirectionDegrees(int degrees) {
         Log.v(TAG, "setDirectionDegrees(): degrees == " + degrees);
@@ -117,12 +120,13 @@ public class CompassView extends View
         return result;
     }
 
+    final Paint mOuterBitmapPaint = new Paint();
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Log.v(TAG, "onDraw(): canvas == " + canvas);
-        drawOuter(canvas);
-        drawDirections(canvas);
+        canvas.drawBitmap(mOuterBitmap, 0, 0, mOuterBitmapPaint);
         if (mDegreesSet) drawInner(canvas, mDegrees);
     }
 
