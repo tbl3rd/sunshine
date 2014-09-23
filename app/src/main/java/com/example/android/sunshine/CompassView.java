@@ -43,9 +43,9 @@ public class CompassView extends View
         final String W = r.getString(R.string.direction_west);
         final Paint paint = new Paint();
         paint.setColor(r.getColor(R.color.sunshine_red));
+        paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(TEXTSIZE);
         paint.setTypeface(Typeface.DEFAULT_BOLD);
-        paint.setTextAlign(Paint.Align.CENTER);
         c.drawText(N, CENTER,          CENTER - OFFSET + YTEXTFUDGE, paint);
         c.drawText(S, CENTER,          CENTER + OFFSET + YTEXTFUDGE, paint);
         c.drawText(E, CENTER + OFFSET, CENTER + YTEXTFUDGE,          paint);
@@ -63,15 +63,21 @@ public class CompassView extends View
         fill.setColor(r.getColor(R.color.sunshine_light_blue));
         fill.setStyle(Paint.Style.FILL);
         line.setColor(Color.GRAY);
-        line.setStyle(Paint.Style.STROKE);
         line.setStrokeWidth(STROKEWIDTH);
+        line.setStyle(Paint.Style.STROKE);
         c.drawCircle(CENTER, CENTER, OUTERRADIUS, fill);
         c.drawCircle(CENTER, CENTER, OUTERRADIUS, line);
         drawDirections(c, r);
         return result;
     }
+
+    // Draw on c the part of the compass that does not change.
+    //
     final Bitmap mOuterBitmap = newOuterBitmap(mResources);
     final Paint  mOuterBitmapPaint = new Paint();
+    final void drawOuterStaticRing(Canvas c) {
+        c.drawBitmap(mOuterBitmap, 0, 0, mOuterBitmapPaint);
+    }
 
     // Return the draw path for a compass needle pointing north.
     //
@@ -114,6 +120,7 @@ public class CompassView extends View
     final Paint mDrawInnerPaint = newDrawInnerPaint(mResources);
 
     // Draw the inner circle of the compass with needle at degrees.
+    // This part of the compass graphic changes with degrees.
     //
     void drawInner(Canvas canvas, int degrees) {
         canvas.drawCircle(CENTER, CENTER, INNERRADIUS, mDrawInnerPaint);
@@ -125,10 +132,10 @@ public class CompassView extends View
     private int mDegrees = 0;
     private boolean mDegreesSet = false;
     public int setDirectionDegrees(int degrees) {
-        Log.v(TAG, "setDirectionDegrees(): degrees == " + degrees);
         final int result = mDegrees;
         final int whatever = 3;
         final int compass = 360;
+        Log.v(TAG, "setDirectionDegrees(): degrees == " + degrees);
         mDegrees = (degrees + whatever * compass) % compass;
         if (!mDegreesSet || result != mDegrees) {
             mDegreesSet = true;
@@ -141,7 +148,7 @@ public class CompassView extends View
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Log.v(TAG, "onDraw(): canvas == " + canvas);
-        canvas.drawBitmap(mOuterBitmap, 0, 0, mOuterBitmapPaint);
+        drawOuterStaticRing(canvas);
         if (mDegreesSet) drawInner(canvas, mDegrees);
     }
 
@@ -162,13 +169,14 @@ public class CompassView extends View
 
     public CompassView(Context context) {
         super(context);
+        Log.v(TAG, "CompassView(Context)");
     }
-
     public CompassView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        Log.v(TAG, "CompassView(Context, AttributeSet)");
     }
-
     public CompassView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        Log.v(TAG, "CompassView(Context, AttributeSet, int)");
     }
 }
