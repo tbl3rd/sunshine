@@ -15,9 +15,7 @@ public class CompassView extends View
 {
     private static final String TAG = CompassView.class.getSimpleName();
 
-    private Canvas mCanvas;
-    private float mSize = 200.0f;
-    private int mDegrees;
+    private static final float SIZE = 200.0f;
 
     private static float stroke(float size) {
         return 1.0f + size / 100.0f;
@@ -39,24 +37,24 @@ public class CompassView extends View
         return size / 10.0f;
     }
 
-    void drawOuter() {
-        final float radius = CompassView.outerRadius(mSize);
-        final float center = CompassView.center(mSize);
-        final float strokeWidth = CompassView.stroke(mSize);
+    void drawOuter(Canvas canvas) {
+        final float radius = CompassView.outerRadius(SIZE);
+        final float center = CompassView.center(SIZE);
+        final float strokeWidth = CompassView.stroke(SIZE);
         final Paint fill = new Paint();
         final Paint outline = new Paint();
         fill.setColor(getResources().getColor(R.color.sunshine_light_blue));
         fill.setStyle(Paint.Style.FILL);
-        mCanvas.drawCircle(center, center, radius, fill);
+        canvas.drawCircle(center, center, radius, fill);
         outline.setColor(Color.GRAY);
         outline.setStyle(Paint.Style.STROKE);
         outline.setStrokeWidth(strokeWidth);
-        mCanvas.drawCircle(center, center, radius, outline);
+        canvas.drawCircle(center, center, radius, outline);
     }
 
-    void drawNeedle() {
-        final float center = CompassView.center(mSize);
-        final float radius = CompassView.innerRadius(mSize);
+    void drawNeedle(Canvas canvas, int degrees) {
+        final float center = CompassView.center(SIZE);
+        final float radius = CompassView.innerRadius(SIZE);
         final Paint paint = new Paint();
         final Path path = new Path();
         final Matrix rotate = new Matrix();
@@ -68,25 +66,25 @@ public class CompassView extends View
         path.lineTo(center - 10.0f, center);
         path.lineTo(center, center - radius);
         path.close();
-        rotate.setRotate(mDegrees, center, center);
+        rotate.setRotate(degrees, center, center);
         path.transform(rotate);
-        mCanvas.drawPath(path, paint);
+        canvas.drawPath(path, paint);
     }
 
-    void drawInner() {
-        final float radius = CompassView.innerRadius(mSize);
-        final float center = CompassView.center(mSize);
+    void drawInner(Canvas canvas, int degrees) {
+        final float radius = CompassView.innerRadius(SIZE);
+        final float center = CompassView.center(SIZE);
         final Paint fill = new Paint();
         fill.setColor(getResources().getColor(R.color.sunshine_blue));
         fill.setStyle(Paint.Style.FILL);
-        mCanvas.drawCircle(center, center, radius, fill);
-        drawNeedle();
+        canvas.drawCircle(center, center, radius, fill);
+        drawNeedle(canvas, degrees);
     }
 
-    void drawDirections() {
-        final float center = CompassView.center(mSize);
-        final float radius = CompassView.innerRadius(mSize);
-        final float textSize = CompassView.textSize(mSize);
+    void drawDirections(Canvas canvas) {
+        final float center = CompassView.center(SIZE);
+        final float radius = CompassView.innerRadius(SIZE);
+        final float textSize = CompassView.textSize(SIZE);
         final float textFudge = 1.0f + textSize / 4.0f;
         final float offset = radius + textSize / 2.0f;
         final String N = getResources().getString(R.string.direction_north);
@@ -95,22 +93,27 @@ public class CompassView extends View
         final String W = getResources().getString(R.string.direction_west);
         final Paint paint = new Paint();
         paint.setColor(getResources().getColor(R.color.sunshine_red));
-        paint.setTextSize(CompassView.textSize(mSize));
+        paint.setTextSize(CompassView.textSize(SIZE));
         paint.setTypeface(Typeface.DEFAULT_BOLD);
         paint.setTextAlign(Paint.Align.CENTER);
-        mCanvas.drawText(N, center, center - offset + textFudge, paint);
-        mCanvas.drawText(S, center, center + offset + textFudge, paint);
-        mCanvas.drawText(E, center + offset, center + textFudge, paint);
-        mCanvas.drawText(W, center - offset, center + textFudge, paint);
+        canvas.drawText(N, center, center - offset + textFudge, paint);
+        canvas.drawText(S, center, center + offset + textFudge, paint);
+        canvas.drawText(E, center + offset, center + textFudge, paint);
+        canvas.drawText(W, center - offset, center + textFudge, paint);
     }
 
+    private int mDegrees;
+    private boolean mDegreesSet = false;
     public int setDirectionDegrees(int degrees) {
         Log.v(TAG, "setDirectionDegrees(): degrees == " + degrees);
         final int result = mDegrees;
         final int whatever = 3;
         final int compass = 360;
         mDegrees = (degrees + whatever * compass) % compass;
-        if (result != mDegrees) invalidate();
+        if (!mDegreesSet || result != mDegrees) {
+            mDegreesSet = true;
+            invalidate();
+        }
         return result;
     }
 
@@ -118,11 +121,10 @@ public class CompassView extends View
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Log.v(TAG, "onDraw(): canvas == " + canvas);
-        mCanvas = canvas;
-        drawOuter();
-        drawDirections();
-        drawInner();
-   }
+        drawOuter(canvas);
+        drawDirections(canvas);
+        if (mDegreesSet) drawInner(canvas, mDegrees);
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
