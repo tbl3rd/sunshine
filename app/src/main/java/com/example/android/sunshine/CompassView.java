@@ -154,6 +154,8 @@ public class CompassView extends View
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        Log.v(TAG, "onMeasure(): widthMeasureSpec == " + widthMeasureSpec);
+        Log.v(TAG, "onMeasure(): heightMeasureSpec == " + heightMeasureSpec);
         final int measuredWidth
             = (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY)
             ? MeasureSpec.getSize(widthMeasureSpec)
@@ -169,14 +171,17 @@ public class CompassView extends View
 
     public CompassView(Context context) {
         super(context);
-        Log.v(TAG, "CompassView(Context)");
+        Log.v(TAG, "CompassView(): context == " + context);
     }
     public CompassView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Log.v(TAG, "CompassView(Context, AttributeSet)");
+        Log.v(TAG, "CompassView(): context == " + context);
+        Log.v(TAG, "CompassView(): attrs == " + attrs);
     }
     public CompassView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        Log.v(TAG, "CompassView(Context, AttributeSet, int)");
+        Log.v(TAG, "CompassView(): context == " + context);
+        Log.v(TAG, "CompassView(): attrs == " + attrs);
+        Log.v(TAG, "CompassView(): defStyleAttr == " + defStyleAttr);
     }
 }
