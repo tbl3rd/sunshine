@@ -42,7 +42,7 @@ public class SettingsActivity
                 = preference.getKey().equals(
                         getString(R.string.preference_location_key));
             if (locationPreferenceChanged) {
-                SunshineService.fetchWeather(this,
+                SunshineService.fetchWeatherNow(this,
                         Utility.getPreferredLocation(this));
             } else {
                 getContentResolver().notifyChange(
