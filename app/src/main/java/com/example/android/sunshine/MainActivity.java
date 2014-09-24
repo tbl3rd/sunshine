@@ -1,5 +1,7 @@
 package com.example.android.sunshine;
 
+import com.example.android.sunshine.service.SunshineService;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -44,7 +46,7 @@ public class MainActivity
         ((ForecastFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_forecast))
             .setTwoPane(mTwoPane);
-        FetchWeatherTask.fetch(this);
+        SunshineService.fetchWeather(this);
     }
 
     @Override

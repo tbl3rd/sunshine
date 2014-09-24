@@ -3,6 +3,7 @@ package com.example.android.sunshine;
 import java.util.Date;
 
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
+import com.example.android.sunshine.service.SunshineService;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -128,7 +129,7 @@ public class ForecastFragment
         Log.i(TAG, "onOptionsItemSelected()");
         switch (item.getItemId()) {
         case R.id.action_refresh:
-            FetchWeatherTask.fetch(getActivity());
+            SunshineService.fetchWeather(getActivity());
             return true;
         }
         return super.onOptionsItemSelected(item);

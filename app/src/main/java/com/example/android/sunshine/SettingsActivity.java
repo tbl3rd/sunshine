@@ -1,6 +1,7 @@
 package com.example.android.sunshine;
 
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
+import com.example.android.sunshine.service.SunshineService;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
@@ -41,7 +42,7 @@ public class SettingsActivity
                 = preference.getKey().equals(
                         getString(R.string.preference_location_key));
             if (locationPreferenceChanged) {
-                FetchWeatherTask.fetch(this);
+                SunshineService.fetchWeather(this);
             } else {
                 getContentResolver().notifyChange(
                         WeatherEntry.CONTENT_URI, null);

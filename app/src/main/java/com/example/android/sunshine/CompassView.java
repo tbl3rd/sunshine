@@ -152,7 +152,8 @@ public class CompassView extends View
     }
 
     @Override
-    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
+    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event)
+    {
         Log.v(TAG, "dispatchPopulateAccessibilityEvent(): event == " + event);
         event.getText().add(
                 Utility.sayWindDirectionFromDegrees(getContext(), mDegrees));
@@ -205,7 +206,8 @@ public class CompassView extends View
         Log.v(TAG, "CompassView(): context == " + context);
         Log.v(TAG, "CompassView(): attrs == " + attrs);
     }
-    public CompassView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CompassView(Context context, AttributeSet attrs, int defStyleAttr)
+    {
         super(context, attrs, defStyleAttr);
         Log.v(TAG, "CompassView(): context == " + context);
         Log.v(TAG, "CompassView(): attrs == " + attrs);

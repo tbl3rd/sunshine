@@ -206,6 +206,10 @@ public class Utility
         Toast.makeText(c, c.getString(stringId), Toast.LENGTH_SHORT).show();
     }
 
+    public static void shortToast(Context c, String s) {
+        Toast.makeText(c, s, Toast.LENGTH_SHORT).show();
+    }
+
     // If today, return localized "Today" instead of the day name.
     // If tomorrow, return localized "Tomorrow".
     // Otherwise return the day name.
