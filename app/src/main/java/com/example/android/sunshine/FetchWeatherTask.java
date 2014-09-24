@@ -163,17 +163,10 @@ public class FetchWeatherTask {
         return null;
     }
 
-    private void fetch() {
-        final String location = Utility.getPreferredLocation(mContext);
+    private void fetch(String location) {
         final String url = getFetchForecastUrl(location);
         Log.i(TAG, "fetch() url == " + url);
-        new AsyncTask<Void, Void, Void>() {
-            protected Void doInBackground(Void... ignored) {
-                Log.v(TAG, "doInBackground()");
-                parseWeather(location, fetchForecast(url));
-                return null;
-            }
-        }.execute();
+        parseWeather(location, fetchForecast(url));
     }
 
     private FetchWeatherTask(Context context) {
@@ -181,7 +174,7 @@ public class FetchWeatherTask {
         mContext = context;
     }
 
-    static public void fetch(Context context) {
-        new FetchWeatherTask(context).fetch();
+    static public void fetch(Context context, String location) {
+        new FetchWeatherTask(context).fetch(location);
     }
 }

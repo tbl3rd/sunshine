@@ -129,7 +129,7 @@ public class ForecastFragment
         Log.i(TAG, "onOptionsItemSelected()");
         switch (item.getItemId()) {
         case R.id.action_refresh:
-            SunshineService.fetchWeather(getActivity());
+            SunshineService.fetchWeather(getActivity(), mLocation);
             return true;
         }
         return super.onOptionsItemSelected(item);

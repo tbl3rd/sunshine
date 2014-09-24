@@ -46,7 +46,8 @@ public class MainActivity
         ((ForecastFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_forecast))
             .setTwoPane(mTwoPane);
-        SunshineService.fetchWeather(this);
+        SunshineService.fetchWeather(this,
+                Utility.getPreferredLocation(this));
     }
 
     @Override
