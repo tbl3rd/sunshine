@@ -1,6 +1,6 @@
 package com.example.android.sunshine;
 
-import com.example.android.sunshine.service.SunshineService;
+import com.example.android.sunshine.sync.SunshineSyncAdapter;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -46,8 +46,7 @@ public class MainActivity
         ((ForecastFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_forecast))
             .setTwoPane(mTwoPane);
-        SunshineService.fetchWeatherNow(this,
-                Utility.getPreferredLocation(this));
+        SunshineSyncAdapter.syncNow(this);
     }
 
     @Override
