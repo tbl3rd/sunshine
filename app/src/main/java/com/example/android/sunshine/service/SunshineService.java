@@ -48,25 +48,27 @@ public class SunshineService extends IntentService
 
     public SunshineService() {
         super("SunshineService");
+        Log.v(TAG, "SunshineService()");
     }
 
-    public class AlarmReceiver extends BroadcastReceiver
+    public static class AlarmReceiver extends BroadcastReceiver
     {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.v(TAG, "onReceive(): context == " + context);
             Log.v(TAG, "onReceive(): intent == " + intent);
-            context.startService(intent);
+            context.startService(makeFetchIntent(context,
+                            intent.getStringExtra(EXTRA_LOCATION)));
         }
     }
 
     public static void fetchWeatherLater(Context context, String location) {
-        Log.v(TAG, "fetchWeatherLater(): context == " + context);
-        Log.v(TAG, "fetchWeatherLater(): location == " + location);
+        Log.v(TAG, "fetchWeatherLater() waiting 5000ms");
         ((AlarmManager)context.getSystemService(Context.ALARM_SERVICE))
             .set(AlarmManager.RTC_WAKEUP, 5000 + System.currentTimeMillis(),
                     PendingIntent.getBroadcast(context, 0,
-                            makeFetchIntent(context, location),
+                            new Intent(context, AlarmReceiver.class)
+                            .setAction(ACTION_FETCH)
+                            .putExtra(EXTRA_LOCATION, location),
                             PendingIntent.FLAG_ONE_SHOT));
     }
 }
