@@ -3,6 +3,7 @@ package com.example.android.sunshine;
 import java.util.Date;
 
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
+import com.example.android.sunshine.data.WeatherContract;
 import com.example.android.sunshine.service.SunshineService;
 
 import android.app.Activity;
@@ -137,9 +138,15 @@ public class ForecastFragment
 
     @Override
     public void onActivityCreated(Bundle saved) {
+        super.onActivityCreated(saved);
         Log.i(TAG, "onActivityCreated()");
         getLoaderManager().initLoader(LOADER_INDEX, null, this);
-        super.onActivityCreated(saved);
+        final boolean contentAuthorityIsConsistent
+            = WeatherContract.CONTENT_AUTHORITY.equals(
+                    getString(R.string.content_authority));
+        if (!contentAuthorityIsConsistent) {
+            throw new RuntimeException("content authority mismatch");
+        }
     }
 
     @Override

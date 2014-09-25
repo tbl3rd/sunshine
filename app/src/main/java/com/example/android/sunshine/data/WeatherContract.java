@@ -16,7 +16,7 @@ public class WeatherContract {
     private static final String TAG = WeatherContract.class.getSimpleName();
 
     public static final String CONTENT_AUTHORITY
-        = WeatherContract.class.getPackage().getName();
+        = Utility.class.getPackage().getName();
 
     public static final Uri BASE_CONTENT_URI
         = new Uri.Builder().scheme("content")

@@ -48,13 +48,8 @@
                 android:value="com.example.android.sunshine.MainActivity" />
         </activity>
 
-        <!-- Crashes with: failed find provider info for
-             com.example.android.sunshine.data
-
-                android:authorities="@string/content_authority"
-        -->
         <provider
-            android:authorities="com.example.android.sunshine.data"
+            android:authorities="@string/content_authority"
             android:exported="false"
             android:name=".data.WeatherProvider"
             android:syncable="true"
