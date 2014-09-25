@@ -177,4 +177,9 @@ public class FetchWeatherTask {
     static public void fetch(Context context, String location) {
         new FetchWeatherTask(context).fetch(location);
     }
+
+    static public void fetch(Context context) {
+        new FetchWeatherTask(context)
+            .fetch(Utility.getPreferredLocation(context));
+    }
 }

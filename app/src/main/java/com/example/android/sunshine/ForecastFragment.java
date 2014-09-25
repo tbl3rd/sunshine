@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 import com.example.android.sunshine.data.WeatherContract;
-import com.example.android.sunshine.service.SunshineService;
+import com.example.android.sunshine.sync.SunshineSyncAdapter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -130,7 +130,7 @@ public class ForecastFragment
         Log.i(TAG, "onOptionsItemSelected()");
         switch (item.getItemId()) {
         case R.id.action_refresh:
-            SunshineService.fetchWeatherLater(getActivity(), mLocation);
+            SunshineSyncAdapter.syncNow(getActivity());
             return true;
         }
         return super.onOptionsItemSelected(item);
