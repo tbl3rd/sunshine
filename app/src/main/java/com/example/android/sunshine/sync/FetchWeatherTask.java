@@ -1,4 +1,4 @@
-package com.example.android.sunshine;
+package com.example.android.sunshine.sync;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -10,6 +10,7 @@ import java.util.Date;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.example.android.sunshine.Utility;
 import com.example.android.sunshine.data.WeatherContract.LocationEntry;
 import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 

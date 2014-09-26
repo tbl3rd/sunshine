@@ -1,7 +1,6 @@
 package com.example.android.sunshine.sync;
 
 import com.example.android.sunshine.DetailActivity;
-import com.example.android.sunshine.FetchWeatherTask;
 import com.example.android.sunshine.R;
 
 import android.accounts.Account;
