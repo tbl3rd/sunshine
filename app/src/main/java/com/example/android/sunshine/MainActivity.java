@@ -46,7 +46,7 @@ public class MainActivity
         ((ForecastFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_forecast))
             .setTwoPane(mTwoPane);
-        SunshineSyncAdapter.syncNow(this);
+        SunshineSyncAdapter.start(this);
     }
 
     @Override

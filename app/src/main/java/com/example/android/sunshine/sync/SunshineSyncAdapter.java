@@ -20,40 +20,46 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 {
     static final String TAG = SunshineSyncAdapter.class.getSimpleName();
 
-    public static final int INTERVAL = 5;
-    public static final int FLEXTIME = INTERVAL / 3;
-
+    public static final int HOURLY = 60 * 60;
+    public static final int NOTBEFORE = HOURLY / 3;
 
     final Context mContext;
 
+    // Return a valid account for R.string.app_name or create a new one.
+    // Configure this sync adapter when returning a new account.
+    //
     static Account getSyncAccount(Context context) {
         Log.v(TAG, "getSyncAccount(): context == " + context);
         final AccountManager am
             = (AccountManager)context.getSystemService(Context.ACCOUNT_SERVICE);
         final Account result = new Account(context.getString(R.string.app_name),
                 context.getString(R.string.sync_account_type));
+        Log.v(TAG, "getSyncAccount(): result == " + result);
         if (null == am.getPassword(result)) {
             am.addAccountExplicitly(result, "", null);
-            configurePeriodicSync(context, INTERVAL, FLEXTIME);
             ContentResolver.setSyncAutomatically(result,
                 context.getString(R.string.content_authority), true);
-            syncNow(context);
+            configurePeriodicSync(context, HOURLY, NOTBEFORE);
         }
         return result;
     }
 
+    // Configure this to sync periodically at least every interval
+    // seconds but not before notBefore seconds of the next sync.
+    //
     static void configurePeriodicSync(Context context,
-            int syncInterval, int flexTime)
+            int interval, int notBefore)
     {
-        Log.v(TAG, "configurePeriodicSync(): interval == " + syncInterval);
+        Log.v(TAG, "configurePeriodicSync(): interval == " + interval);
         final String ca = context.getString(R.string.content_authority);
         final Account account = getSyncAccount(context);
+        Log.v(TAG, "configurePeriodicSync(): account == " + account);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             ContentResolver.addPeriodicSync(account,
-                    ca, new Bundle(), syncInterval);
+                    ca, new Bundle(), interval);
         } else {
             ContentResolver.requestSync(new SyncRequest.Builder()
-                    .syncPeriodic(syncInterval, flexTime)
+                    .syncPeriodic(interval, notBefore)
                     .setSyncAdapter(account, ca)
                     .build());
         }
@@ -68,7 +74,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
                 context.getString(R.string.content_authority), bundle);
     }
 
-    static void initializeSyncAdapter(Context context) {
+    // Start this periodic sync adapter.
+    //
+    public static void start(Context context) {
         getSyncAccount(context);
     }
 
