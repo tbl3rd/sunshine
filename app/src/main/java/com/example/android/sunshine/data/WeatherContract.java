@@ -3,6 +3,7 @@ package com.example.android.sunshine.data;
 import java.util.Date;
 import java.util.List;
 
+import com.example.android.sunshine.MainActivity;
 import com.example.android.sunshine.Utility;
 
 import android.content.ContentUris;
@@ -16,7 +17,7 @@ public class WeatherContract {
     private static final String TAG = WeatherContract.class.getSimpleName();
 
     public static final String CONTENT_AUTHORITY
-        = Utility.class.getPackage().getName();
+        = MainActivity.class.getPackage().getName();
 
     public static final Uri BASE_CONTENT_URI
         = new Uri.Builder().scheme("content")
