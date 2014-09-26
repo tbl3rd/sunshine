@@ -24,9 +24,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 
-public class FetchWeatherTask {
+public class SunshineFetchWeather {
 
-    private final String TAG = FetchWeatherTask.class.getSimpleName();
+    private final String TAG = SunshineFetchWeather.class.getSimpleName();
 
     private final Context mContext;
 
@@ -170,17 +170,17 @@ public class FetchWeatherTask {
         parseWeather(location, fetchForecast(url));
     }
 
-    private FetchWeatherTask(Context context) {
+    private SunshineFetchWeather(Context context) {
         Log.v(TAG, "constructor: context == " + context);
         mContext = context;
     }
 
     static public void fetch(Context context, String location) {
-        new FetchWeatherTask(context).fetch(location);
+        new SunshineFetchWeather(context).fetch(location);
     }
 
     static public void fetch(Context context) {
-        new FetchWeatherTask(context)
+        new SunshineFetchWeather(context)
             .fetch(Utility.getPreferredLocation(context));
     }
 }

@@ -47,7 +47,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
             ContentProviderClient provider, SyncResult syncResult)
     {
         Log.v(TAG, "onPerformSync(): account == " + account);
-        FetchWeatherTask.fetch(mContext);
+        SunshineFetchWeather.fetch(mContext);
     }
 
     public SunshineSyncAdapter(Context context, boolean autoInitialize)
