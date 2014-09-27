@@ -111,7 +111,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         return result;
     }
 
-    private void notify(Context context, Cursor cursor) {
+    private static void notify(Context context, Cursor cursor) {
         final int code = cursor.getInt(Utility.COLUMN_WEATHER_CODE);
         final PendingIntent pending = TaskStackBuilder.create(context)
             .addParentStack(MainActivity.class)
@@ -129,7 +129,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         Log.v(TAG, "notify(): code == " + code);
     }
 
-    private void maybeNotifyWeather(Context context) {
+    private static void maybeNotifyWeather(Context context) {
         Log.v(TAG, "maybeNotifyWeather()");
         final SharedPreferences sp
             = PreferenceManager.getDefaultSharedPreferences(context);
