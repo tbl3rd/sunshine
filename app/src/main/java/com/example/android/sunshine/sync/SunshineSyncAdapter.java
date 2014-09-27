@@ -1,18 +1,31 @@
 package com.example.android.sunshine.sync;
 
-import com.example.android.sunshine.DetailActivity;
+import java.util.Date;
+
+import com.example.android.sunshine.MainActivity;
 import com.example.android.sunshine.R;
+import com.example.android.sunshine.Utility;
+import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 
@@ -20,8 +33,11 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 {
     static final String TAG = SunshineSyncAdapter.class.getSimpleName();
 
-    public static final int HOURLY = 60 * 60;
-    public static final int NOTBEFORE = HOURLY / 3;
+    // public static final int HOURLY = 60 * 60;
+    public static final int MINUTELY = 30;
+    public static final int NOTBEFORE = MINUTELY / 3;
+
+    private static final int WEATHER_NOTIFICATION_ID = 3004;
 
     final Context mContext;
 
@@ -38,8 +54,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         if (null == am.getPassword(result)) {
             am.addAccountExplicitly(result, "", null);
             ContentResolver.setSyncAutomatically(result,
-                context.getString(R.string.content_authority), true);
-            configurePeriodicSync(context, HOURLY, NOTBEFORE);
+                    context.getString(R.string.content_authority), true);
+            configurePeriodicSync(context, MINUTELY, NOTBEFORE);
         }
         return result;
     }
@@ -77,7 +93,64 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
     // Start this periodic sync adapter.
     //
     public static void start(Context context) {
+        Log.v(TAG, "start(): context == " + context);
         getSyncAccount(context);
+    }
+
+    final static String notificationText(Context context, Cursor cursor) {
+        final int code = cursor.getInt(Utility.COLUMN_WEATHER_CODE);
+        final double maximum = cursor.getDouble(Utility.COLUMN_MAXIMUM);
+        final double minimum = cursor.getDouble(Utility.COLUMN_MINIMUM);
+        final boolean isMetric = Utility.isMetric(context);
+        final String result = String.format(
+                context.getString(R.string.format_notification),
+                cursor.getString(Utility.COLUMN_DESCRIPTION),
+                Utility.formatCelsius(context, isMetric, maximum),
+                Utility.formatCelsius(context, isMetric, minimum));
+        Log.v(TAG, "notificationText(): result == " + result);
+        return result;
+    }
+
+    private void notify(Context context, Cursor cursor) {
+        final int code = cursor.getInt(Utility.COLUMN_WEATHER_CODE);
+        final PendingIntent pending = TaskStackBuilder.create(context)
+            .addParentStack(MainActivity.class)
+            .addNextIntent(new Intent(context, MainActivity.class))
+            .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        final NotificationManager nm = (NotificationManager)context
+            .getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.notify(WEATHER_NOTIFICATION_ID,
+                new NotificationCompat.Builder(context)
+                .setContentIntent(pending)
+                .setContentText(notificationText(context, cursor))
+                .setContentTitle(context.getString(R.string.app_name))
+                .setSmallIcon(Utility.weatherIcon(code))
+                .build());
+        Log.v(TAG, "notify(): code == " + code);
+    }
+
+    private void maybeNotifyWeather(Context context) {
+        Log.v(TAG, "maybeNotifyWeather()");
+        final SharedPreferences sp
+            = PreferenceManager.getDefaultSharedPreferences(context);
+        final String key = context.getString(R.string.pref_last_notification);
+        final long nowMs = System.currentTimeMillis();
+        Log.v(TAG, "maybeNotifyWeather(): nowMs == " + nowMs);
+        Log.v(TAG, "maybeNotifyWeather(): key == " + key);
+        Log.v(TAG, "maybeNotifyWeather(): sp.getLong(key, 0) == "
+                + sp.getLong(key, 0));
+        if (nowMs - sp.getLong(key, 0) > 1000 * 60) {
+            final Uri uri = WeatherEntry.buildWeatherLocationDate(
+                    Utility.getPreferredLocation(context),
+                    Utility.dbDate(new Date()));
+            final Cursor cursor = context.getContentResolver().query(
+                    uri, Utility.FORECAST_COLUMNS, null, null, null);
+            if (cursor.moveToFirst()) {
+                sp.edit().putLong(key, nowMs).commit();
+                notify(context, cursor);
+            }
+        }
+
     }
 
     @Override
@@ -87,6 +160,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
     {
         Log.v(TAG, "onPerformSync(): account == " + account);
         SunshineFetchWeather.fetch(mContext);
+        maybeNotifyWeather(mContext);
     }
 
     SunshineSyncAdapter(Context context, boolean autoInitialize)

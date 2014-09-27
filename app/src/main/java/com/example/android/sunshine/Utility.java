@@ -91,6 +91,11 @@ public class Utility
         return units.equals(metric);
     }
 
+    public static long getLastNotification(Context c) {
+        return getDefaultSharedPreferences(c).getLong(
+                c.getString(R.string.pref_last_notification), 0);
+    }
+
     public static String formatCelsius(Context c,
             boolean isMetric, double temperature)
     {
