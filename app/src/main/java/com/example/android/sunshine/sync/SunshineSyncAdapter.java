@@ -1,5 +1,6 @@
 package com.example.android.sunshine.sync;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import com.example.android.sunshine.MainActivity;
@@ -147,6 +148,13 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         }
     }
 
+    static String yesterday() {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, -1);
+        return Utility.dbDate(calendar.getTime());
+    }
+
     @Override
     public void onPerformSync(
             Account account, Bundle extras, String authority,
@@ -155,6 +163,16 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         Log.v(TAG, "onPerformSync(): account == " + account);
         SunshineFetchWeather.fetch(mContext);
         if (Utility.notificationsOn(mContext)) maybeNotifyWeather(mContext);
+        final String yesterday = SunshineSyncAdapter.yesterday();
+        Log.v(TAG, "onPerformSync(): yesterday == " + yesterday);
+        try {
+            final int count = provider.delete(WeatherEntry.CONTENT_URI,
+                    (WeatherEntry.COLUMN_DATE + " < ? "),
+                    (new String[] { yesterday }));
+            Log.v(TAG, "onPerformSync(): count == " + count);
+        } catch (final Exception e) {
+            Log.d(TAG, "onPerformSync(): caught " + e);
+        }
     }
 
     SunshineSyncAdapter(Context context, boolean autoInitialize)
