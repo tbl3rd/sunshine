@@ -102,12 +102,12 @@ public class Utility
     }
 
     public static boolean notificationsOn(Context c) {
-        final boolean notifyDefault
-            = Boolean.valueOf(c.getString(R.string.preference_notify_default))
-            .booleanValue();
-        return getDefaultSharedPreferences(c).getBoolean(
+        final boolean result = getDefaultSharedPreferences(c).getBoolean(
                 c.getString(R.string.preference_notify_key),
-                notifyDefault);
+                Boolean.parseBoolean(
+                        c.getString(R.string.preference_notify_default)));
+        Log.v(TAG, "notificationsOn(): result == " + result);
+        return result;
     }
 
     public static String formatCelsius(Context c,
