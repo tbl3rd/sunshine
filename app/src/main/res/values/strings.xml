@@ -9,14 +9,17 @@
     <string name="action_share">Share</string>
     <string name="action_share_none">No way to share.</string>
     <string name="app_name">Sunshine</string>
+
     <string name="preference_location_default">02138</string>
     <string name="preference_location_key">location</string>
     <string name="preference_location_title">Location</string>
+
     <string name="preference_units_default">metric</string>
     <string name="preference_units_imperial">Imperial</string>
     <string name="preference_units_key">units</string>
     <string name="preference_units_metric">Metric</string>
     <string name="preference_units_title">Units</string>
+
     <string name="title_activity_detail">Details</string>
     <string name="title_activity_settings">Settings</string>
 
@@ -114,6 +117,11 @@
     </string>
 
     <!-- Strings related to Notification preference -->
-    <string name="pref_last_notification">last_notification</string>
+    <string name="preference_notify_default">true</string>
+    <string name="preference_notify_key">notify</string>
+    <string name="preference_notify_last">last_notification</string>
+    <string name="preference_notify_summary_off">Do not notify me</string>
+    <string name="preference_notify_summary_on">Notify me once a day</string>
+    <string name="preference_notify_title">Notifications</string>
 
 </resources>

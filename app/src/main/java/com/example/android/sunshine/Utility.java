@@ -93,7 +93,21 @@ public class Utility
 
     public static long getLastNotification(Context c) {
         return getDefaultSharedPreferences(c).getLong(
-                c.getString(R.string.pref_last_notification), 0);
+                c.getString(R.string.preference_notify_last), 0);
+    }
+
+    public static void setLastNotification(Context c, long t) {
+        getDefaultSharedPreferences(c).edit().putLong(
+                c.getString(R.string.preference_notify_last), t).commit();
+    }
+
+    public static boolean notificationsOn(Context c) {
+        final boolean notifyDefault
+            = Boolean.valueOf(c.getString(R.string.preference_notify_default))
+            .booleanValue();
+        return getDefaultSharedPreferences(c).getBoolean(
+                c.getString(R.string.preference_notify_key),
+                notifyDefault);
     }
 
     public static String formatCelsius(Context c,

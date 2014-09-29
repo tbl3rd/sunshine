@@ -7,6 +7,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -24,14 +25,25 @@ public class SettingsActivity
 
     boolean mBindingPreference = true;
 
+    private void bindPreferenceSummaryToValue(Preference preference) {
+        mBindingPreference = true;
+        preference.setOnPreferenceChangeListener(this);
+        preference.setOnPreferenceClickListener(this);
+        onPreferenceChange(preference,
+                PreferenceManager
+                        .getDefaultSharedPreferences(preference.getContext())
+                        .getString(preference.getKey(), ""));
+        mBindingPreference = false;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
-        final String locKey = getString(R.string.preference_location_key);
-        final String unitsKey = getString(R.string.preference_units_key);
-        bindPreferenceSummaryToValue(findPreference(locKey));
-        bindPreferenceSummaryToValue(findPreference(unitsKey));
+        final String location = getString(R.string.preference_location_key);
+        final String units = getString(R.string.preference_units_key);
+        bindPreferenceSummaryToValue(findPreference(location));
+        bindPreferenceSummaryToValue(findPreference(units));
     }
 
     @Override
@@ -69,17 +81,6 @@ public class SettingsActivity
             etp.getEditText().setSelection(etp.getText().length());
         }
         return true;
-    }
-
-    private void bindPreferenceSummaryToValue(Preference preference) {
-        mBindingPreference = true;
-        preference.setOnPreferenceChangeListener(this);
-        preference.setOnPreferenceClickListener(this);
-        onPreferenceChange(preference,
-                PreferenceManager
-                .getDefaultSharedPreferences(preference.getContext())
-                .getString(preference.getKey(), ""));
-        mBindingPreference = false;
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)

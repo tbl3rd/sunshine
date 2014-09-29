@@ -4,21 +4,30 @@
 
     <EditTextPreference
         android:contentDescription="@string/preference_location_description"
-        android:key="@string/preference_location_key"
-        android:title="@string/preference_location_title"
         android:defaultValue="@string/preference_location_default"
         android:inputType="text"
+        android:key="@string/preference_location_key"
         android:selectAllOnFocus="true"
         android:singleLine="true"
+        android:title="@string/preference_location_title"
         />
 
     <ListPreference
-        android:key="@string/preference_units_key"
-        android:title="@string/preference_units_title"
+        android:defaultValue="@string/preference_units_default"
         android:dialogTitle="@string/preference_units_title"
         android:entries="@array/preference_units_entries"
         android:entryValues="@array/preference_units_values"
-        android:defaultValue="@string/preference_units_default"
+        android:key="@string/preference_units_key"
+        android:title="@string/preference_units_title"
+        />
+
+    <CheckBoxPreference
+        android:defaultValue="@string/preference_notify_default"
+        android:dialogTitle="@string/preference_notify_title"
+        android:key="@string/preference_notify_key"
+        android:summaryOff="@string/preference_notify_summary_off"
+        android:summaryOn="@string/preference_notify_summary_on"
+        android:title="@string/preference_notify_title"
         />
 
 </PreferenceScreen>

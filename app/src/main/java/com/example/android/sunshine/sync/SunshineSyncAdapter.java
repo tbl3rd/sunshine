@@ -131,26 +131,20 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 
     private static void maybeNotifyWeather(Context context) {
         Log.v(TAG, "maybeNotifyWeather()");
-        final SharedPreferences sp
-            = PreferenceManager.getDefaultSharedPreferences(context);
-        final String key = context.getString(R.string.pref_last_notification);
+        final long last = Utility.getLastNotification(context);
+        Log.v(TAG, "maybeNotifyWeather(): last == " + last);
         final long nowMs = System.currentTimeMillis();
-        Log.v(TAG, "maybeNotifyWeather(): nowMs == " + nowMs);
-        Log.v(TAG, "maybeNotifyWeather(): key == " + key);
-        Log.v(TAG, "maybeNotifyWeather(): sp.getLong(key, 0) == "
-                + sp.getLong(key, 0));
-        if (nowMs - sp.getLong(key, 0) > 1000 * 60) {
+        if (nowMs - last > 1000 * 60) {
             final Uri uri = WeatherEntry.buildWeatherLocationDate(
                     Utility.getPreferredLocation(context),
                     Utility.dbDate(new Date()));
             final Cursor cursor = context.getContentResolver().query(
                     uri, Utility.FORECAST_COLUMNS, null, null, null);
             if (cursor.moveToFirst()) {
-                sp.edit().putLong(key, nowMs).commit();
+                Utility.setLastNotification(context, nowMs);
                 notify(context, cursor);
             }
         }
-
     }
 
     @Override
@@ -160,7 +154,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
     {
         Log.v(TAG, "onPerformSync(): account == " + account);
         SunshineFetchWeather.fetch(mContext);
-        maybeNotifyWeather(mContext);
+        if (Utility.notificationsOn(mContext)) maybeNotifyWeather(mContext);
     }
 
     SunshineSyncAdapter(Context context, boolean autoInitialize)
