@@ -34,9 +34,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
 {
     static final String TAG = SunshineSyncAdapter.class.getSimpleName();
 
-    // public static final int HOURLY = 60 * 60;
-    public static final int MINUTELY = 30;
-    public static final int NOTBEFORE = MINUTELY / 3;
+    public static final int SECONDS_PER_HOUR = 60 * 60;
+    public static final int MILLISECONDS_PER_DAY = 1000 + 24 * 60 * 60;
 
     private static final int WEATHER_NOTIFICATION_ID = 3004;
 
@@ -56,7 +55,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
             am.addAccountExplicitly(result, "", null);
             ContentResolver.setSyncAutomatically(result,
                     context.getString(R.string.content_authority), true);
-            configurePeriodicSync(context, MINUTELY, NOTBEFORE);
+            syncPeriodically(context, SECONDS_PER_HOUR, SECONDS_PER_HOUR / 3);
         }
         return result;
     }
@@ -64,13 +63,12 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
     // Configure this to sync periodically at least every interval
     // seconds but not before notBefore seconds of the next sync.
     //
-    static void configurePeriodicSync(Context context,
-            int interval, int notBefore)
+    static void syncPeriodically(Context context, int interval, int notBefore)
     {
-        Log.v(TAG, "configurePeriodicSync(): interval == " + interval);
+        Log.v(TAG, "syncPeriodically(): interval == " + interval);
         final String ca = context.getString(R.string.content_authority);
         final Account account = getSyncAccount(context);
-        Log.v(TAG, "configurePeriodicSync(): account == " + account);
+        Log.v(TAG, "syncPeriodically(): account == " + account);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             ContentResolver.addPeriodicSync(account,
                     ca, new Bundle(), interval);
@@ -135,7 +133,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         final long last = Utility.getLastNotification(context);
         Log.v(TAG, "maybeNotifyWeather(): last == " + last);
         final long nowMs = System.currentTimeMillis();
-        if (nowMs - last > 1000 * 60) {
+        if (nowMs - last > MILLISECONDS_PER_DAY) {
             final Uri uri = WeatherEntry.buildWeatherLocationDate(
                     Utility.getPreferredLocation(context),
                     Utility.dbDate(new Date()));
@@ -148,6 +146,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter
         }
     }
 
+    // Return a String representing yesterday's date in SQL format.
+    //
     static String yesterday() {
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());

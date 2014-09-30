@@ -129,6 +129,9 @@ public class ForecastFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.i(TAG, "onOptionsItemSelected()");
         switch (item.getItemId()) {
+        case R.id.action_map:
+            Utility.showMap(getActivity());
+            return true;
         case R.id.action_refresh:
             SunshineSyncAdapter.syncNow(getActivity());
             return true;
