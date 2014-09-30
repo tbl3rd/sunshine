@@ -162,9 +162,6 @@ public class ForecastFragment
         case R.id.action_map:
             showMap(getActivity());
             return true;
-        case R.id.action_refresh:
-            SunshineSyncAdapter.syncNow(getActivity());
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }
