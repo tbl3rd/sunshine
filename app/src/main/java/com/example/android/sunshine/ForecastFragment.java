@@ -127,20 +127,19 @@ public class ForecastFragment
     }
 
     private Uri getGeoLocationUri(Activity a) {
-        final Uri.Builder result = new Uri.Builder().scheme("geo");
-        final Cursor cursor = (mAdapter == null)
-            ? null
+        final Cursor cursor = (mAdapter == null) ? null
             : mAdapter.getCursor();
         if (cursor == null) {
             if (mLocation == null) {
                 mLocation = Utility.getPreferredLocation(a);
-            result.appendPath("0,0").appendQueryParameter("q", mLocation);
-        } else {
-            result.appendPath(cursor.getString(Utility.COLUMN_LATITUDE)
-                    + ","
-                    + cursor.getString(Utility.COLUMN_LONGITUDE));
+            }
+            return Uri.parse("geo:0,0").buildUpon()
+                .appendQueryParameter("q", mLocation).build();
         }
-        return result.build();
+        return Uri.parse("geo:"
+                + cursor.getString(Utility.COLUMN_LATITUDE)
+                + ","
+                + cursor.getString(Utility.COLUMN_LONGITUDE));
     }
 
     private void showMap(Activity a) {
