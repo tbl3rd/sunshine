@@ -133,13 +133,14 @@ public class ForecastFragment
             if (mLocation == null) {
                 mLocation = Utility.getPreferredLocation(a);
             }
-            return Uri.parse("geo:0,0").buildUpon()
+            return Uri.fromParts("geo", "0,0", null).buildUpon()
                 .appendQueryParameter("q", mLocation).build();
         }
-        return Uri.parse("geo:"
-                + cursor.getString(Utility.COLUMN_LATITUDE)
+        return Uri.fromParts("geo",
+                cursor.getString(Utility.COLUMN_LATITUDE)
                 + ","
-                + cursor.getString(Utility.COLUMN_LONGITUDE));
+                + cursor.getString(Utility.COLUMN_LONGITUDE),
+                null);
     }
 
     private void showMap(Activity a) {
