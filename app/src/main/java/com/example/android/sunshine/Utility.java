@@ -270,22 +270,6 @@ public class Utility
                     .format(Utility.dbDate(dbDate)));
     }
 
-    public static void showMap(Activity a) {
-        final String location = Utility.getPreferredLocation(a);
-        final Uri geo = new Uri.Builder()
-            .scheme("geo")
-            .appendPath("0,0")
-            .appendQueryParameter("q", location)
-            .build();
-        final Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(geo);
-        if (intent.resolveActivity(a.getPackageManager()) == null) {
-            Utility.shortToast(a, R.string.action_map_none);
-        } else {
-            a.startActivity(intent);
-        }
-    }
-
     // See: http://openweathermap.org/weather-conditions
     //
     static int weatherCodeToIndex(int code) {

@@ -126,11 +126,27 @@ public class ForecastFragment
         inflater.inflate(R.menu.forecastfragment, menu);
     }
 
+    public static void showMap(Activity a) {
+        final String location = Utility.getPreferredLocation(a);
+        final Uri geo = new Uri.Builder()
+            .scheme("geo")
+            .appendPath("0,0")
+            .appendQueryParameter("q", location)
+            .build();
+        final Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(geo);
+        if (intent.resolveActivity(a.getPackageManager()) == null) {
+            Utility.shortToast(a, R.string.action_map_none);
+        } else {
+            a.startActivity(intent);
+        }
+    }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.i(TAG, "onOptionsItemSelected()");
         switch (item.getItemId()) {
         case R.id.action_map:
-            Utility.showMap(getActivity());
+            ForecastFragment.showMap(getActivity());
             return true;
         case R.id.action_refresh:
             SunshineSyncAdapter.syncNow(getActivity());

@@ -44,7 +44,7 @@ public class SunshineFetchWeather {
         return result;
     }
 
-    private long addLocation(ContentResolver resolver,
+    private long insertLocation(ContentResolver resolver,
             String setting, String city, double latitude, double longitude)
     {
         long result = findLocation(resolver, setting);
@@ -56,10 +56,10 @@ public class SunshineFetchWeather {
             location.put(LocationEntry.COLUMN_LONGITUDE, longitude);
             final Uri uri
                 = resolver.insert(LocationEntry.CONTENT_URI, location);
-            Log.v(TAG, "addLocation(): uri == " + uri);
+            Log.v(TAG, "insertLocation(): uri == " + uri);
             result = ContentUris.parseId(uri);
         }
-        Log.v(TAG, "addLocation(): result == " + result);
+        Log.v(TAG, "insertLocation(): result == " + result);
         return result;
     }
 
@@ -72,7 +72,7 @@ public class SunshineFetchWeather {
         final String name = city.getString("name");
         final double lat = coord.getDouble("lat");
         final double lon = coord.getDouble("lon");
-        final long result = addLocation(resolver, setting, name, lat, lon);
+        final long result = insertLocation(resolver, setting, name, lat, lon);
         Log.v(TAG, "parseLocation(): result == " + result);
         return result;
     }
