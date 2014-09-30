@@ -26,30 +26,34 @@ public class Utility
 
     public static final String[] FORECAST_COLUMNS = {
         WeatherEntry.TABLE + "." + WeatherEntry._ID,
+        LocationEntry.COLUMN_LATITUDE,
+        LocationEntry.COLUMN_LONGITUDE,
         LocationEntry.COLUMN_SETTING,
-        WeatherEntry.COLUMN_DATE,
-        WeatherEntry.COLUMN_DESCRIPTION,
-        WeatherEntry.COLUMN_DIRECTION,
-        WeatherEntry.COLUMN_HUMIDITY,
-        WeatherEntry.COLUMN_MAXIMUM,
-        WeatherEntry.COLUMN_MINIMUM,
-        WeatherEntry.COLUMN_PRESSURE,
-        WeatherEntry.COLUMN_WEATHER_CODE,
-        WeatherEntry.COLUMN_WIND
+         WeatherEntry.COLUMN_DATE,
+         WeatherEntry.COLUMN_DESCRIPTION,
+         WeatherEntry.COLUMN_DIRECTION,
+         WeatherEntry.COLUMN_HUMIDITY,
+         WeatherEntry.COLUMN_MAXIMUM,
+         WeatherEntry.COLUMN_MINIMUM,
+         WeatherEntry.COLUMN_PRESSURE,
+         WeatherEntry.COLUMN_WEATHER_CODE,
+         WeatherEntry.COLUMN_WIND
     };
 
     public static final int COLUMN_ID           =  0;
-    public static final int COLUMN_SETTING      =  1;
-    public static final int COLUMN_DATE         =  2;
-    public static final int COLUMN_DESCRIPTION  =  3;
-    public static final int COLUMN_DIRECTION    =  4;
-    public static final int COLUMN_HUMIDITY     =  5;
-    public static final int COLUMN_MAXIMUM      =  6;
-    public static final int COLUMN_MINIMUM      =  7;
-    public static final int COLUMN_PRESSURE     =  8;
-    public static final int COLUMN_WEATHER_CODE =  9;
-    public static final int COLUMN_WIND         = 10;
-    public static final int COLUMN_COUNT        = 11;
+    public static final int COLUMN_LATITUDE     =  1;
+    public static final int COLUMN_LONGITUDE    =  2;
+    public static final int COLUMN_SETTING      =  3;
+    public static final int COLUMN_DATE         =  4;
+    public static final int COLUMN_DESCRIPTION  =  5;
+    public static final int COLUMN_DIRECTION    =  6;
+    public static final int COLUMN_HUMIDITY     =  7;
+    public static final int COLUMN_MAXIMUM      =  8;
+    public static final int COLUMN_MINIMUM      =  9;
+    public static final int COLUMN_PRESSURE     = 10;
+    public static final int COLUMN_WEATHER_CODE = 11;
+    public static final int COLUMN_WIND         = 12;
+    public static final int COLUMN_COUNT        = 13;
 
     static HashMap<String, Integer> makeColumnToIndex() {
         Log.v(TAG, "makeColumnToIndex()");

@@ -126,14 +126,27 @@ public class ForecastFragment
         inflater.inflate(R.menu.forecastfragment, menu);
     }
 
-    public static void showMap(Activity a) {
-        final String location = Utility.getPreferredLocation(a);
-        final Uri geo = new Uri.Builder()
-            .scheme("geo")
-            .appendPath("0,0")
-            .appendQueryParameter("q", location)
-            .build();
+    private Uri getGeoLocationUri(Activity a) {
+        final Uri.Builder result = new Uri.Builder().scheme("geo");
+        final Cursor cursor = (mAdapter == null)
+            ? null
+            : mAdapter.getCursor();
+        if (cursor == null) {
+            if (mLocation == null) {
+                mLocation = Utility.getPreferredLocation(a);
+            result.appendPath("0,0").appendQueryParameter("q", mLocation);
+        } else {
+            result.appendPath(cursor.getString(Utility.COLUMN_LATITUDE)
+                    + ","
+                    + cursor.getString(Utility.COLUMN_LONGITUDE));
+        }
+        return result.build();
+    }
+
+    private void showMap(Activity a) {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
+        final Uri geo = getGeoLocationUri(a);
+        Log.v(TAG, "showMap(): geo == " + geo);
         intent.setData(geo);
         if (intent.resolveActivity(a.getPackageManager()) == null) {
             Utility.shortToast(a, R.string.action_map_none);
@@ -146,7 +159,7 @@ public class ForecastFragment
         Log.i(TAG, "onOptionsItemSelected()");
         switch (item.getItemId()) {
         case R.id.action_map:
-            ForecastFragment.showMap(getActivity());
+            showMap(getActivity());
             return true;
         case R.id.action_refresh:
             SunshineSyncAdapter.syncNow(getActivity());
@@ -190,8 +203,8 @@ public class ForecastFragment
                                 mPosition, mAdapter.getItemId(mPosition));
                     }
                 });
+            mListView.setSelection(mPosition);
         }
-        mListView.setSelection(mPosition);
     }
 
     @Override
